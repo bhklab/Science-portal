@@ -1,11 +1,10 @@
 import React from 'react';
 
-export const ListView: React.FC = () => {
+export const Card: React.FC = () => {
 
     return (
         <div>
 			
-		
 		</div>
     );
 }

@@ -46,11 +46,14 @@ module.exports = {
             },
             fontFamily: { inter: "Inter" },
             fontSize: {
-              pp_name: ["20px", "24px"],
-              sign_in: ["24px", "28px"],
-              social_sign_in: ["14px", "16px"],
+			  headingMd: ["16px", "20px"],
+			  headingSm: ["14px", "16px"],
+			  bodyMd: ["14px", "20px"],
             },
-            boxShadow: { bs: "0px 1px  1px 0px #0000000c" },
+            boxShadow: { 
+				card: "0px 2px 1px 0px #0000000d",
+				button: "0px 1px 0px 0px #0000000d"
+			},
             transitionProperty: {
                 ...defaultTheme.transitionProperty,
                 width: "width",
@@ -58,7 +61,8 @@ module.exports = {
             },
             borderRadius: { "4xl": "30px", "4.5xl": "32px" },
             minWidth: {
-                "20": "80px"
+                20: "80px",
+				23: "92px"
             },
 			borderWidth: {
 				"1": "1px" 
