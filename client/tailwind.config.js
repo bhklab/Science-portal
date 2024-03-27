@@ -14,7 +14,6 @@ module.exports = {
                 black: { 900: "#000000", "900_0c": "#0000000c" },
                 gray: {
                     50: "#fafafa",
-                    100: "#edf3fa",
                     200: "#e9e9e9",
                     400: "#b5b5b5",
                     600: "#717171",
@@ -23,7 +22,7 @@ module.exports = {
                 },
                 white: "#ffffff",
                 colors: "#edf3faff",
-                checkbox_border: "#B6B6B6",
+                open_border: "#B6B6B6",
                 interactive: "#2463BC",
                 selected: "#EDF3FA",
                 deep_purple: "#7f61db",
@@ -66,7 +65,11 @@ module.exports = {
             },
 			borderWidth: {
 				"1": "1px" 
-			}
+			},
+            spacing: {
+                "800": "800px",
+                "50": "196px",
+            },
         },
     },
     plugins: [require("@tailwindcss/forms")],

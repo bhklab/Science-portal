@@ -21,7 +21,7 @@ const Home: React.FC = () => {
 
 	return (
 		<>
-			<div id='search-bar' className="fixed top-16 w-full shadow-sm px-16 py-3 flex flex-row gap-4 border-t-1 border-gray-200 bg-white">
+			<div id='search-bar' className="fixed top-16 w-full shadow-sm px-16 py-3 flex flex-row gap-4 border-t-1 border-gray-200 bg-white z-40">
 				<button>
 					<img src="/images/assets/filter-button-icon.svg" alt="science portal logo" />
 				</button>
@@ -31,7 +31,7 @@ const Home: React.FC = () => {
 					</button>
 					<InputText placeholder="Search Publications" className='pl-12 pr-3 py-2 rounded border-1 border-gray-300 w-full'/>
 				</div>
-				<Dropdown value={filter} onChange={(e) => setFilter(e.value)} options={options} optionLabel="name" placeholder="Sort by: Most Recent" className="rounded border-1 border-gray-300 w-60text-black-900"/>
+				<Dropdown value={`Sort by: ${filter}`} onChange={(e) => setFilter(e.value)} options={options} optionLabel="name" placeholder="Sort by: Most Recent" className="rounded border-1 border-gray-300 w-72 text-black-900"/>
 			</div>
 			<div className='w-full pt-32 px-16 flex flex-col justify-center gap-5'>
 				<div id='main' className='py-5 w-full'>
