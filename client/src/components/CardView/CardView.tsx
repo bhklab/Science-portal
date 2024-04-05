@@ -4,12 +4,47 @@ import data from './data/data.json'
 import { DropdownButton } from '../DropdownButton/DropdownButton';
 import { PublicationImage } from '../PublicationImage/PublicationImage';
 
-export const CardView: React.FC = () => {
+
+interface Pub {
+	_id: {
+	  $oid: string;
+	};
+	PMID: number;
+	doi: string;
+	date: string;
+	name: string;
+	journal: string;
+	type: string;
+	authors: string;
+	filteredAuthors: string;
+	affiliations: string;
+	filteredAffiliations: string;
+	image: string;
+	rating: string;
+	citations: number;
+	status: string;
+	repoLinks: {
+	  codeOcean: string;
+	  github: string;
+	  dggap: string;
+	  GEO: string;
+	  EGA: string;
+	  protocols: string;
+	  PDF: string;
+	  other: string;
+	};
+}
+  
+interface publications {
+	pubs: Pub[];
+}
+
+export const CardView: React.FC<publications> = ({ pubs }) => {
 
     return (
 		<div className='flex flex-row flex-wrap gap-4 justify-center pb-10'>
 			{		
-				data.map((pub) => (
+				pubs.map((pub) => (
 					<div className='flex flex-col w-[318px] rounded-lg shadow-card border-1 border-gray-200 bg-white' key={pub.PMID}>
 						<div className='h-48 w-[318px] px-8 py-12 flex flex-col justify-center items-center border-b-1 border-gray-200'>
 							<PublicationImage image={pub.image} />

@@ -3,12 +3,46 @@ import data from './data/data.json'
 import { DropdownButton } from '../DropdownButton/DropdownButton';
 import { PublicationImage } from '../PublicationImage/PublicationImage';
 
-export const ListView: React.FC = () => {
+interface Pub {
+	_id: {
+	  $oid: string;
+	};
+	PMID: number;
+	doi: string;
+	date: string;
+	name: string;
+	journal: string;
+	type: string;
+	authors: string;
+	filteredAuthors: string;
+	affiliations: string;
+	filteredAffiliations: string;
+	image: string;
+	rating: string;
+	citations: number;
+	status: string;
+	repoLinks: {
+	  codeOcean: string;
+	  github: string;
+	  dggap: string;
+	  GEO: string;
+	  EGA: string;
+	  protocols: string;
+	  PDF: string;
+	  other: string;
+	};
+}
+  
+interface publications {
+	pubs: Pub[];
+}
+
+export const ListView: React.FC<publications> = ({ pubs }) => {
 
     return (
 		<div className='flex flex-col items-center gap-4 justify-center pb-10'>
 			{		
-				data.map((pub) => (
+				pubs.map((pub) => (
 					<div className='w-800 rounded-lg border-1 border-gray-200 shadow-card bg-white flex flex-row justify-between' key={pub.PMID}>
                         <div className='p-5 w-[644px]'>
                             <div className='flex flex-row gap-2 mb-4'>
@@ -49,7 +83,7 @@ export const ListView: React.FC = () => {
                                 <DropdownButton/>
                             </div>
                         </div>
-                        <div className='flex flex-col justify-center items-center px-[33px] py-[55px] w-[156px]'>
+                        <div className='flex flex-col justify-center items-center px-[33px] py-[55px] w-[156px] border-l-1 border-gray-200'>
                             <PublicationImage image={pub.image} />
                         </div>
 

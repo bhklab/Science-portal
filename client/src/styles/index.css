@@ -1,6 +1,11 @@
 * {
     box-sizing: border-box;
 }
+.custom-sidebar .p-sidebar-header {
+    padding: 0;
+    margin: 0;
+}
+
 .pro-sidebar{
     height:100vh !important;
 }

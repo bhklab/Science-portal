@@ -45,9 +45,11 @@ module.exports = {
             },
             fontFamily: { inter: "Inter" },
             fontSize: {
-			  headingMd: ["16px", "20px"],
-			  headingSm: ["14px", "16px"],
-			  bodyMd: ["14px", "20px"],
+				heading2Xl: ["28px", "32px"],
+				headingLg: ["20px", "24px"],
+			  	headingMd: ["16px", "20px"],
+			  	headingSm: ["14px", "16px"],
+			  	bodyMd: ["14px", "20px"],
             },
             boxShadow: { 
 				card: "0px 2px 1px 0px #0000000d",
@@ -61,7 +63,6 @@ module.exports = {
             borderRadius: { "4xl": "30px", "4.5xl": "32px" },
             minWidth: {
                 20: "80px",
-				23: "92px"
             },
 			borderWidth: {
 				"1": "1px" 
