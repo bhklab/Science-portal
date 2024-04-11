@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { CardView } from '../components/CardView/CardView';
 import { ListView } from '../components/ListView/ListView';
-
 import { Sidebar } from 'primereact/sidebar';
-import data from './data/data.json';
 
 interface Option {
 	name: string;
@@ -19,10 +18,13 @@ interface Status {
 	name: string;
 }
 
-
 const options: Option[] = [
+	{ name: 'A-Z' },
+	{ name: 'Z-A' },
 	{ name: 'Most Recent' },
+	{ name: 'Least Recent' },
 	{ name: 'Most Citations' },
+	{ name: 'Least Citations' },
 ];
 
 const filters: Filter[] = [
@@ -46,9 +48,47 @@ const Home: React.FC = () => {
 	const [labFilter, setLabFilter] = useState<Filter | null>(null);
 	const [statusFilter, setStatusFilter] = useState<Status | null>(null);
 
+	// State for cardview/listview
 	const [cardView, setCardView] = useState<true | false>(true);
 
+	// State for filter sidebar visibility
 	const [visible, setVisible] = useState<boolean>(false);
+
+	// State to store fetched data
+	const [publications, setPublications] = useState<any>([]);
+
+	// Fetch publications on load
+	useEffect(() => {
+		const getPublications = async () => {
+			try {
+				const res = await axios.get(`/publications/all`);
+				setPublications(res.data);
+			} catch (error) {
+				console.log(error);
+			}
+		}
+		getPublications();		
+	}, []);
+
+	const publicationSort = (sortMethod: string) => {
+		let sortedPublications = [...publications];
+		console.log(sortMethod);
+		if (sortMethod === 'A-Z') {
+			sortedPublications.sort((a, b) => a.name.localeCompare(b.name));
+		} else if (sortMethod === 'Z-A') {
+			sortedPublications.sort((a, b) => b.name.localeCompare(a.name));
+		} else if (sortMethod === 'Most Recent') {
+			sortedPublications.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+		} else if (sortMethod === 'Least Recent') {
+			sortedPublications.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+		} else if (sortMethod === 'Most Citations') {
+			sortedPublications.sort((a, b) => b.citations - a.citations);
+		} else if (sortMethod === 'Least Citations') {
+			sortedPublications.sort((a, b) => a.citations - b.citations);
+		}
+	
+		setPublications(sortedPublications);
+	};
 
 	return (
 		<>
@@ -126,7 +166,7 @@ const Home: React.FC = () => {
 						</button>
 						<InputText placeholder="Search publications" className='pl-12 pr-3 py-2 rounded border-1 border-gray-300 w-full'/>
 					</div>
-					<Dropdown value={sort} onChange={(e) => setSort(e.value)} options={options} optionLabel="name" placeholder="Sort by: Most Recent" className="rounded border-1 border-gray-300 w-72 md:text-sm text-black-900"/>
+					<Dropdown value={sort} onChange={(e) => {publicationSort(e.value.name); setSort(e.value)}} options={options} optionLabel="name" placeholder="Sort by: Most Recent" className="rounded border-1 border-gray-300 w-72 md:text-sm text-black-900"/>
 				</div>
 				<div className='w-full pt-32 px-16 flex flex-col justify-center gap-5'>
 					<div id='main' className='py-5 w-full'>
@@ -162,9 +202,9 @@ const Home: React.FC = () => {
 					</div>
 					{
 						cardView ? (
-							<CardView pubs={data}/>
+							<CardView pubs={publications}/>
 						) :	(
-							<ListView pubs={data}/>
+							<ListView pubs={publications}/>
 						)
 					}
 				</div>

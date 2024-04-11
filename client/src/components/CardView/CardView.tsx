@@ -1,9 +1,6 @@
 import React from 'react';
-// import Card from './Card';
-import data from './data/data.json'
 import { DropdownButton } from '../DropdownButton/DropdownButton';
 import { PublicationImage } from '../PublicationImage/PublicationImage';
-
 
 interface Pub {
 	_id: {
@@ -40,12 +37,12 @@ interface publications {
 }
 
 export const CardView: React.FC<publications> = ({ pubs }) => {
-
+	console.log(pubs);
     return (
 		<div className='flex flex-row flex-wrap gap-4 justify-center pb-10'>
 			{		
 				pubs.map((pub) => (
-					<div className='flex flex-col w-[318px] rounded-lg shadow-card border-1 border-gray-200 bg-white' key={pub.PMID}>
+					<div className='flex flex-col w-[318px] rounded-lg shadow-card border-1 border-gray-200 bg-white' key={pub.doi}>
 						<div className='h-48 w-[318px] px-8 py-12 flex flex-col justify-center items-center border-b-1 border-gray-200'>
 							<PublicationImage image={pub.image} />
 						</div>

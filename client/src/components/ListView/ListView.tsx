@@ -1,5 +1,4 @@
 import React from 'react';
-import data from './data/data.json'
 import { DropdownButton } from '../DropdownButton/DropdownButton';
 import { PublicationImage } from '../PublicationImage/PublicationImage';
 
@@ -38,12 +37,11 @@ interface publications {
 }
 
 export const ListView: React.FC<publications> = ({ pubs }) => {
-
     return (
 		<div className='flex flex-col items-center gap-4 justify-center pb-10'>
 			{		
 				pubs.map((pub) => (
-					<div className='w-800 rounded-lg border-1 border-gray-200 shadow-card bg-white flex flex-row justify-between' key={pub.PMID}>
+					<div className='w-800 rounded-lg border-1 border-gray-200 shadow-card bg-white flex flex-row justify-between' key={pub.doi}>
                         <div className='p-5 w-[644px]'>
                             <div className='flex flex-row gap-2 mb-4'>
                                 <a href='https://google.com'>
