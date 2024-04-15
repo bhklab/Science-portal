@@ -1,36 +1,7 @@
 import React from 'react';
 import { DropdownButton } from '../DropdownButton/DropdownButton';
 import { PublicationImage } from '../PublicationImage/PublicationImage';
-
-interface Pub {
-	_id: {
-	  $oid: string;
-	};
-	PMID: number;
-	doi: string;
-	date: string;
-	name: string;
-	journal: string;
-	type: string;
-	authors: string;
-	filteredAuthors: string;
-	affiliations: string;
-	filteredAffiliations: string;
-	image: string;
-	rating: string;
-	citations: number;
-	status: string;
-	repoLinks: {
-	  codeOcean: string;
-	  github: string;
-	  dggap: string;
-	  GEO: string;
-	  EGA: string;
-	  protocols: string;
-	  PDF: string;
-	  other: string;
-	};
-}
+import Pub from '../../interfaces/Pub';
   
 interface publications {
 	pubs: Pub[];

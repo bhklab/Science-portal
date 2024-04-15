@@ -46,6 +46,7 @@ module.exports = {
             fontFamily: { inter: "Inter" },
             fontSize: {
 				heading2Xl: ["28px", "32px"],
+				headingXl: ["24px", "28px"],
 				headingLg: ["20px", "24px"],
 			  	headingMd: ["16px", "20px"],
 			  	headingSm: ["14px", "16px"],

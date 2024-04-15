@@ -187,3 +187,26 @@ ul li a{
     background: #6b6b6b;
     border-radius: 10px;
 }
+
+
+/* Slide out animation for bottom modal to move to middle */
+.p-dialog-mask{
+	align-items: normal !important;
+}
+.p-dialog .p-dialog-default{
+	margin-top: 3em;
+	border-radius: 20px !important;
+}
+.p-dialog-bottom {
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important; /* Adjust to properly center the dialog */
+    left: 50% !important;
+}
+
+.p-dialog-content.custom-dialog {
+    border-radius: 15px !important; /* Ensure overriding with !important */
+}
+
+.p-dialog-header {
+	padding: 20px 20px 0 20px !important;
+}
