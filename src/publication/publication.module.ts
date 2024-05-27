@@ -8,7 +8,7 @@ import { PublicationSchema } from '../schema/publication.schema';
 	imports: [
 		MongooseModule.forFeature([{ name: 'Publication', schema: PublicationSchema }])
 	],
-  controllers: [PublicationController],
-  providers: [PublicationService],
+  controllers: [PublicationController], // receieve requests
+  providers: [PublicationService], // logic for conducting work upon controllers request
 })
 export class PublicationModule {}

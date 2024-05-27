@@ -17,4 +17,17 @@ export class PublicationService {
             throw new Error(`Error fetching: ${error}`);
         }
     }
+
+	async findByDoi(doi: string): Promise<PublicationDocument> {
+        try {
+            const publication = await this.publicationModel.findOne({ doi }).exec();
+            if (!publication) {
+                throw new Error('Publication not found');
+            }
+            return publication;
+        } catch (error) {
+            throw new Error(`Error fetching publication by DOI: ${error}`);
+        }
+    }
+	
 }

@@ -1,15 +1,11 @@
 import React from 'react';
 
-
-
 export const Navbar: React.FC = () => {
-
     return (
-        <nav className="fixed top-0 w-full px-16 py-3 bg-white z-50 border-b-1 border-gray-200">
+        <nav className="fixed top-0 w-full px-16 py-3 bg-white z-10 border-b-1 border-gray-200">
             <div className="">
-				<img src="/images/assets/science-portal-logo.svg" alt="science portal logo" />
+                <img src="/images/assets/science-portal-logo.svg" alt="science portal logo" />
             </div>
         </nav>
     );
-}
-
+};
