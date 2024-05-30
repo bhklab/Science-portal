@@ -210,3 +210,14 @@ ul li a{
 .p-dialog-header {
 	padding: 20px 20px 0 20px !important;
 }
+
+
+.p-dropdown-label {
+	color: #727272;
+	font-weight: 300;
+}
+
+.p-dropdown-item {
+	color: #727272;
+	font-weight: 300;
+}

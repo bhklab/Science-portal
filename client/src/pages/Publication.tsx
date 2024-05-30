@@ -25,7 +25,9 @@ const Publication: React.FC = () => {
     }, [doi]);
 
     return (
-        <div className="pt-28">{pub ? <PublicationModalContent pub={pub} /> : <p>Loading publication data...</p>}</div>
+        <div className="pt-28 md:px-0 px-[120px]">
+            {pub ? <PublicationModalContent pub={pub} /> : <p>Loading publication data...</p>}
+        </div>
     );
 };
 

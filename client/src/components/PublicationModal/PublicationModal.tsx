@@ -29,19 +29,19 @@ const ReusableModal: React.FC<ReusableModalProps> = ({ isVisible, onHide, pub })
                 .then(() => {
                     toast.current?.show({
                         severity: 'success',
-                        summary: 'Success',
-                        detail: 'DOI link copied to clipboard',
-                        life: 3000
+                        summary: 'Link Copy',
+                        detail: 'Science Portal link has been succcessfully copied',
+                        life: 6000
                     });
                 })
-                .catch(err => {
+                .catch(error => {
                     toast.current?.show({
                         severity: 'error',
                         summary: 'Error',
-                        detail: 'Failed to copy DOI link',
-                        life: 3000
+                        detail: 'Science Portal link has not been successfully copied',
+                        life: 6000
                     });
-                    console.error('Failed to copy DOI link', err);
+                    console.error('Failed to copy Science Portal link', error);
                 });
         }
     };
@@ -59,17 +59,17 @@ const ReusableModal: React.FC<ReusableModalProps> = ({ isVisible, onHide, pub })
                     <img src="/images/assets/close-modal-icon.svg" alt="close publication modal icon" className="w-6" />
                 </button>
             </div>
+            <Toast ref={toast} baseZIndex={1000} position="bottom-right" />
         </div>
     );
 
     return (
         <>
-            <Toast ref={toast} className="fixed z-50 top-10 right-4" />
             <Dialog
                 visible={isVisible}
                 header={modalHeader}
                 onHide={onHide}
-                style={{ width: '50vw', borderRadius: '15px' }}
+                style={{ width: '80%', borderRadius: '15px' }}
                 modal
                 draggable={false}
                 closable={false}

@@ -88,12 +88,46 @@ const Home: React.FC = () => {
 
     return (
         <>
+            <div
+                id="search-bar"
+                className={`transform ${visible ? 'pl-[382px] md:pl-[342px]' : ''} duration-300 ease-in-out fixed top-16 w-full shadow-sm px-16 md:px-1 py-3 flex flex-row gap-4 bg-white z-10`}
+            >
+                {visible ? (
+                    <button onClick={() => setVisible(!visible)} className="min-h-10 min-w-10">
+                        <img src="/images/assets/close-filter-icon.svg" alt="close filter button" />
+                    </button>
+                ) : (
+                    <button onClick={() => setVisible(!visible)} className="min-h-10 min-w-10">
+                        <img src="/images/assets/filter-button-icon.svg" alt="open filter button" />
+                    </button>
+                )}
+                <div className={`flex items-center w-full relative ${visible ? 'mmd:invisible' : ''}`}>
+                    <button className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                        <img src="/images/assets/search-icon.svg" alt="search-icon" className="h-6 w-6" />
+                    </button>
+                    <InputText
+                        placeholder="Search publications"
+                        className="pl-12 pr-3 py-2 rounded border-1 border-gray-300 w-full"
+                    />
+                </div>
+                <Dropdown
+                    value={sort}
+                    onChange={e => {
+                        publicationSort(e.value.name);
+                        setSort(e.value);
+                    }}
+                    options={options}
+                    optionLabel="name"
+                    placeholder="Sort by"
+                    className={`rounded border-1 border-gray-300 w-72 md:w-40 text-black-900 ${visible ? 'mmd:invisible' : ''}`}
+                />
+            </div>
             <div className={`transform ${visible ? 'ml-[320px]' : 'ml-0'} duration-300 ease-in-out`}>
                 <Sidebar
                     visible={visible}
                     position="left"
                     onHide={() => {}}
-                    className="z-20 w-[320px] mt-[130px] bg-white shadow-sm border-r-1 border-gray-200 custom-sidebar p-sidebar-header"
+                    className={`z-20 w-[320px] mt-[130px] bg-white shadow-sm border-r-1 border-gray-200 custom-sidebar p-sidebar-header`}
                     modal={false}
                     showCloseIcon={false}
                 >
@@ -140,40 +174,8 @@ const Home: React.FC = () => {
                     </div>
                 </Sidebar>
                 <div
-                    id="search-bar"
-                    className="fixed top-16 w-full shadow-sm px-16 py-3 flex flex-row gap-4 bg-white z-40"
+                    className={`w-full pt-32 px-16 md:px-6 flex flex-col justify-center gap-5 ${visible ? 'mmd:hidden' : ''}`}
                 >
-                    {visible ? (
-                        <button onClick={() => setVisible(!visible)} className="min-h-10 min-w-10">
-                            <img src="/images/assets/close-filter-icon.svg" alt="close filter button" />
-                        </button>
-                    ) : (
-                        <button onClick={() => setVisible(!visible)} className="min-h-10 min-w-10">
-                            <img src="/images/assets/filter-button-icon.svg" alt="open filter button" />
-                        </button>
-                    )}
-                    <div className="flex items-center w-full relative">
-                        <button className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                            <img src="/images/assets/search-icon.svg" alt="search-icon" className="h-6 w-6" />
-                        </button>
-                        <InputText
-                            placeholder="Search publications"
-                            className="pl-12 pr-3 py-2 rounded border-1 border-gray-300 w-full"
-                        />
-                    </div>
-                    <Dropdown
-                        value={sort}
-                        onChange={e => {
-                            publicationSort(e.value.name);
-                            setSort(e.value);
-                        }}
-                        options={options}
-                        optionLabel="name"
-                        placeholder="Sort by: Most Recent"
-                        className="rounded border-1 border-gray-300 w-72 md:text-sm text-black-900"
-                    />
-                </div>
-                <div className="w-full pt-32 px-16 flex flex-col justify-center gap-5">
                     <div id="main" className="py-5 w-full">
                         <div className="flex flex-row justify-between items-center w-full">
                             <span className="">6 of 120 publications</span>
