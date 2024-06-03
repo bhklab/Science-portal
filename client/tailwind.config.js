@@ -5,7 +5,7 @@ module.exports = {
     content: ['./src/**/**/*.{js,ts,jsx,tsx,html,mdx}', './src/**/*.{js,ts,jsx,tsx,html,mdx}'],
     darkMode: 'class',
     theme: {
-        screens: { md: { max: '1050px' }, mmd: { max: '650px' }, sm: { max: '550px' } },
+        screens: { md: { max: '1050px' }, smd: { max: '800px' }, mmd: { max: '700px' }, sm: { max: '550px' } },
         extend: {
             colors: {
                 black: { 900: '#000000', '900_0c': '#0000000c' },
