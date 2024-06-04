@@ -213,11 +213,14 @@ ul li a{
 
 
 .p-dropdown-label {
-	color: #727272;
 	font-weight: 300;
 }
 
 .p-dropdown-item {
+	font-weight: 300;
+}
+
+.p-placeholder{
 	color: #727272;
 	font-weight: 300;
 }

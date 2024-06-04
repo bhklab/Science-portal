@@ -185,7 +185,7 @@ const Home: React.FC = () => {
                 >
                     <div id="main" className="py-5 w-full">
                         <div className="flex flex-row justify-between items-center w-full">
-                            <span className="">6 of 120 publications</span>
+                            <span className="">{publications?.length} publications</span>
                             {cardView ? (
                                 <div className="flex flex-row gap-2">
                                     <button onClick={() => setCardView(true)}>

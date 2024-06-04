@@ -71,7 +71,7 @@ export const ListView: React.FC<publications> = ({ pubs }) => {
                             </div>
                         </div>
                     </div>
-                    <div className="flex flex-col justify-center items-center px-[20px] py-[25px] w-[156px] h-[170px] mmd:px-[10px] mmd:w-[156px] mmd:h-[170px]">
+                    <div className="flex flex-col justify-center items-center align-center px-[20px] py-[25px] w-[156px] h-[156px] mmd:h-[210px] mmd:px-[10px]">
                         <PublicationImage image={pub.image} />
                     </div>
                 </div>
