@@ -25,10 +25,10 @@ export const ListView: React.FC<publications> = ({ pubs }) => {
         <div className="flex flex-col items-center gap-4 justify-center pb-10">
             {pubs.map(pub => (
                 <div
-                    className="rounded-lg border-1 border-gray-200 shadow-card bg-white flex flex-row justify-between"
+                    className="rounded-lg border-1 smd:w-full border-gray-200 shadow-card bg-white flex flex-row justify-between"
                     key={pub.doi}
                 >
-                    <div className="p-5 w-[644px] md:w-full border-r-1 border-gray-200">
+                    <div className="p-5 w-[644px] smd:w-full border-r-1 border-gray-200">
                         <h2
                             className="text-headingMd mmd:text-headingSm font-semibold min-h-10 mb-2 cursor-pointer hover:underline underline-offset-1"
                             onClick={() => openModal(pub)}
