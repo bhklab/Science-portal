@@ -5,6 +5,8 @@ import { Dropdown } from 'primereact/dropdown';
 import { CardView } from '../components/CardView/CardView';
 import { ListView } from '../components/ListView/ListView';
 import { Sidebar } from 'primereact/sidebar';
+import { ProgressSpinner } from 'primereact/progressspinner';
+import Pub from '../interfaces/Pub';
 
 interface Option {
     name: string;
@@ -51,7 +53,10 @@ const Home: React.FC = () => {
     const [visible, setVisible] = useState<boolean>(false);
 
     // State to store fetched data
-    const [publications, setPublications] = useState<any>([]);
+    const [publications, setPublications] = useState<Pub[] | null>(null);
+
+    // Search bar state
+    const [search, setSearch] = useState<string>('');
 
     // Fetch publications on load
     useEffect(() => {
@@ -67,23 +72,24 @@ const Home: React.FC = () => {
     }, []);
 
     const publicationSort = (sortMethod: string) => {
-        let sortedPublications = [...publications];
-        console.log(sortMethod);
-        if (sortMethod === 'A-Z') {
-            sortedPublications.sort((a, b) => a.name.localeCompare(b.name));
-        } else if (sortMethod === 'Z-A') {
-            sortedPublications.sort((a, b) => b.name.localeCompare(a.name));
-        } else if (sortMethod === 'Most Recent') {
-            sortedPublications.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-        } else if (sortMethod === 'Least Recent') {
-            sortedPublications.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-        } else if (sortMethod === 'Most Citations') {
-            sortedPublications.sort((a, b) => b.citations - a.citations);
-        } else if (sortMethod === 'Least Citations') {
-            sortedPublications.sort((a, b) => a.citations - b.citations);
+        //Verify publications is an Array before assigning it
+        if (publications?.constructor === Array) {
+            let sortedPublications = [...publications];
+            if (sortMethod === 'A-Z') {
+                sortedPublications.sort((a, b) => a.name.localeCompare(b.name));
+            } else if (sortMethod === 'Z-A') {
+                sortedPublications.sort((a, b) => b.name.localeCompare(a.name));
+            } else if (sortMethod === 'Most Recent') {
+                sortedPublications.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+            } else if (sortMethod === 'Least Recent') {
+                sortedPublications.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+            } else if (sortMethod === 'Most Citations') {
+                sortedPublications.sort((a, b) => b.citations - a.citations);
+            } else if (sortMethod === 'Least Citations') {
+                sortedPublications.sort((a, b) => a.citations - b.citations);
+            }
+            setPublications(sortedPublications);
         }
-
-        setPublications(sortedPublications);
     };
 
     return (
@@ -108,6 +114,7 @@ const Home: React.FC = () => {
                     <InputText
                         placeholder="Search publications"
                         className="pl-12 pr-3 py-2 rounded border-1 border-gray-300 w-full"
+                        onChange={e => setSearch(e.target.value)}
                     />
                 </div>
                 <Dropdown
@@ -200,7 +207,32 @@ const Home: React.FC = () => {
                             )}
                         </div>
                     </div>
-                    {cardView ? <CardView pubs={publications} /> : <ListView pubs={publications} />}
+                    {publications ? (
+                        cardView ? (
+                            <CardView
+                                pubs={publications.filter(publication => {
+                                    if (search.toLowerCase() === '') return publication;
+                                    else if (publication.name.toLowerCase().includes(search.toLowerCase()))
+                                        return publication;
+                                })}
+                            />
+                        ) : (
+                            <ListView
+                                pubs={publications.filter(publication => {
+                                    if (search.toLowerCase() === '') return publication;
+                                    else if (publication.name.toLowerCase().includes(search.toLowerCase()))
+                                        return publication;
+                                })}
+                            />
+                        )
+                    ) : (
+                        <ProgressSpinner
+                            style={{ width: '600px', height: '600px' }}
+                            strokeWidth="4"
+                            fill="var(--surface-ground)"
+                            animationDuration="0.5s"
+                        />
+                    )}
                 </div>
             </div>
         </>
