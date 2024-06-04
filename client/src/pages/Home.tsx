@@ -227,7 +227,7 @@ const Home: React.FC = () => {
                         )
                     ) : (
                         <ProgressSpinner
-                            style={{ width: '600px', height: '600px' }}
+                            style={{ width: '400px', height: '400px' }}
                             strokeWidth="4"
                             fill="var(--surface-ground)"
                             animationDuration="0.5s"
