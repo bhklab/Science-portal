@@ -58,6 +58,9 @@ const Home: React.FC = () => {
     // Search bar state
     const [search, setSearch] = useState<string>('');
 
+    // Loaded content state
+    const [loaded, setLoaded] = useState<boolean>(false);
+
     // Fetch publications on load
     useEffect(() => {
         const getPublications = async () => {
@@ -69,6 +72,7 @@ const Home: React.FC = () => {
             }
         };
         getPublications();
+        setTimeout(() => setLoaded(true), 2000);
     }, []);
 
     const publicationSort = (sortMethod: string) => {
@@ -207,7 +211,7 @@ const Home: React.FC = () => {
                             )}
                         </div>
                     </div>
-                    {publications ? (
+                    {loaded && publications ? (
                         cardView ? (
                             <CardView
                                 pubs={publications.filter(publication => {
@@ -226,12 +230,14 @@ const Home: React.FC = () => {
                             />
                         )
                     ) : (
-                        <ProgressSpinner
-                            style={{ width: '400px', height: '400px' }}
-                            strokeWidth="4"
-                            fill="var(--surface-ground)"
-                            animationDuration="0.5s"
-                        />
+                        <div className="flex justify-content-center items-center">
+                            <ProgressSpinner
+                                style={{ width: '400px', height: '400px' }}
+                                strokeWidth="4"
+                                fill="var(--surface-ground)"
+                                animationDuration="1s"
+                            />
+                        </div>
                     )}
                 </div>
             </div>
