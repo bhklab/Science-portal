@@ -28,7 +28,7 @@ export const CardView: React.FC<publications> = ({ pubs }) => {
                     className="flex flex-col w-[318px] rounded-lg shadow-card border-1 border-gray-200 bg-white"
                     key={pub.doi}
                 >
-                    <div className="h-48 w-[318px] px-8 py-12 flex flex-col justify-center items-center border-b-1 border-gray-200">
+                    <div className="h-48 w-[318px] px-4 py-6 flex flex-col justify-center items-center border-b-1 border-gray-200">
                         <PublicationImage image={pub.image} />
                     </div>
                     <div className="p-5 flex flex-col justify-between">

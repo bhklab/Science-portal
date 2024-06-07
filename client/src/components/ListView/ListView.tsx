@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { DropdownButton } from '../DropdownButton/DropdownButton';
 import { PublicationImage } from '../PublicationImage/PublicationImage';
 import Pub from '../../interfaces/Pub';
 import PublicationModal from '../PublicationModal/PublicationModal';
@@ -26,7 +25,7 @@ export const ListView: React.FC<publications> = ({ pubs }) => {
         <div className="flex flex-col items-center gap-4 justify-center pb-10">
             {pubs.map(pub => (
                 <div
-                    className="rounded-lg border-1 border-gray-200 shadow-card bg-white flex flex-row justify-between"
+                    className="rounded-lg border-1 smd:w-full border-gray-200 shadow-card bg-white flex flex-row justify-between"
                     key={pub.doi}
                 >
                     <div className="p-5 w-[644px] smd:w-full border-r-1 border-gray-200">
@@ -72,7 +71,7 @@ export const ListView: React.FC<publications> = ({ pubs }) => {
                             </div>
                         </div>
                     </div>
-                    <div className="flex flex-col justify-center items-center px-[20px] py-[25px] w-[156px] h-[156px] mmd:w-[170px] mmd:h-[170px]">
+                    <div className="flex flex-col justify-center items-center align-center px-[20px] py-[25px] w-[156px] h-[156px] mmd:h-[210px] mmd:px-[10px]">
                         <PublicationImage image={pub.image} />
                     </div>
                 </div>

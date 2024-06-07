@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Pub from '../interfaces/Pub';
 import PublicationModalContent from '../components/PublicationModal/PublicationModalContent';
@@ -24,11 +24,7 @@ const Publication: React.FC = () => {
         getPublication();
     }, [doi]);
 
-    return (
-        <div className="pt-28 md:px-0 px-[120px]">
-            {pub ? <PublicationModalContent pub={pub} /> : <p>Loading publication data...</p>}
-        </div>
-    );
+    return <div className="pt-28 md:px-0 px-[120px]">{pub && <PublicationModalContent pub={pub} />}</div>;
 };
 
 export default Publication;

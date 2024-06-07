@@ -24,6 +24,7 @@ const ReusableModal: React.FC<ReusableModalProps> = ({ isVisible, onHide, pub })
         if (pub) {
             const encodedDoi = encodeURIComponent(pub.doi);
             const url = `${window.location.origin}/publication/${encodedDoi}`;
+            //navigator.clipboard only works on local host or trusted domain
             navigator.clipboard
                 .writeText(url)
                 .then(() => {
