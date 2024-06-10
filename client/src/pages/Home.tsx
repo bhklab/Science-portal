@@ -41,7 +41,7 @@ const filters: Filter[] = [
 const status: Status[] = [{ name: 'Published' }, { name: 'Preprint' }];
 
 const Home: React.FC = () => {
-    // Drop down states
+    // State of various dropdowns
     const [sort, setSort] = useState<Option | null>(null);
     const [labFilter, setLabFilter] = useState<Filter | null>(null);
     const [statusFilter, setStatusFilter] = useState<Status | null>(null);
@@ -55,46 +55,108 @@ const Home: React.FC = () => {
     // State to store fetched data
     const [publications, setPublications] = useState<Pub[] | null>(null);
 
-    // Search bar state
+    // State of search bar
     const [search, setSearch] = useState<string>('');
 
-    // Loaded content state
+    // State of loaded content
     const [loaded, setLoaded] = useState<boolean>(false);
+
+    // State of load more button total
+    const [totalPubs, setTotalPubs] = useState<number>(20);
+
+    // State of new authors
+    const [authors, setAuthors] = useState<String[]>([]);
 
     // Fetch publications on load
     useEffect(() => {
+        setLoaded(false);
+        setTotalPubs(20);
         const getPublications = async () => {
             try {
-                const res = await axios.get(`/api/publications/all`);
+                const res = await axios.post(
+                    `/api/publications/all`,
+                    {
+                        total: totalPubs,
+                        sort: sort?.name,
+                        // lab: labFilter?.lastName + labFilter?.firstName,
+                        lab: '',
+                        name: search
+                    },
+                    {
+                        maxBodyLength: Infinity
+                    }
+                );
                 setPublications(res.data);
             } catch (error) {
                 console.log(error);
             }
         };
         getPublications();
-        setTimeout(() => setLoaded(true), 2000);
-    }, []);
+        setTimeout(() => setLoaded(true), 1000);
+    }, [search, labFilter]);
 
-    const publicationSort = (sortMethod: string) => {
-        //Verify publications is an Array before assigning it
-        if (publications?.constructor === Array) {
-            let sortedPublications = [...publications];
-            if (sortMethod === 'A-Z') {
-                sortedPublications.sort((a, b) => a.name.localeCompare(b.name));
-            } else if (sortMethod === 'Z-A') {
-                sortedPublications.sort((a, b) => b.name.localeCompare(a.name));
-            } else if (sortMethod === 'Most Recent') {
-                sortedPublications.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-            } else if (sortMethod === 'Least Recent') {
-                sortedPublications.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-            } else if (sortMethod === 'Most Citations') {
-                sortedPublications.sort((a, b) => b.citations - a.citations);
-            } else if (sortMethod === 'Least Citations') {
-                sortedPublications.sort((a, b) => a.citations - b.citations);
+    // Fetch additional publications from current query when more are requested
+    useEffect(() => {
+        const getPublications = async () => {
+            try {
+                const res = await axios.post(
+                    `/api/publications/all`,
+                    {
+                        total: totalPubs,
+                        sort: sort?.name,
+                        // lab: labFilter?.lastName + labFilter?.firstName,
+                        lab: '',
+                        name: search
+                    },
+                    {
+                        maxBodyLength: Infinity
+                    }
+                );
+                setPublications(res.data);
+            } catch (error) {
+                console.log(error);
             }
-            setPublications(sortedPublications);
-        }
-    };
+        };
+        getPublications();
+    }, [totalPubs]);
+
+    // Sort current query when sort is adjusted
+    useEffect(() => {
+        const getPublications = async () => {
+            try {
+                const res = await axios.post(
+                    `/api/publications/all`,
+                    {
+                        total: totalPubs,
+                        sort: sort?.name,
+                        // lab: labFilter?.lastName + labFilter?.firstName,
+                        lab: '',
+                        name: search
+                    },
+                    {
+                        maxBodyLength: Infinity
+                    }
+                );
+                setPublications(res.data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        getPublications();
+    }, [sort]);
+
+    useEffect(() => {
+        const getAuthors = async () => {
+            try {
+                const res = await axios.get(`/api/authors/all`);
+                console.log(res.data);
+                setAuthors(res.data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        getAuthors();
+    }, []);
 
     return (
         <>
@@ -124,7 +186,6 @@ const Home: React.FC = () => {
                 <Dropdown
                     value={sort}
                     onChange={e => {
-                        publicationSort(e.value.name);
                         setSort(e.value);
                     }}
                     options={options}
@@ -189,7 +250,7 @@ const Home: React.FC = () => {
                 >
                     <div id="main" className="py-5 w-full">
                         <div className="flex flex-row justify-between items-center w-full">
-                            <span className="">{publications?.length} publications</span>
+                            <span className="">Showing {publications?.length} publications</span>
                             {cardView ? (
                                 <div className="flex flex-row gap-2">
                                     <button onClick={() => setCardView(true)}>
@@ -213,21 +274,38 @@ const Home: React.FC = () => {
                     </div>
                     {loaded && publications ? (
                         cardView ? (
-                            <CardView
-                                pubs={publications.filter(publication => {
-                                    if (search.toLowerCase() === '') return publication;
-                                    else if (publication.name.toLowerCase().includes(search.toLowerCase()))
-                                        return publication;
-                                })}
-                            />
+                            <>
+                                <CardView
+                                    pubs={publications.filter(publication => {
+                                        if (search.toLowerCase() === '') return publication;
+                                        else if (publication.name.toLowerCase().includes(search.toLowerCase()))
+                                            return publication;
+                                    })}
+                                />
+
+                                <button
+                                    className="m-auto w-32 h-10 text-BodyMd font-bold mb-10 text-black-900"
+                                    onClick={() => setTotalPubs(totalPubs + 40)}
+                                >
+                                    Load More
+                                </button>
+                            </>
                         ) : (
-                            <ListView
-                                pubs={publications.filter(publication => {
-                                    if (search.toLowerCase() === '') return publication;
-                                    else if (publication.name.toLowerCase().includes(search.toLowerCase()))
-                                        return publication;
-                                })}
-                            />
+                            <>
+                                <ListView
+                                    pubs={publications.filter(publication => {
+                                        if (search.toLowerCase() === '') return publication;
+                                        else if (publication.name.toLowerCase().includes(search.toLowerCase()))
+                                            return publication;
+                                    })}
+                                />
+                                <button
+                                    className="m-auto w-32 h-10 text-BodyMd font-bold mb-10 text-black-900"
+                                    onClick={() => setTotalPubs(totalPubs + 40)}
+                                >
+                                    Load More
+                                </button>
+                            </>
                         )
                     ) : (
                         <div className="flex justify-content-center items-center">

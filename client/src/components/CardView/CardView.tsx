@@ -25,7 +25,7 @@ export const CardView: React.FC<publications> = ({ pubs }) => {
         <div className="flex flex-row flex-wrap gap-4 justify-center pb-10">
             {pubs.map(pub => (
                 <div
-                    className="flex flex-col w-[318px] rounded-lg shadow-card border-1 border-gray-200 bg-white"
+                    className="flex flex-col w-[318px] h-[426px] rounded-lg shadow-card border-1 border-gray-200 bg-white relative"
                     key={pub.doi}
                 >
                     <div className="h-48 w-[318px] px-4 py-6 flex flex-col justify-center items-center border-b-1 border-gray-200">
@@ -43,13 +43,13 @@ export const CardView: React.FC<publications> = ({ pubs }) => {
                                 {pub.authors.length > 60 ? `${pub.authors.substring(0, 60)}...` : pub.authors}
                             </p>
                         </div>
-                        <div className="flex flex-row justify-between items-end">
+                        <div className="flex flex-row justify-between items-end w-[280px] absolute bottom-4">
                             <div className="flex flex-col gap-1 text-bodyMd text-gray-700 font-normal">
-                                <p>{pub.journal}</p>
+                                <p className="max-w-[175px]">{pub.journal}</p>
                                 <p>{pub.date}</p>
                                 <p>{pub.citations} citations</p>
                             </div>
-                            <div className="flex flex-row gap-2">
+                            <div className="flex flex-row gap-2 w-[88px]">
                                 <a href="https://www.google.com" target="_blank" rel="noreferrer">
                                     <img src="/images/assets/doi-icon.svg" alt="icon" className="h-6 w-6" />
                                 </a>
