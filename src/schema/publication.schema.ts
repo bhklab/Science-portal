@@ -1,9 +1,9 @@
-import { Schema } from "mongoose";
+import { Schema } from 'mongoose';
 
 export const PublicationSchema = new Schema({
   PMID: Number,
   doi: String,
-  date: Date,
+  date: String,
   name: String,
   journal: String,
   type: String,
@@ -11,7 +11,7 @@ export const PublicationSchema = new Schema({
   filteredAuthors: String,
   affiliations: String,
   citations: Number,
-  dateAdded: Date,
+  dateAdded: String,
   publisher: String,
   status: String,
   image: String,
@@ -46,6 +46,7 @@ export const PublicationSchema = new Schema({
   },
 }, { collection: 'publications' });
 
-
-
-
+PublicationSchema.index(
+  { authors: 1, name: 1 },
+  { collation: { locale: 'en', strength: 2 } }
+);

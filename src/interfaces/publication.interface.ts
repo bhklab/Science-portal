@@ -4,7 +4,7 @@ import { Document } from 'mongoose';
 export interface PublicationDocument extends Document {
   PMID: number;
   doi: string;
-  date: Date;
+  date: string;
   name: string;
   journal: string;
   type: string;
@@ -12,7 +12,7 @@ export interface PublicationDocument extends Document {
   filteredAuthors: string;
   affiliations: string;
   citations: number;
-  dateAdded: Date;
+  dateAdded: string;
   publisher: string;
   status: string;
   image: string;

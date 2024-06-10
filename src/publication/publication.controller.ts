@@ -1,14 +1,19 @@
-import { Controller, Get, HttpException, HttpStatus, Param } from '@nestjs/common';
+import { Controller, Get, Body, HttpException, HttpStatus, Param, Post } from '@nestjs/common';
 import { PublicationService } from './publication.service';
 
 @Controller('publications')
 export class PublicationController {
     constructor(private publicationService: PublicationService) {}
 
-    @Get('all')
-    async getAllPublications() {
+    @Post('all')
+    async getAllPublications(
+		@Body('total') total: number, 
+		@Body('sort') sort: string,
+		@Body('lab') lab: string,
+		@Body('name') name: string
+	){
         try {
-            const publications = await this.publicationService.findAll();
+            const publications = await this.publicationService.findPublications(total, sort, lab, name);
             return publications;
         } catch (error) {
             throw new HttpException(`Error retrieving publications: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);

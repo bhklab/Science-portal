@@ -7,12 +7,56 @@ import { PublicationDocument } from '../interfaces/publication.interface';
 @Injectable()
 export class PublicationService {
     constructor(@InjectModel('Publication') private publicationModel: Model<PublicationDocument>) {}
-
-    async findAll(): Promise<PublicationDocument[]> {
+	//Get the total number of publications needed, filter based on lab, and sort based on criteria
+    async findPublications(total: number, sort: string, lab: string, name: string): Promise<PublicationDocument[]> {
         try {
-            const publications = await this.publicationModel.find().exec();
-            console.log(publications);
-            return publications;
+			let query = {};
+			if (lab != '' && name != '') {
+				query = {
+					authors: { $regex: new RegExp(lab, 'i') },
+					name: { $regex: new RegExp (name, 'i') }
+				};
+			} else if (lab != '') {
+				query = {
+					authors: { $regex: new RegExp(lab, 'i') }
+				};
+			} else if (name != '') {
+				query = {
+					name: { $regex: new RegExp (name, 'i') }
+				};
+			}
+			
+			let sortOption = {};
+			switch (sort) {
+				case 'A-Z':
+					sortOption = { name: 1 };
+					break;
+				case 'Z-A':
+					sortOption = { name: -1 };
+					break;
+				case 'Most Recent':
+					sortOption = { date: -1 };
+					break;
+				case 'Least Recent':
+					sortOption = { date: 1 };
+					break;
+				case 'Most Citations':
+					sortOption = { citations: -1 };
+					break;
+				case 'Least Citations':
+					sortOption = { citations: 1 };
+					break;
+			}
+		
+			console.log(sortOption);
+			const publications = await this.publicationModel
+				.find(query)
+				.collation({ locale: 'en', strength: 2 })
+				.sort(sortOption)
+				.limit(total);
+			
+			return publications;
+
         } catch (error) {
             throw new Error(`Error fetching: ${error}`);
         }
