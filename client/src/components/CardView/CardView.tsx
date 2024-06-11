@@ -22,7 +22,7 @@ export const CardView: React.FC<publications> = ({ pubs }) => {
     };
 
     return (
-        <div className="flex flex-row flex-wrap gap-4 justify-center pb-10">
+        <div className="flex flex-row flex-wrap items-center gap-4 justify-center pb-10">
             {pubs.map(pub => (
                 <div
                     className="flex flex-col w-[318px] h-[426px] rounded-lg shadow-card border-1 border-gray-200 bg-white relative"

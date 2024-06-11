@@ -12,12 +12,23 @@ interface Option {
     name: string;
 }
 
-interface Filter {
+interface Status {
     name: string;
 }
 
-interface Status {
+interface Lab {
     name: string;
+}
+
+interface Author {
+    firstName: string;
+    lastName: string;
+    email: string;
+    primaryAppointment: string;
+    primaryResearchInstitute: string;
+    secondaryAppointment: string | null;
+    secondaryResearchInstitute: string | null;
+    enid: string;
 }
 
 const options: Option[] = [
@@ -29,22 +40,13 @@ const options: Option[] = [
     { name: 'Least Citations' }
 ];
 
-const filters: Filter[] = [
-    { name: 'Any' },
-    { name: 'Benjamin Haibe-Kains' },
-    { name: 'Lupien' },
-    { name: 'Cescon' },
-    { name: 'Schimmer' },
-    { name: 'Notta' }
-];
-
 const status: Status[] = [{ name: 'Published' }, { name: 'Preprint' }];
 
 const Home: React.FC = () => {
     // State of various dropdowns
     const [sort, setSort] = useState<Option | null>(null);
-    const [labFilter, setLabFilter] = useState<Filter | null>(null);
     const [statusFilter, setStatusFilter] = useState<Status | null>(null);
+    const [selectedAuthor, setSelectedAuthor] = useState<Lab | null>(null);
 
     // State for cardview/listview
     const [cardView, setCardView] = useState<true | false>(true);
@@ -78,34 +80,33 @@ const Home: React.FC = () => {
                     {
                         total: totalPubs,
                         sort: sort?.name,
-                        // lab: labFilter?.lastName + labFilter?.firstName,
-                        lab: '',
+                        lab: selectedAuthor?.name,
                         name: search
                     },
                     {
                         maxBodyLength: Infinity
                     }
                 );
-                setPublications(res.data);
+                setPublications([...res.data]);
             } catch (error) {
                 console.log(error);
             }
         };
         getPublications();
         setTimeout(() => setLoaded(true), 1000);
-    }, [search, labFilter]);
+    }, [search, selectedAuthor, sort]);
 
     // Fetch additional publications from current query when more are requested
     useEffect(() => {
         const getPublications = async () => {
             try {
+                console.log(selectedAuthor);
                 const res = await axios.post(
                     `/api/publications/all`,
                     {
                         total: totalPubs,
                         sort: sort?.name,
-                        // lab: labFilter?.lastName + labFilter?.firstName,
-                        lab: '',
+                        lab: selectedAuthor?.name,
                         name: search
                     },
                     {
@@ -120,37 +121,16 @@ const Home: React.FC = () => {
         getPublications();
     }, [totalPubs]);
 
-    // Sort current query when sort is adjusted
-    useEffect(() => {
-        const getPublications = async () => {
-            try {
-                const res = await axios.post(
-                    `/api/publications/all`,
-                    {
-                        total: totalPubs,
-                        sort: sort?.name,
-                        // lab: labFilter?.lastName + labFilter?.firstName,
-                        lab: '',
-                        name: search
-                    },
-                    {
-                        maxBodyLength: Infinity
-                    }
-                );
-                setPublications(res.data);
-            } catch (error) {
-                console.log(error);
-            }
-        };
-        getPublications();
-    }, [sort]);
-
     useEffect(() => {
         const getAuthors = async () => {
             try {
                 const res = await axios.get(`/api/authors/all`);
                 console.log(res.data);
-                setAuthors(res.data);
+                setAuthors(
+                    res.data.map((aut: Author) => ({
+                        name: `${aut.lastName}, ${aut.firstName}`
+                    }))
+                );
             } catch (error) {
                 console.log(error);
             }
@@ -207,17 +187,18 @@ const Home: React.FC = () => {
                         <h2 className="text-headingLg text-black-900 font-semibold">Filters</h2>
                         <div className="flex flex-col gap-2">
                             <h3 className="text-headingMd text-black-900 font-semibold">Lab</h3>
-                            <Dropdown
-                                value={labFilter}
-                                options={filters}
-                                optionLabel="name"
-                                placeholder="Select a lab"
-                                className="rounded border-1 border-gray-300 w-64 text-black-900"
-                                onChange={e => {
-                                    e.originalEvent?.stopPropagation(); // Prevent click event from propagating
-                                    setLabFilter(e.target.value);
-                                }}
-                            />
+                            {authors && (
+                                <Dropdown
+                                    value={selectedAuthor}
+                                    options={authors}
+                                    optionLabel="name"
+                                    placeholder="Select a lab"
+                                    className="rounded border-1 border-gray-300 w-64 text-black-900"
+                                    onChange={e => {
+                                        setSelectedAuthor(e.value);
+                                    }}
+                                />
+                            )}
                         </div>
                         <div className="flex flex-row gap-5 justify-between align-middle text-center">
                             <div className="flex flex-col gap-2 w-[130px]">
@@ -283,12 +264,14 @@ const Home: React.FC = () => {
                                     })}
                                 />
 
-                                <button
-                                    className="m-auto w-32 h-10 text-BodyMd font-bold mb-10 text-black-900"
-                                    onClick={() => setTotalPubs(totalPubs + 40)}
-                                >
-                                    Load More
-                                </button>
+                                {totalPubs <= publications?.length + 20 && (
+                                    <button
+                                        className="m-auto w-32 h-10 text-BodyMd font-bold mb-10 text-black-900"
+                                        onClick={() => setTotalPubs(totalPubs + 40)}
+                                    >
+                                        Load More
+                                    </button>
+                                )}
                             </>
                         ) : (
                             <>
@@ -299,18 +282,20 @@ const Home: React.FC = () => {
                                             return publication;
                                     })}
                                 />
-                                <button
-                                    className="m-auto w-32 h-10 text-BodyMd font-bold mb-10 text-black-900"
-                                    onClick={() => setTotalPubs(totalPubs + 40)}
-                                >
-                                    Load More
-                                </button>
+                                {totalPubs > publications?.length + 20 && (
+                                    <button
+                                        className="m-auto w-32 h-10 text-BodyMd font-bold mb-10 text-black-900"
+                                        onClick={() => setTotalPubs(totalPubs + 40)}
+                                    >
+                                        Load More
+                                    </button>
+                                )}
                             </>
                         )
                     ) : (
                         <div className="flex justify-content-center items-center">
                             <ProgressSpinner
-                                style={{ width: '400px', height: '400px' }}
+                                style={{ width: '500px', height: '600px' }}
                                 strokeWidth="4"
                                 fill="var(--surface-ground)"
                                 animationDuration="1s"

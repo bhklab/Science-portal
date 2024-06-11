@@ -22,7 +22,7 @@ export const ListView: React.FC<publications> = ({ pubs }) => {
     };
 
     return (
-        <div className="flex flex-col items-center gap-4 justify-center pb-10">
+        <div className="flex flex-col flex-wrap items-center gap-4 justify-center pb-10">
             {pubs.map(pub => (
                 <div
                     className="rounded-lg border-1 smd:w-full border-gray-200 shadow-card bg-white flex flex-row justify-between"
@@ -39,9 +39,9 @@ export const ListView: React.FC<publications> = ({ pubs }) => {
                             {pub.authors.length > 60 ? `${pub.authors.substring(0, 60)}...` : pub.authors}
                         </p>
                         <div className="flex flex-row justify-between items-center">
-                            <div className="flex flex-row mmd:flex-col gap-2 mmd:gap-0 text-bodyMd mmd:text-bodySm text-gray-700 font-light">
-                                <p>{pub.journal}</p>
-                                <p className="mmd:hidden">•</p>
+                            <div className="flex flex-row mmd:flex-col gap-2 mmd:gap-0 text-bodyMd mmd:text-bodySm text-gray-700 font-light align-middle text-pretty">
+                                <p className="max-w-[280px]">{pub.journal}</p>
+                                <p className="mmd:hidden align-middle">•</p>
                                 <p>{pub.date}</p>
                                 <p className="mmd:hidden">•</p>
                                 <p>{pub.citations} citations</p>
