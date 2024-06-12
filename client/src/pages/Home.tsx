@@ -196,7 +196,10 @@ const Home: React.FC = () => {
                                     optionLabel="name"
                                     placeholder="Select a lab"
                                     className="rounded border-1 border-gray-300 w-64 text-black-900"
-                                    onChange={e => setSelectedAuthor(e.value)}
+                                    onChange={e => {
+                                        e.originalEvent?.stopPropagation();
+                                        setSelectedAuthor(e.value);
+                                    }}
                                     filter
                                     showClear
                                     filterBy="name"
@@ -222,7 +225,10 @@ const Home: React.FC = () => {
                                 placeholder="Select a status"
                                 className="rounded border-1 border-gray-300 w-64 text-black-900"
                                 showClear
-                                onChange={e => setStatusFilter(e.value)}
+                                onChange={e => {
+                                    e.originalEvent?.stopPropagation();
+                                    setStatusFilter(e.value);
+                                }}
                             />
                         </div>
                     </div>
