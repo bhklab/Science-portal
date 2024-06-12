@@ -100,7 +100,6 @@ const Home: React.FC = () => {
     useEffect(() => {
         const getPublications = async () => {
             try {
-                console.log(selectedAuthor);
                 const res = await axios.post(
                     `/api/publications/all`,
                     {
@@ -125,7 +124,6 @@ const Home: React.FC = () => {
         const getAuthors = async () => {
             try {
                 const res = await axios.get(`/api/authors/all`);
-                console.log(res.data);
                 setAuthors(
                     res.data.map((aut: Author) => ({
                         name: `${aut.lastName}, ${aut.firstName}`
@@ -171,6 +169,7 @@ const Home: React.FC = () => {
                     options={options}
                     optionLabel="name"
                     placeholder="Sort by"
+                    showClear
                     className={`rounded border-1 border-gray-300 w-72 md:w-40 text-black-900 ${visible ? 'mmd:invisible' : ''}`}
                 />
             </div>
@@ -194,9 +193,10 @@ const Home: React.FC = () => {
                                     optionLabel="name"
                                     placeholder="Select a lab"
                                     className="rounded border-1 border-gray-300 w-64 text-black-900"
-                                    onChange={e => {
-                                        setSelectedAuthor(e.value);
-                                    }}
+                                    onChange={e => setSelectedAuthor(e.value)}
+                                    filter
+                                    showClear
+                                    filterBy="name"
                                 />
                             )}
                         </div>
@@ -218,6 +218,7 @@ const Home: React.FC = () => {
                                 optionLabel="name"
                                 placeholder="Select a status"
                                 className="rounded border-1 border-gray-300 w-64 text-black-900"
+                                showClear
                                 onChange={e => {
                                     e.originalEvent?.stopPropagation(); // Prevent click event from propagating
                                     setStatusFilter(e.target.value);

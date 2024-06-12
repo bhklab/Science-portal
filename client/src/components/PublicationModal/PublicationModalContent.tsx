@@ -9,23 +9,33 @@ const PublicationModalContent: React.FC<{ pub: Pub }> = ({ pub }) => {
     const repositoryLinks = supplementaryKeys.filter(key => repositories.includes(key) && supplementary[key]);
     const dataLinks = supplementaryKeys.filter(key => !repositories.includes(key) && supplementary[key]);
 
+    console.log(repositoryLinks, dataLinks, supplementary); // Debug log
+
     const renderLinkSection = (title: string, links: string[]) => (
         <div className="flex flex-col gap-5">
             <h1 className="text-headingXl text-black-900 font-semibold">{title}</h1>
-            {links.map(link => (
-                <div key={link} className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200">
-                    <div className="flex flex-row">
-                        <p className="w-full capitalize">{link}</p>
-                        <a href={supplementary[link]} target="_blank" rel="noreferrer">
-                            <img src="/images/assets/goto-link-icon.svg" alt="Go to link" className="h-6 w-6" />
-                        </a>
-                    </div>
-                    <div className="flex flex-row gap-2 items-center">
-                        <img src={`/images/assets/${link}-icon.svg`} alt={link} className="h-6 w-6" />
-                        <p className="text-bodyMd mmd:text-bodySm break-all">{supplementary[link]}</p>
-                    </div>
-                </div>
-            ))}
+            {links.map(link => {
+                const url = supplementary[link];
+                console.log(link, url); // Debug log
+                return url ? (
+                    <a href={url} target="_blank" rel="noreferrer">
+                        <div
+                            key={link}
+                            className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200"
+                        >
+                            <div className="flex flex-row">
+                                <p className="w-full capitalize">{link}</p>
+                                <img src="/images/assets/goto-link-icon.svg" alt="Go to link" className="h-6 w-6" />
+                            </div>
+
+                            <div className="flex flex-row gap-2 items-center">
+                                <img src={`/images/assets/${link}-icon.svg`} alt={link} className="h-6 w-6" />
+                                <p className="text-bodyMd mmd:text-bodySm break-all">{url}</p>
+                            </div>
+                        </div>
+                    </a>
+                ) : null;
+            })}
         </div>
     );
 
@@ -48,18 +58,19 @@ const PublicationModalContent: React.FC<{ pub: Pub }> = ({ pub }) => {
                         <p>{pub.citations} citations</p>
                     </div>
                 </div>
-                <div className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200 w-full">
-                    <div className="flex flex-row">
-                        <p className="w-full">Digital Object Identifier</p>
-                        <a href={`https://doi.org/${pub.doi}`} target="_blank" rel="noreferrer">
+                <a href={`https://doi.org/${pub.doi}`} target="_blank" rel="noreferrer">
+                    <div className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200 w-full">
+                        <div className="flex flex-row">
+                            <p className="w-full">Digital Object Identifier</p>
                             <img src="/images/assets/goto-link-icon.svg" alt="Go to link" className="h-6 w-6" />
-                        </a>
+                        </div>
+
+                        <div className="flex flex-row gap-2 items-center">
+                            <img src="/images/assets/doi-icon.svg" alt="Doi" className="h-6 w-6" />
+                            <p className="text-bodyMd mmd:text-bodySm break-all">https://doi.org/{pub.doi}</p>
+                        </div>
                     </div>
-                    <div className="flex flex-row gap-2 items-center">
-                        <img src="/images/assets/doi-icon.svg" alt="Doi" className="h-6 w-6" />
-                        <p className="text-bodyMd mmd:text-bodySm break-all">https://doi.org/{pub.doi}</p>
-                    </div>
-                </div>
+                </a>
             </div>
             {repositoryLinks.length > 0 && renderLinkSection('Repositories', repositoryLinks)}
             {dataLinks.length > 0 && renderLinkSection('Data', dataLinks)}

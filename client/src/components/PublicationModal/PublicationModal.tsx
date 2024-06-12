@@ -31,7 +31,7 @@ const ReusableModal: React.FC<ReusableModalProps> = ({ isVisible, onHide, pub })
                     toast.current?.show({
                         severity: 'success',
                         summary: 'Link Copy',
-                        detail: 'Science Portal link has been succcessfully copied',
+                        detail: 'Publication page link has been copied to your clipboard',
                         life: 6000
                     });
                 })
@@ -39,7 +39,7 @@ const ReusableModal: React.FC<ReusableModalProps> = ({ isVisible, onHide, pub })
                     toast.current?.show({
                         severity: 'error',
                         summary: 'Error',
-                        detail: 'Science Portal link has not been successfully copied',
+                        detail: 'Publication page link has not been copied to your clipboard',
                         life: 6000
                     });
                     console.error('Failed to copy Science Portal link', error);
