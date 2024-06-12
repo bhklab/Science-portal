@@ -42,7 +42,7 @@ const PublicationModalContent: React.FC<{ pub: Pub }> = ({ pub }) => {
     return (
         <div className="flex flex-col gap-10 py-10 mmd:px-[10px] px-[120px]">
             <div className="flex flex-col gap-5 pb-10 border-b-2 border-gray-200 mmd:justify-center mmd:items-center ">
-                <div className="h-48 w-48 overflow-hidden border-2 border-gray-200 rounded-lg flex justify-center items-center bg-white">
+                <div className="h-48 w-48 md:h-[120px] md:w-[120px] overflow-hidden border-2 border-gray-200 rounded-lg flex justify-center items-center bg-white">
                     <PublicationImage image={pub.image} />
                 </div>
                 <div className="flex flex-col gap-2">
