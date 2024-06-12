@@ -67,13 +67,13 @@ const Home: React.FC = () => {
     const [totalPubs, setTotalPubs] = useState<number>(20);
 
     // State of new authors
-    const [authors, setAuthors] = useState<String[]>([]);
+    const [authors, setAuthors] = useState<Lab[]>([]);
 
-    // Fetch publications on load
+    // Fetch publications on load and when filters change
     useEffect(() => {
-        setLoaded(false);
-        setTotalPubs(20);
         const getPublications = async () => {
+            setLoaded(false);
+            setTotalPubs(20); // Reset total pubs on filter change
             try {
                 const res = await axios.post(
                     `/api/publications/all`,
@@ -88,8 +88,10 @@ const Home: React.FC = () => {
                     }
                 );
                 setPublications([...res.data]);
+                setLoaded(true);
             } catch (error) {
                 console.log(error);
+                setLoaded(true);
             }
         };
         getPublications();
@@ -120,6 +122,7 @@ const Home: React.FC = () => {
         getPublications();
     }, [totalPubs]);
 
+    // Fetch authors on load
     useEffect(() => {
         const getAuthors = async () => {
             try {
@@ -177,7 +180,7 @@ const Home: React.FC = () => {
                 <Sidebar
                     visible={visible}
                     position="left"
-                    onHide={() => {}}
+                    onHide={() => setVisible(false)}
                     className={`z-20 w-[320px] mt-[130px] bg-white shadow-sm border-r-1 border-gray-200 custom-sidebar p-sidebar-header`}
                     modal={false}
                     showCloseIcon={false}
@@ -219,10 +222,7 @@ const Home: React.FC = () => {
                                 placeholder="Select a status"
                                 className="rounded border-1 border-gray-300 w-64 text-black-900"
                                 showClear
-                                onChange={e => {
-                                    e.originalEvent?.stopPropagation(); // Prevent click event from propagating
-                                    setStatusFilter(e.target.value);
-                                }}
+                                onChange={e => setStatusFilter(e.value)}
                             />
                         </div>
                     </div>
