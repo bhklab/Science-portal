@@ -24,7 +24,11 @@ const Publication: React.FC = () => {
         getPublication();
     }, [doi]);
 
-    return <div className="pt-28 md:px-0 px-[120px]">{pub && <PublicationModalContent pub={pub} />}</div>;
+    return (
+        <div className="pt-28 md:px-0 px-[120px] bg-white min-h-screen">
+            {pub && <PublicationModalContent pub={pub} />}
+        </div>
+    );
 };
 
 export default Publication;

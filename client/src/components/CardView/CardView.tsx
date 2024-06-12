@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { PublicationImage } from '../PublicationImage/PublicationImage';
 import Pub from '../../interfaces/Pub';
 import PublicationModal from '../PublicationModal/PublicationModal';
+import { Tooltip } from 'primereact/tooltip';
 
 interface publications {
     pubs: Pub[];
@@ -23,6 +24,7 @@ export const CardView: React.FC<publications> = ({ pubs }) => {
 
     return (
         <div className="flex flex-row flex-wrap items-center gap-4 justify-center pb-10">
+            <Tooltip target=".logo" position="top" />
             {pubs.map(pub => (
                 <div
                     className="flex flex-col w-[318px] h-[426px] rounded-lg shadow-card border-1 border-gray-200 bg-white relative"
@@ -51,13 +53,28 @@ export const CardView: React.FC<publications> = ({ pubs }) => {
                             </div>
                             <div className="flex flex-row gap-2 w-[88px]">
                                 <a href="https://www.google.com" target="_blank" rel="noreferrer">
-                                    <img src="/images/assets/doi-icon.svg" alt="icon" className="h-6 w-6" />
+                                    <img
+                                        src="/images/assets/doi-icon.svg"
+                                        alt="icon"
+                                        className="h-6 w-6 logo"
+                                        data-pr-tooltip="Open publication"
+                                    />
                                 </a>
                                 <a href="https://www.google.com" target="_blank" rel="noreferrer">
-                                    <img src="/images/assets/github-icon.svg" alt="icon" className="h-6 w-6" />
+                                    <img
+                                        src="/images/assets/github-icon.svg"
+                                        alt="icon"
+                                        className="h-6 w-6 logo"
+                                        data-pr-tooltip="Open in Github"
+                                    />
                                 </a>
                                 <a href="https://www.google.com" target="_blank" rel="noreferrer">
-                                    <img src="/images/assets/codeocean-icon.svg" alt="icon" className="h-6 w-6" />
+                                    <img
+                                        src="/images/assets/codeocean-icon.svg"
+                                        alt="icon"
+                                        className="h-6 w-6 logo"
+                                        data-pr-tooltip="Open in Code Ocean"
+                                    />
                                 </a>
                             </div>
                         </div>
