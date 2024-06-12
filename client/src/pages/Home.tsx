@@ -202,11 +202,11 @@ const Home: React.FC = () => {
                         </div>
                         <div className="flex flex-row gap-5 justify-between align-middle text-center">
                             <div className="flex flex-col gap-2 w-[130px]">
-                                <h2 className="text-heading2Xl font-semibold text-gray-700">50</h2>
+                                <h2 className="text-heading2Xl font-semibold text-black-900">50</h2>
                                 <h3 className="text-bodyMd text-black-900">Publications</h3>
                             </div>
                             <div className="flex flex-col gap-2 w-[130px]">
-                                <h2 className="text-heading2Xl font-semibold text-gray-700">320</h2>
+                                <h2 className="text-heading2Xl font-semibold text-black-900">320</h2>
                                 <h3 className="text-bodyMd text-black-900">Citations</h3>
                             </div>
                         </div>

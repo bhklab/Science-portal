@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { PublicationImage } from '../PublicationImage/PublicationImage';
 import Pub from '../../interfaces/Pub';
 import PublicationModal from '../PublicationModal/PublicationModal';
+import { Tooltip } from 'primereact/tooltip';
 
 interface publications {
     pubs: Pub[];
@@ -23,6 +24,7 @@ export const ListView: React.FC<publications> = ({ pubs }) => {
 
     return (
         <div className="flex flex-col flex-wrap items-center gap-4 justify-center pb-10">
+            <Tooltip target=".logo" position="top" event="hover" hideDelay={800} />
             {pubs.map(pub => (
                 <div
                     className="rounded-lg border-1 smd:w-full border-gray-200 shadow-card bg-white flex flex-row justify-between"
@@ -51,21 +53,24 @@ export const ListView: React.FC<publications> = ({ pubs }) => {
                                     <img
                                         src="/images/assets/doi-icon.svg"
                                         alt="icon"
-                                        className="h-6 w-6 mmd:h-5 mmd:w-5"
+                                        className="h-6 w-6 mmd:h-5 mmd:w-5 logo"
+                                        data-pr-tooltip="Open in Github"
                                     />
                                 </a>
                                 <a href="https://google.com">
                                     <img
                                         src="/images/assets/github-icon.svg"
                                         alt="icon"
-                                        className="h-6 w-6 mmd:h-5 mmd:w-5"
+                                        className="h-6 w-6 mmd:h-5 mmd:w-5 logo"
+                                        data-pr-tooltip="Open in Code Ocean"
                                     />
                                 </a>
                                 <a href="https://google.com">
                                     <img
                                         src="/images/assets/codeocean-icon.svg"
                                         alt="icon"
-                                        className="h-6 w-6 mmd:h-5 mmd:w-5"
+                                        className="h-6 w-6 mmd:h-5 mmd:w-5 logo"
+                                        data-pr-tooltip="Open publication"
                                     />
                                 </a>
                             </div>
