@@ -88,10 +88,8 @@ const Home: React.FC = () => {
                     }
                 );
                 setPublications([...res.data]);
-                setLoaded(true);
             } catch (error) {
                 console.log(error);
-                setLoaded(true);
             }
         };
         getPublications();
