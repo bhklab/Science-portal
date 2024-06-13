@@ -144,11 +144,17 @@ const Home: React.FC = () => {
                 className={`transform ${visible ? 'pl-[382px] md:pl-[342px]' : ''} duration-300 ease-in-out fixed top-16 w-full shadow-sm px-16 md:px-1 py-3 flex flex-row gap-4 bg-white z-10`}
             >
                 {visible ? (
-                    <button onClick={() => setVisible(!visible)} className="min-h-10 min-w-10">
+                    <button
+                        onClick={() => setVisible(!visible)}
+                        className="min-h-10 min-w-10 hover:bg-gray-100 flex items-center justify-center"
+                    >
                         <img src="/images/assets/close-filter-icon.svg" alt="close filter button" />
                     </button>
                 ) : (
-                    <button onClick={() => setVisible(!visible)} className="min-h-10 min-w-10">
+                    <button
+                        onClick={() => setVisible(!visible)}
+                        className="min-h-10 min-w-10 hover:bg-gray-100 flex items-center justify-center"
+                    >
                         <img src="/images/assets/filter-button-icon.svg" alt="open filter button" />
                     </button>
                 )}
@@ -239,19 +245,19 @@ const Home: React.FC = () => {
                             <span className="">Showing {publications?.length} publications</span>
                             {cardView ? (
                                 <div className="flex flex-row gap-2">
-                                    <button onClick={() => setCardView(true)}>
+                                    <button onClick={() => setCardView(true)} className="hover:bg-gray-200">
                                         <img src="/images/assets/card-view-active-icon.svg" alt="card-view-active" />
                                     </button>
-                                    <button onClick={() => setCardView(false)}>
+                                    <button onClick={() => setCardView(false)} className="hover:bg-gray-200">
                                         <img src="/images/assets/list-view-icon.svg" alt="list-view" />
                                     </button>
                                 </div>
                             ) : (
                                 <div className="flex flex-row gap-2">
-                                    <button onClick={() => setCardView(true)}>
+                                    <button onClick={() => setCardView(true)} className="hover:bg-gray-200">
                                         <img src="/images/assets/card-view-icon.svg" alt="card-view" />
                                     </button>
-                                    <button onClick={() => setCardView(false)}>
+                                    <button onClick={() => setCardView(false)} className="hover:bg-gray-200">
                                         <img src="/images/assets/list-view-active-icon.svg" alt="list-view-active" />
                                     </button>
                                 </div>
@@ -287,7 +293,7 @@ const Home: React.FC = () => {
                                             return publication;
                                     })}
                                 />
-                                {totalPubs > publications?.length + 20 && (
+                                {totalPubs <= publications?.length + 20 && (
                                     <button
                                         className="m-auto w-32 h-10 text-BodyMd font-bold mb-10 text-black-900"
                                         onClick={() => setTotalPubs(totalPubs + 40)}
@@ -300,7 +306,7 @@ const Home: React.FC = () => {
                     ) : (
                         <div className="flex justify-content-center items-center">
                             <ProgressSpinner
-                                style={{ width: '500px', height: '600px' }}
+                                style={{ width: '200px', height: '200px' }}
                                 strokeWidth="4"
                                 fill="var(--surface-ground)"
                                 animationDuration="1s"

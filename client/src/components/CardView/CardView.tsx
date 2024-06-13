@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PublicationImage } from '../PublicationImage/PublicationImage';
 import Pub from '../../interfaces/Pub';
 import PublicationModal from '../PublicationModal/PublicationModal';
@@ -24,7 +24,7 @@ export const CardView: React.FC<publications> = ({ pubs }) => {
 
     return (
         <div className="flex flex-row flex-wrap items-center gap-4 justify-center pb-10">
-            <Tooltip target=".logo" position="top" />
+            <Tooltip target=".logo" position="top" hideDelay={200} />
             {pubs.map(pub => (
                 <div
                     className="flex flex-col w-[318px] h-[426px] rounded-lg shadow-card border-1 border-gray-200 bg-white relative"
@@ -36,13 +36,13 @@ export const CardView: React.FC<publications> = ({ pubs }) => {
                     <div className="p-5 flex flex-col justify-between">
                         <div>
                             <h2
-                                className="text-headingMd font-semibold mb-2 cursor-pointer hover:underline underline-offset-1"
+                                className="text-headingMd md:text-headingSm font-semibold min-h-10 md:min-h-0 mb-2 cursor-pointer hover:underline underline-offset-1 line-clamp-2"
                                 onClick={() => openModal(pub)}
                             >
-                                {pub.name.length > 50 ? `${pub.name.substring(0, 50)}...` : pub.name}
+                                {pub.name}
                             </h2>
-                            <p className="text-bodyMd mb-4 h-10">
-                                {pub.authors.length > 60 ? `${pub.authors.substring(0, 60)}...` : pub.authors}
+                            <p className="text-bodyMd md:text-bodySm min-h-10 md:min-h-0 mb-4 line-clamp-2">
+                                {pub.authors}
                             </p>
                         </div>
                         <div className="flex flex-row justify-between items-end w-[280px] absolute bottom-4">

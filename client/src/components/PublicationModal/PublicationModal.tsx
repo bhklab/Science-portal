@@ -70,7 +70,7 @@ const ReusableModal: React.FC<ReusableModalProps> = ({ isVisible, onHide, pub })
                 visible={isVisible}
                 header={modalHeader}
                 onHide={onHide}
-                style={{ width: '80%', borderRadius: '15px' }}
+                style={{ width: '1100px', borderRadius: '15px' }}
                 modal
                 draggable={false}
                 closable={false}

@@ -21,7 +21,7 @@ const PublicationModalContent: React.FC<{ pub: Pub }> = ({ pub }) => {
                     <a href={url} target="_blank" rel="noreferrer">
                         <div
                             key={link}
-                            className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200"
+                            className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200 hover:bg-gray-100"
                         >
                             <div className="flex flex-row">
                                 <p className="w-full capitalize">{link}</p>
@@ -59,7 +59,7 @@ const PublicationModalContent: React.FC<{ pub: Pub }> = ({ pub }) => {
                     </div>
                 </div>
                 <a href={`https://doi.org/${pub.doi}`} target="_blank" rel="noreferrer">
-                    <div className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200 w-full">
+                    <div className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200 w-full hover:bg-gray-100 hover:text-gray">
                         <div className="flex flex-row">
                             <p className="w-full">Digital Object Identifier</p>
                             <img src="/images/assets/goto-link-icon.svg" alt="Go to link" className="h-6 w-6" />

@@ -24,28 +24,26 @@ export const ListView: React.FC<publications> = ({ pubs }) => {
 
     return (
         <div className="flex flex-col flex-wrap items-center gap-4 justify-center pb-10">
-            <Tooltip target=".logo" position="top" event="hover" hideDelay={800} />
+            <Tooltip target=".logo" position="top" hideDelay={200} />
             {pubs.map(pub => (
                 <div
                     className="rounded-lg border-1 smd:w-full border-gray-200 shadow-card bg-white flex flex-row justify-between"
                     key={pub.doi}
                 >
-                    <div className="p-5 w-[644px] smd:w-full border-r-1 border-gray-200">
+                    <div className="p-5 w-[644px] smd:w-full border-r-1 border-gray-200 relative">
                         <h2
-                            className="text-headingMd mmd:text-headingSm font-semibold min-h-10 mb-2 cursor-pointer hover:underline underline-offset-1"
+                            className="text-headingMd sm:text-headingSm font-semibold mb-2 cursor-pointer hover:underline underline-offset-1 line-clamp-2"
                             onClick={() => openModal(pub)}
                         >
-                            {pub.name.length > 130 ? `${pub.name.substring(0, 130)}...` : pub.name}
+                            {pub.name}
                         </h2>
-                        <p className="text-bodyMd mmd:text-bodySm mb-2 h-10">
-                            {pub.authors.length > 60 ? `${pub.authors.substring(0, 60)}...` : pub.authors}
-                        </p>
-                        <div className="flex flex-row justify-between items-center">
-                            <div className="flex flex-row mmd:flex-col gap-2 mmd:gap-0 text-bodyMd mmd:text-bodySm text-gray-700 font-light align-middle text-pretty">
-                                <p className="max-w-[280px]">{pub.journal}</p>
-                                <p className="mmd:hidden align-middle">•</p>
+                        <p className="text-bodyMd sm:text-bodySm mb-2 line-clamp-2">{pub.authors}</p>
+                        <div className="flex flex-row justify-between items-center w-full absolute bottom-4 left-0 right-0 px-5">
+                            <div className="flex flex-row smd:flex-col gap-2 smd:gap-0 text-bodyMd mmd:text-bodySm text-gray-700 font-light align-middle text-pretty">
+                                <p className="line-clamp-1 max-h-6 max-w-[285px]">{pub.journal}</p>
+                                <p className="smd:hidden align-middle">•</p>
                                 <p>{pub.date}</p>
-                                <p className="mmd:hidden">•</p>
+                                <p className="smd:hidden">•</p>
                                 <p>{pub.citations} citations</p>
                             </div>
                             <div className="flex flex-row gap-2 items-center">
@@ -53,7 +51,7 @@ export const ListView: React.FC<publications> = ({ pubs }) => {
                                     <img
                                         src="/images/assets/doi-icon.svg"
                                         alt="icon"
-                                        className="h-6 w-6 mmd:h-5 mmd:w-5 logo"
+                                        className="h-6 w-6 logo"
                                         data-pr-tooltip="Open in Github"
                                     />
                                 </a>
@@ -61,7 +59,7 @@ export const ListView: React.FC<publications> = ({ pubs }) => {
                                     <img
                                         src="/images/assets/github-icon.svg"
                                         alt="icon"
-                                        className="h-6 w-6 mmd:h-5 mmd:w-5 logo"
+                                        className="h-6 w-6 logo"
                                         data-pr-tooltip="Open in Code Ocean"
                                     />
                                 </a>
@@ -76,7 +74,7 @@ export const ListView: React.FC<publications> = ({ pubs }) => {
                             </div>
                         </div>
                     </div>
-                    <div className="flex flex-col justify-center items-center align-center px-[20px] py-[25px] w-[156px] h-[156px] mmd:h-[210px] mmd:px-[10px]">
+                    <div className="flex flex-col justify-center items-center align-center px-[20px] py-[25px] w-[156px] h-[156px] smd:h-[210px] smd:px-[10px]">
                         <PublicationImage image={pub.image} />
                     </div>
                 </div>
