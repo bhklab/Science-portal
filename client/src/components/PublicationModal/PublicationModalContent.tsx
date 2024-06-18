@@ -16,7 +16,6 @@ const PublicationModalContent: React.FC<{ pub: Pub }> = ({ pub }) => {
             <h1 className="text-headingXl text-black-900 font-semibold">{title}</h1>
             {links.map(link => {
                 const url = supplementary[link];
-                console.log(link, url); // Debug log
                 return url ? (
                     <a href={url} target="_blank" rel="noreferrer">
                         <div
@@ -29,7 +28,15 @@ const PublicationModalContent: React.FC<{ pub: Pub }> = ({ pub }) => {
                             </div>
 
                             <div className="flex flex-row gap-2 items-center">
-                                <img src={`/images/assets/${link}-icon.svg`} alt={link} className="h-6 w-6" />
+                                <img
+                                    src={
+                                        link === 'github' || link === 'gitlab' || link === 'codeOcean'
+                                            ? `/images/assets/${link}-icon.svg`
+                                            : `/images/assets/link-icon.svg`
+                                    }
+                                    alt={link}
+                                    className="h-6 w-6"
+                                />{' '}
                                 <p className="text-bodyMd mmd:text-bodySm break-all">{url}</p>
                             </div>
                         </div>

@@ -51,31 +51,42 @@ export const CardView: React.FC<publications> = ({ pubs }) => {
                                 <p>{pub.date}</p>
                                 <p>{pub.citations} citations</p>
                             </div>
-                            <div className="flex flex-row gap-2 w-[88px]">
-                                <a href="https://www.google.com" target="_blank" rel="noreferrer">
-                                    <img
-                                        src="/images/assets/doi-icon.svg"
-                                        alt="icon"
-                                        className="h-6 w-6 logo"
-                                        data-pr-tooltip="Open publication"
-                                    />
-                                </a>
-                                <a href="https://www.google.com" target="_blank" rel="noreferrer">
-                                    <img
-                                        src="/images/assets/github-icon.svg"
-                                        alt="icon"
-                                        className="h-6 w-6 logo"
-                                        data-pr-tooltip="Open in Github"
-                                    />
-                                </a>
-                                <a href="https://www.google.com" target="_blank" rel="noreferrer">
-                                    <img
-                                        src="/images/assets/codeocean-icon.svg"
-                                        alt="icon"
-                                        className="h-6 w-6 logo"
-                                        data-pr-tooltip="Open in Code Ocean"
-                                    />
-                                </a>
+                            <div className="flex flex-row gap-2">
+                                {pub.doi && (
+                                    <a href={pub.doi} target="_blank" rel="noreferrer">
+                                        <img
+                                            src="/images/assets/doi-icon.svg"
+                                            alt="icon"
+                                            className="h-6 w-6 logo"
+                                            data-pr-tooltip="Open publication"
+                                        />
+                                    </a>
+                                )}
+
+                                {pub.supplementary.github && (
+                                    <a href={pub.supplementary.github.split(',')[0]} target="_blank" rel="noreferrer">
+                                        <img
+                                            src="/images/assets/github-icon.svg"
+                                            alt="icon"
+                                            className="h-6 w-6 logo"
+                                            data-pr-tooltip="Open in Github"
+                                        />
+                                    </a>
+                                )}
+                                {pub.supplementary.codeOcean && (
+                                    <a
+                                        href={pub.supplementary.codeOcean.split(',')[0]}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                    >
+                                        <img
+                                            src="/images/assets/codeocean-icon.svg"
+                                            alt="icon"
+                                            className="h-6 w-6 logo"
+                                            data-pr-tooltip="Open in Code Ocean"
+                                        />
+                                    </a>
+                                )}
                             </div>
                         </div>
                     </div>

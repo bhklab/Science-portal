@@ -71,8 +71,8 @@ const Home: React.FC = () => {
 
     // Fetch publications on load and when filters change
     useEffect(() => {
+        setLoaded(false);
         const getPublications = async () => {
-            setLoaded(false);
             setTotalPubs(20); // Reset total pubs on filter change
             try {
                 const res = await axios.post(
@@ -92,7 +92,20 @@ const Home: React.FC = () => {
                 console.log(error);
             }
         };
+
+        const getStats = async () => {
+            try {
+                const res = await axios.post('/api/stats/individual', {
+                    lab: selectedAuthor?.name
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        };
         getPublications();
+        if (selectedAuthor !== null) {
+            getStats();
+        }
         setTimeout(() => setLoaded(true), 1000);
     }, [search, selectedAuthor, sort]);
 
@@ -220,7 +233,7 @@ const Home: React.FC = () => {
                                 <h3 className="text-bodyMd text-black-900">Citations</h3>
                             </div>
                         </div>
-                        <div className="flex flex-col gap-2">
+                        {/* <div className="flex flex-col gap-2">
                             <h3 className="text-headingMd text-black-900 font-semibold">Publication Status</h3>
                             <Dropdown
                                 value={statusFilter}
@@ -234,7 +247,7 @@ const Home: React.FC = () => {
                                     setStatusFilter(e.value);
                                 }}
                             />
-                        </div>
+                        </div> */}
                     </div>
                 </Sidebar>
                 <div

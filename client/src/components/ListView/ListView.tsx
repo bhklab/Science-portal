@@ -47,30 +47,41 @@ export const ListView: React.FC<publications> = ({ pubs }) => {
                                 <p>{pub.citations} citations</p>
                             </div>
                             <div className="flex flex-row gap-2 items-center">
-                                <a href="https://google.com">
-                                    <img
-                                        src="/images/assets/doi-icon.svg"
-                                        alt="icon"
-                                        className="h-6 w-6 logo"
-                                        data-pr-tooltip="Open in Github"
-                                    />
-                                </a>
-                                <a href="https://google.com">
-                                    <img
-                                        src="/images/assets/github-icon.svg"
-                                        alt="icon"
-                                        className="h-6 w-6 logo"
-                                        data-pr-tooltip="Open in Code Ocean"
-                                    />
-                                </a>
-                                <a href="https://google.com">
-                                    <img
-                                        src="/images/assets/codeocean-icon.svg"
-                                        alt="icon"
-                                        className="h-6 w-6 mmd:h-5 mmd:w-5 logo"
-                                        data-pr-tooltip="Open publication"
-                                    />
-                                </a>
+                                {pub.doi && (
+                                    <a href={pub.doi} target="_blank" rel="noreferrer">
+                                        <img
+                                            src="/images/assets/doi-icon.svg"
+                                            alt="icon"
+                                            className="h-6 w-6 logo"
+                                            data-pr-tooltip="Open publication"
+                                        />
+                                    </a>
+                                )}
+
+                                {pub.supplementary.github && (
+                                    <a href={pub.supplementary.github.split(',')[0]} target="_blank" rel="noreferrer">
+                                        <img
+                                            src="/images/assets/github-icon.svg"
+                                            alt="icon"
+                                            className="h-6 w-6 logo"
+                                            data-pr-tooltip="Open in Github"
+                                        />
+                                    </a>
+                                )}
+                                {pub.supplementary.codeOcean && (
+                                    <a
+                                        href={pub.supplementary.codeOcean.split(',')[0]}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                    >
+                                        <img
+                                            src="/images/assets/codeocean-icon.svg"
+                                            alt="icon"
+                                            className="h-6 w-6 logo"
+                                            data-pr-tooltip="Open in Code Ocean"
+                                        />
+                                    </a>
+                                )}
                             </div>
                         </div>
                     </div>
