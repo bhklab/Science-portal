@@ -31,6 +31,11 @@ interface Author {
     enid: string;
 }
 
+interface stats {
+    publications: number;
+    citations: number;
+}
+
 const options: Option[] = [
     { name: 'A-Z' },
     { name: 'Z-A' },
@@ -69,7 +74,13 @@ const Home: React.FC = () => {
     // State of new authors
     const [authors, setAuthors] = useState<Lab[]>([]);
 
-    // Fetch publications on load and when filters change
+    // Lab Stats
+    const [labStats, setLabStats] = useState<stats>({
+        publications: 0,
+        citations: 0
+    });
+
+    // Fetch publications and stats on load and when filters change
     useEffect(() => {
         setLoaded(false);
         const getPublications = async () => {
@@ -94,18 +105,25 @@ const Home: React.FC = () => {
         };
 
         const getStats = async () => {
-            try {
-                const res = await axios.post('/api/stats/individual', {
-                    lab: selectedAuthor?.name
+            if (selectedAuthor) {
+                try {
+                    const res = await axios.post('/api/stats/lab', {
+                        lab: selectedAuthor?.name
+                    });
+                    setLabStats(res.data);
+                } catch (error) {
+                    console.log(error);
+                }
+            } else {
+                setLabStats({
+                    publications: 0,
+                    citations: 0
                 });
-            } catch (error) {
-                console.log(error);
             }
         };
+
         getPublications();
-        if (selectedAuthor !== null) {
-            getStats();
-        }
+        getStats();
         setTimeout(() => setLoaded(true), 1000);
     }, [search, selectedAuthor, sort]);
 
@@ -225,11 +243,13 @@ const Home: React.FC = () => {
                         </div>
                         <div className="flex flex-row gap-5 justify-between align-middle text-center">
                             <div className="flex flex-col gap-2 w-[130px]">
-                                <h2 className="text-heading2Xl font-semibold text-black-900">50</h2>
+                                <h2 className="text-heading2Xl font-semibold text-black-900">
+                                    {labStats.publications}
+                                </h2>
                                 <h3 className="text-bodyMd text-black-900">Publications</h3>
                             </div>
                             <div className="flex flex-col gap-2 w-[130px]">
-                                <h2 className="text-heading2Xl font-semibold text-black-900">320</h2>
+                                <h2 className="text-heading2Xl font-semibold text-black-900">{labStats.citations}</h2>
                                 <h3 className="text-bodyMd text-black-900">Citations</h3>
                             </div>
                         </div>

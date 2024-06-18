@@ -4,11 +4,11 @@ import { StatsService } from './stats.service';
 @Controller('stats')
 export class StatsController {
     constructor(private StatsService: StatsService) {}
-	@Get('lab')
-    async getAllAuthors() {
+	@Post('lab')
+    async getLabStats(@Body('lab') lab: string) {
         try {
-            const authors = await this.StatsService.findAllAuthors();
-            return authors;
+            const publications = await this.StatsService.findLabStats(lab);
+            return publications;
         } catch (error) {
             throw new HttpException(`Error retrieving publication: ${error}`, HttpStatus.NOT_FOUND);
         }

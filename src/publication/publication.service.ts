@@ -7,7 +7,7 @@ import { PublicationDocument } from '../interfaces/publication.interface';
 @Injectable()
 export class PublicationService {
     constructor(@InjectModel('Publication') private publicationModel: Model<PublicationDocument>) {}
-	//Get the total number of publications needed, filter based on lab, and sort based on criteria
+	//Get all publications based on criteria
     async findPublications(total: number, sort: string, lab: string, name: string): Promise<PublicationDocument[]> {
         try {
 			let query = {};
@@ -48,7 +48,7 @@ export class PublicationService {
 					break;
 			}
 		
-			console.log(sortOption);
+			// console.log(sortOption);
 			const publications = await this.publicationModel
 				.find(query)
 				.collation({ locale: 'en', strength: 2 })

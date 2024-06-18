@@ -5,11 +5,13 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PublicationModule } from './publication/publication.module';
 import { AuthorModule } from './author/author.module';
+import { StatsModule } from './stats/stats.module';
 @Module({
   imports: [
 	MongooseModule.forRoot(process.env.MONGODB_URL),
 	PublicationModule,
-	AuthorModule
+	AuthorModule,
+	StatsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
