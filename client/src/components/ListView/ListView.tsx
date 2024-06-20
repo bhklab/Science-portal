@@ -48,7 +48,7 @@ export const ListView: React.FC<publications> = ({ pubs }) => {
                             </div>
                             <div className="flex flex-row gap-2 items-center">
                                 {pub.doi && (
-                                    <a href={pub.doi} target="_blank" rel="noreferrer">
+                                    <a href={`https://doi.org/${pub.doi}`} target="_blank" rel="noreferrer">
                                         <img
                                             src="/images/assets/doi-icon.svg"
                                             alt="icon"

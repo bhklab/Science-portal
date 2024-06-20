@@ -104,6 +104,7 @@ const Home: React.FC = () => {
             }
         };
 
+        // Retrieve lab stats if selected
         const getStats = async () => {
             if (selectedAuthor) {
                 try {
