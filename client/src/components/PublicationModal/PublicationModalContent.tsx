@@ -31,7 +31,7 @@ const PublicationModalContent: React.FC<{ pub: Pub }> = ({ pub }) => {
                                 <img
                                     src={
                                         link === 'github' || link === 'gitlab' || link === 'codeOcean'
-                                            ? `/images/assets/${link}-icon.svg`
+                                            ? `/images/assets/${link.toLowerCase()}-icon.svg`
                                             : `/images/assets/link-icon.svg`
                                     }
                                     alt={link}
