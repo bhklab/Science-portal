@@ -87,7 +87,7 @@ const Home: React.FC = () => {
             setTotalPubs(20); // Reset total pubs on filter change
             try {
                 const res = await axios.post(
-                    `/api/publications/all`,
+                    `/api/publications/select`,
                     {
                         total: totalPubs,
                         sort: sort?.name,
@@ -133,7 +133,7 @@ const Home: React.FC = () => {
         const getPublications = async () => {
             try {
                 const res = await axios.post(
-                    `/api/publications/all`,
+                    `/api/publications/select`,
                     {
                         total: totalPubs,
                         sort: sort?.name,

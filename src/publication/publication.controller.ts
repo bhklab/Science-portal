@@ -5,15 +5,26 @@ import { PublicationService } from './publication.service';
 export class PublicationController {
     constructor(private publicationService: PublicationService) {}
 
-    @Post('all')
-    async getAllPublications(
+	@Get('all')
+    async getAllPublications()
+	{
+        try {
+            const publications = await this.publicationService.findAllPublications();
+            return publications;
+        } catch (error) {
+            throw new HttpException(`Error retrieving publications: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Post('select')
+    async getSelectPublications(
 		@Body('total') total: number, 
 		@Body('sort') sort: string,
 		@Body('lab') lab: string,
 		@Body('name') name: string
 	){
         try {
-            const publications = await this.publicationService.findPublications(total, sort, lab, name);
+            const publications = await this.publicationService.findSelectPublications(total, sort, lab, name);
             return publications;
         } catch (error) {
             throw new HttpException(`Error retrieving publications: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);

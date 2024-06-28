@@ -7,8 +7,18 @@ import { PublicationDocument } from '../interfaces/publication.interface';
 @Injectable()
 export class PublicationService {
     constructor(@InjectModel('Publication') private publicationModel: Model<PublicationDocument>) {}
-	//Get all publications based on criteria
-    async findPublications(total: number, sort: string, lab: string, name: string): Promise<PublicationDocument[]> {
+
+	async findAllPublications(): Promise<PublicationDocument[]> {
+        try {
+			const publications = await this.publicationModel.find({})
+			return publications;
+
+        } catch (error) {
+            throw new Error(`Error fetching: ${error}`);
+        }
+    }
+	//Get select publications based on criteria
+    async findSelectPublications(total: number, sort: string, lab: string, name: string): Promise<PublicationDocument[]> {
         try {
 			let query = {};
 			if (lab != '' && name != '') {

@@ -15,19 +15,24 @@ const PublicationModalContent: React.FC<{ pub: Pub }> = ({ pub }) => {
         <div className="flex flex-col gap-5">
             <h1 className="text-headingXl text-black-900 font-semibold">{title}</h1>
             {links.map(link => {
-                const url = supplementary[link];
-                return url ? (
-                    <a href={url} target="_blank" rel="noreferrer">
-                        <div
-                            key={link}
-                            className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200 hover:bg-gray-100"
-                        >
-                            <div className="flex flex-row">
-                                <p className="w-full capitalize">{link}</p>
-                                <img src="/images/assets/goto-link-icon.svg" alt="Go to link" className="h-6 w-6" />
-                            </div>
+                const urls = (supplementary[link] || '').split(',').map(url => url.trim());
+                return (
+                    <div
+                        key={link}
+                        className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200 hover:bg-gray-100"
+                    >
+                        <div className="flex flex-row">
+                            <p className="w-full capitalize">{link}</p>
+                        </div>
 
-                            <div className="flex flex-row gap-2 items-center">
+                        {urls.map((url, index) => (
+                            <a
+                                key={index}
+                                href={url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex flex-row gap-2 items-center mt-2 hover:text-blue-500"
+                            >
                                 <img
                                     src={
                                         link === 'github' || link === 'gitlab' || link === 'codeOcean'
@@ -36,12 +41,13 @@ const PublicationModalContent: React.FC<{ pub: Pub }> = ({ pub }) => {
                                     }
                                     alt={link}
                                     className="h-6 w-6"
-                                />{' '}
+                                />
                                 <p className="text-bodyMd mmd:text-bodySm break-all">{url}</p>
-                            </div>
-                        </div>
-                    </a>
-                ) : null;
+                                {/* <img src="/images/assets/goto-link-icon.svg" alt="Go to link" className="h-5 w-5" /> */}
+                            </a>
+                        ))}
+                    </div>
+                );
             })}
         </div>
     );
@@ -65,19 +71,18 @@ const PublicationModalContent: React.FC<{ pub: Pub }> = ({ pub }) => {
                         <p>{pub.citations} citations</p>
                     </div>
                 </div>
-                <a href={`https://doi.org/${pub.doi}`} target="_blank" rel="noreferrer">
-                    <div className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200 w-full hover:bg-gray-100 hover:text-gray">
-                        <div className="flex flex-row">
-                            <p className="w-full">Digital Object Identifier</p>
-                            <img src="/images/assets/goto-link-icon.svg" alt="Go to link" className="h-6 w-6" />
-                        </div>
-
-                        <div className="flex flex-row gap-2 items-center">
+                <div className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200 w-full hover:bg-gray-100 hover:text-gray">
+                    <div className="flex flex-row">
+                        <p className="w-full">Digital Object Identifier</p>
+                    </div>
+                    <a href={`https://doi.org/${pub.doi}`} target="_blank" rel="noreferrer">
+                        <div className="flex flex-row gap-2 items-center hover:text-blue-500">
                             <img src="/images/assets/doi-icon.svg" alt="Doi" className="h-6 w-6" />
                             <p className="text-bodyMd mmd:text-bodySm break-all">https://doi.org/{pub.doi}</p>
+                            {/* <img src="/images/assets/goto-link-icon.svg" alt="Go to link" className="h-5 w-5" /> */}
                         </div>
-                    </div>
-                </a>
+                    </a>
+                </div>
             </div>
             {repositoryLinks.length > 0 && renderLinkSection('Repositories', repositoryLinks)}
             {dataLinks.length > 0 && renderLinkSection('Data', dataLinks)}
