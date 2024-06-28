@@ -144,7 +144,7 @@ const Home: React.FC = () => {
                         maxBodyLength: Infinity
                     }
                 );
-                setPublications(res.data);
+                setPublications([...res.data]);
             } catch (error) {
                 console.log(error);
             }
