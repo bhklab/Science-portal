@@ -13,4 +13,15 @@ export class StatsController {
             throw new HttpException(`Error retrieving publication: ${error}`, HttpStatus.NOT_FOUND);
         }
     }
+
+	@Get('supplementary')
+    async getAllPublications()
+	{
+        try {
+            const publications = await this.StatsService.findAllSupplementary();
+            return publications;
+        } catch (error) {
+            throw new HttpException(`Error retrieving publications: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

@@ -7,6 +7,7 @@ import { StatsDocument } from '../interfaces/stats.interface';
 @Injectable()
 export class StatsService {
     constructor(@InjectModel('Stats') private statsModel: Model<StatsDocument>){}
+
 	async findLabStats(lab: string) {
 		const query = {
 			authors: { $regex: new RegExp(lab, 'i') },
@@ -21,6 +22,23 @@ export class StatsService {
         } catch (error) {
             throw new Error(`Error fetching lab stats: ${error}`);
         }
+    }
+
+	async findAllSupplementary() {
+		try {
+			const publications = await this.statsModel.find({})
+        } catch (error) {
+            throw new Error(`Error fetching: ${error}`);
+        }
+
+		let supplementary = ['github', 'codeOcean', 'geo', 'dbGap', 'figshare', 'kaggle', 'dryad', 'empiar', 'gigaDb',
+			'dataverse', 'IEEE', 'mendeley', 'openScienceFramework', 'zenodo', 'gitlab', 'finngenGitbook', 'pdf',
+			'docx', 'clinicalTrial', 'ega', 'zip', 'xlsx', 'gtexPortal', 'proteinDataBank', 'ebiAcUk', 'gsea'
+		];
+
+		for (const item of supplementary){
+
+		} 
     }
 	
 }

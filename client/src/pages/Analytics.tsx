@@ -32,8 +32,8 @@ const data = {
         },
         {
             label: 'Geo',
-            backgroundColor: 'rgba(132, 129, 221, 0.5)',
-            borderColor: 'rgba(132, 129, 221, 1)',
+            backgroundColor: 'rgba(87, 82, 209, 0.5)',
+            borderColor: 'rgba(87, 82, 209, 1)',
             borderWidth: 1,
             data: [3, 10, 21, 17, 16]
         },
@@ -111,8 +111,8 @@ const Analytics: React.FC = () => {
     useEffect(() => {
         const getChartData = async () => {
             try {
-                const res = await axios.get('/api/publications/all');
-                setChartData(res.data); // Ensure the data is set properly
+                const res = await axios.get('/api/stats/supplementary');
+                setChartData(data);
             } catch (error) {
                 console.error('Error fetching chart data:', error);
             }
