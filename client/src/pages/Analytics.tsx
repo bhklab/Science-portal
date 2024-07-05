@@ -14,35 +14,35 @@ const data = {
             backgroundColor: 'rgba(255,99,132,0.5)',
             borderColor: 'rgba(255,99,132,1)',
             borderWidth: 1,
-            data: [65, 59, 80, 81, 56, 20, 25]
+            data: [65, 59, 80, 81, 56]
         },
         {
             label: 'Code Ocean',
             backgroundColor: 'rgba(54,162,235,0.5)',
             borderColor: 'rgba(54,162,235,1)',
             borderWidth: 1,
-            data: [28, 48, 40, 19, 86, 21, 22]
+            data: [28, 48, 40, 19, 86]
         },
         {
             label: 'Gitlab',
             backgroundColor: 'rgba(75,192,192,0.5)',
             borderColor: 'rgba(75,192,192,1)',
             borderWidth: 1,
-            data: [12, 33, 45, 67, 78, 14, 2]
+            data: [12, 33, 45, 67, 78]
         },
         {
             label: 'Geo',
-            backgroundColor: 'purple',
-            borderColor: 'purple',
+            backgroundColor: 'rgba(132, 129, 221, 0.5)',
+            borderColor: 'rgba(132, 129, 221, 1)',
             borderWidth: 1,
-            data: [3, 10, 21, 17, 16, 40, 22]
+            data: [3, 10, 21, 17, 16]
         },
         {
             label: 'Clinical Trials',
-            backgroundColor: 'black',
-            borderColor: 'black',
+            backgroundColor: 'rgba(239, 146, 52, 0.5)',
+            borderColor: 'rgba(239, 146, 52, 1)',
             borderWidth: 1,
-            data: [30, 29, 17, 45, 12, 21, 10]
+            data: [30, 29, 17, 45, 12]
         }
     ]
 };
@@ -102,6 +102,7 @@ const Analytics: React.FC = () => {
         return () => {
             if (chartInstance.current) {
                 chartInstance.current.destroy();
+                chartInstance.current = null;
             }
             resizeObserver.disconnect();
         };
@@ -111,24 +112,32 @@ const Analytics: React.FC = () => {
         const getChartData = async () => {
             try {
                 const res = await axios.get('/api/publications/all');
-                setChartData(res);
-            } catch (error) {}
-            if (chartRef.current) {
-                chartInstance.current = new Chart(chartRef.current, {
-                    type: 'bar',
-                    data: data,
-                    options: options
-                });
+                setChartData(res.data); // Ensure the data is set properly
+            } catch (error) {
+                console.error('Error fetching chart data:', error);
             }
         };
         getChartData();
-    });
+    }, []);
+
+    useEffect(() => {
+        if (chartData && chartRef.current) {
+            if (chartInstance.current) {
+                chartInstance.current.destroy();
+            }
+            chartInstance.current = new Chart(chartRef.current, {
+                type: 'bar',
+                data: data, // You may want to use chartData here if your API returns the appropriate data format
+                options: options
+            });
+        }
+    }, [chartData]);
 
     return (
         <div className="pt-16">
             <h1 className="text-heading2Xl text-center font-bold py-10">Analytics</h1>
             <div className="flex flex-col px-60 md:px-10 sm:px-0">
-                {data ? (
+                {chartData ? (
                     <div className="chart-container relative w-full" style={{ height: '400px' }} ref={containerRef}>
                         <canvas ref={chartRef}></canvas>
                     </div>
