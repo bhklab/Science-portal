@@ -5,17 +5,6 @@ import { PublicationService } from './publication.service';
 export class PublicationController {
     constructor(private publicationService: PublicationService) {}
 
-	@Get('all')
-    async getAllPublications()
-	{
-        try {
-            const publications = await this.publicationService.findAllPublications();
-            return publications;
-        } catch (error) {
-            throw new HttpException(`Error retrieving publications: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
     @Post('select')
     async getSelectPublications(
 		@Body('total') total: number, 
