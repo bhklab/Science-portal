@@ -7,7 +7,7 @@ import ResizeObserver from 'resize-observer-polyfill';
 Chart.register(...registerables);
 
 const data = {
-    labels: ['2020', '2021', '2022', '2023', '2024'],
+    labels: ['2018', '2019', '2020', '2021', '2022', '2023', '2024'],
     datasets: [
         {
             label: 'Github',
@@ -110,7 +110,7 @@ const Analytics: React.FC = () => {
     useEffect(() => {
         const getChartData = async () => {
             try {
-                const res = await axios.get('/api/publications/all');
+                const res = await axios.get('/api/stats/supplementary');
                 setChartData(res);
             } catch (error) {}
             if (chartRef.current) {
