@@ -2,6 +2,7 @@ import { Schema } from 'mongoose';
 
 export const StatsSchema = new Schema({
   name: String,
+  date: Date,
   citations: Number,
   supplementary: {
     github: { type: String, default: "" },
