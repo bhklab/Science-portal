@@ -80,7 +80,7 @@ export const CardView: React.FC<publications> = ({ pubs }) => {
                                         rel="noreferrer"
                                     >
                                         <img
-                                            src="/images/assets/codeocean-icon.svg"
+                                            src="/images/assets/codeocean-icon.png"
                                             alt="icon"
                                             className="h-6 w-6 logo"
                                             data-pr-tooltip="Open in Code Ocean"

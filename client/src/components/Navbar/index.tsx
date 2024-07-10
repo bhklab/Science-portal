@@ -12,7 +12,11 @@ export const Navbar: React.FC = () => {
                     navigate('/');
                 }}
             >
-                <img src="/images/assets/science-portal-logo.svg" alt="science portal logo" />
+                <img
+                    src="/images/assets/new-science-portal-logo.svg"
+                    alt="science portal logo"
+                    className="h-[40px] w-[220px]"
+                />
             </div>
             <div className="flex flex-1 justify-center md:absolute md:right-4 md:top-5">
                 <div className="flex flex-row gap-4">

@@ -3,13 +3,35 @@ import Pub from '../../interfaces/Pub';
 import { PublicationImage } from '../PublicationImage/PublicationImage';
 
 const PublicationModalContent: React.FC<{ pub: Pub }> = ({ pub }) => {
-    const repositories = ['github', 'codeOcean', 'gitlab'];
+    const code = ['github', 'gitlab'];
+    const data = [
+        'geo',
+        'dbGap',
+        'kaggle',
+        'dryad',
+        'empiar',
+        'gigaDB',
+        'zenodo',
+        'ega',
+        'xlsx',
+        'csv',
+        'proteinDataBank',
+        'dataverse',
+        'openScienceframework',
+        'finngenGitbook',
+        'gtexPortal',
+        'ebiAcUk',
+        'mendeley'
+    ];
+    const results = ['gsea', 'figshare'];
+    const trials = ['clinicalTrial'];
+    const miscellanous = ['IEEE', 'pdf', 'docx', 'zip'];
     const supplementary = pub.supplementary as { [key: string]: string | undefined };
     const supplementaryKeys = Object.keys(supplementary);
-    const repositoryLinks = supplementaryKeys.filter(key => repositories.includes(key) && supplementary[key]);
-    const dataLinks = supplementaryKeys.filter(key => !repositories.includes(key) && supplementary[key]);
+    const codeLinks = supplementaryKeys.filter(key => code.includes(key) && supplementary[key]);
+    const dataLinks = supplementaryKeys.filter(key => !code.includes(key) && supplementary[key]);
 
-    console.log(repositoryLinks, dataLinks, supplementary); // Debug log
+    console.log(codeLinks, dataLinks, supplementary); // Debug log
 
     const renderLinkSection = (title: string, links: string[]) => (
         <div className="flex flex-col gap-5">
@@ -34,11 +56,7 @@ const PublicationModalContent: React.FC<{ pub: Pub }> = ({ pub }) => {
                                 className="flex flex-row gap-2 items-center mt-2 hover:text-blue-500"
                             >
                                 <img
-                                    src={
-                                        link === 'github' || link === 'gitlab' || link === 'codeOcean'
-                                            ? `/images/assets/${link.toLowerCase()}-icon.svg`
-                                            : `/images/assets/link-icon.svg`
-                                    }
+                                    src={`/images/assets/${link.toLowerCase()}-icon.png`}
                                     alt={link}
                                     className="h-6 w-6"
                                 />
@@ -84,7 +102,7 @@ const PublicationModalContent: React.FC<{ pub: Pub }> = ({ pub }) => {
                     </a>
                 </div>
             </div>
-            {repositoryLinks.length > 0 && renderLinkSection('Repositories', repositoryLinks)}
+            {codeLinks.length > 0 && renderLinkSection('Repositories', codeLinks)}
             {dataLinks.length > 0 && renderLinkSection('Data', dataLinks)}
         </div>
     );
