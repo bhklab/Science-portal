@@ -22,12 +22,24 @@ export const CardView: React.FC<publications> = ({ pubs }) => {
         setSelectedPub(null);
     };
 
+    // Show first and last 3 authors separated by ...
+    const formatAuthors = (authorsString: string) => {
+        const authorsArray = authorsString.split(';');
+        const authorsCount = authorsArray.length;
+        if (authorsCount <= 6) {
+            return authorsString; // If 6 or fewer authors, return them all
+        }
+        const firstThreeAuthors = authorsArray.slice(0, 3).join('; ');
+        const lastThreeAuthors = authorsArray.slice(-3).join('; ');
+        return `${firstThreeAuthors} ...${lastThreeAuthors}`;
+    };
+
     return (
         <div className="flex flex-row flex-wrap items-center gap-4 justify-center pb-10">
             <Tooltip target=".logo" position="top" hideDelay={200} />
             {pubs.map(pub => (
                 <div
-                    className="flex flex-col w-[318px] h-[426px] rounded-lg shadow-card border-1 border-gray-200 bg-white relative"
+                    className="flex flex-col w-[318px] h-[440px] rounded-lg shadow-card border-1 border-gray-200 bg-white relative"
                     key={pub.doi}
                 >
                     <div className="h-48 w-[318px] px-8 py-8 flex flex-col justify-center items-center border-b-1 border-gray-200">
@@ -41,8 +53,8 @@ export const CardView: React.FC<publications> = ({ pubs }) => {
                             >
                                 {pub.name}
                             </h2>
-                            <p className="text-bodyMd md:text-bodySm min-h-10 md:min-h-0 mb-4 line-clamp-2">
-                                {pub.authors}
+                            <p className="text-bodyMd md:text-bodySm min-h-10 md:min-h-0 line-clamp-3">
+                                {formatAuthors(pub.authors)}
                             </p>
                         </div>
                         <div className="flex flex-row justify-between items-end w-[280px] absolute bottom-4">

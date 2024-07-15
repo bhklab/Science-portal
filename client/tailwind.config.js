@@ -17,6 +17,9 @@ module.exports = {
                     700: '#727272',
                     900: '#212121'
                 },
+                cyan: {
+                    1000: '#3BB6AC'
+                },
                 white: '#ffffff',
                 colors: '#edf3faff',
                 open_border: '#B6B6B6',

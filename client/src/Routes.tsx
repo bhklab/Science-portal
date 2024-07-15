@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import Publication from './pages/Publication';
 import Analytics from './pages/Analytics';
+import PiProfile from './pages/PiProfile';
 
 const ProjectRoutes = () => {
     return (
@@ -11,6 +12,7 @@ const ProjectRoutes = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/analytics" element={<Analytics />} />
                 <Route path="/publication/:doi" element={<Publication />} />
+                <Route path="/PiProfile" element={<PiProfile />} />
             </Routes>
         </React.Suspense>
     );

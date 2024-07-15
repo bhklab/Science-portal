@@ -23,13 +23,18 @@ const PublicationModalContent: React.FC<{ pub: Pub }> = ({ pub }) => {
         'ebiAcUk',
         'mendeley'
     ];
+    const containers = ['codeOcean', 'colab'];
     const results = ['gsea', 'figshare'];
     const trials = ['clinicalTrial'];
     const miscellanous = ['IEEE', 'pdf', 'docx', 'zip'];
     const supplementary = pub.supplementary as { [key: string]: string | undefined };
     const supplementaryKeys = Object.keys(supplementary);
     const codeLinks = supplementaryKeys.filter(key => code.includes(key) && supplementary[key]);
-    const dataLinks = supplementaryKeys.filter(key => !code.includes(key) && supplementary[key]);
+    const dataLinks = supplementaryKeys.filter(key => data.includes(key) && supplementary[key]);
+    const containerLinks = supplementaryKeys.filter(key => containers.includes(key) && supplementary[key]);
+    const resultLinks = supplementaryKeys.filter(key => results.includes(key) && supplementary[key]);
+    const trialLinks = supplementaryKeys.filter(key => trials.includes(key) && supplementary[key]);
+    const miscellanousLinks = supplementaryKeys.filter(key => miscellanous.includes(key) && supplementary[key]);
 
     console.log(codeLinks, dataLinks, supplementary); // Debug log
 
@@ -102,8 +107,12 @@ const PublicationModalContent: React.FC<{ pub: Pub }> = ({ pub }) => {
                     </a>
                 </div>
             </div>
-            {codeLinks.length > 0 && renderLinkSection('Repositories', codeLinks)}
+            {codeLinks.length > 0 && renderLinkSection('Code', codeLinks)}
             {dataLinks.length > 0 && renderLinkSection('Data', dataLinks)}
+            {containerLinks.length > 0 && renderLinkSection('Containers', containerLinks)}
+            {trialLinks.length > 0 && renderLinkSection('Trials', trialLinks)}
+            {resultLinks.length > 0 && renderLinkSection('Results', resultLinks)}
+            {miscellanousLinks.length > 0 && renderLinkSection('Miscellanous', miscellanousLinks)}
         </div>
     );
 };

@@ -22,6 +22,18 @@ export const ListView: React.FC<publications> = ({ pubs }) => {
         setSelectedPub(null);
     };
 
+    // Show first and last 3 authors separated by ...
+    const formatAuthors = (authorsString: string) => {
+        const authorsArray = authorsString.split(';');
+        const authorsCount = authorsArray.length;
+        if (authorsCount <= 6) {
+            return authorsString; // If 6 or fewer authors, return them all
+        }
+        const firstThreeAuthors = authorsArray.slice(0, 3).join('; ');
+        const lastThreeAuthors = authorsArray.slice(-3).join('; ');
+        return `${firstThreeAuthors} ...${lastThreeAuthors}`;
+    };
+
     return (
         <div className="flex flex-col flex-wrap items-center gap-4 justify-center pb-10">
             <Tooltip target=".logo" position="top" hideDelay={200} />
@@ -37,7 +49,7 @@ export const ListView: React.FC<publications> = ({ pubs }) => {
                         >
                             {pub.name}
                         </h2>
-                        <p className="text-bodyMd sm:text-bodySm mb-2 line-clamp-2">{pub.authors}</p>
+                        <p className="text-bodyMd sm:text-bodySm mb-2 line-clamp-2">{formatAuthors(pub.authors)}</p>
                         <div className="flex flex-row justify-between items-center w-full absolute bottom-4 left-0 right-0 px-5">
                             <div className="flex flex-row smd:flex-col gap-2 smd:gap-0 text-bodyMd mmd:text-bodySm text-gray-700 font-light align-middle text-pretty">
                                 <p className="line-clamp-1 max-h-6 max-w-[285px]">{pub.journal}</p>
