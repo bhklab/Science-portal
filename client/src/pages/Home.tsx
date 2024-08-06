@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
@@ -10,6 +10,12 @@ import Pub from '../interfaces/Pub';
 import { useMagic } from  '../hooks/magicProvider';
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'primereact/button';
+import { Dialog } from 'primereact/dialog';
+import 'primeicons/primeicons.css';
+import { Messages } from 'primereact/messages';
+        
+        
+        
         
 
 interface Option {
@@ -84,11 +90,27 @@ const Home: React.FC = () => {
         citations: 0
     });
 
+    
     const [email, setEmail] = useState<string>('');
+    const [emails, setEmails] = useState<string[]>([]);
     const { magic } = useMagic();
     const navigate = useNavigate();
     const [isSubmitting, setIsSubmitting] = useState(false);
-  
+    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+    const messages = useRef(null);
+
+    useEffect(() => {
+        const getEmails = async () => {
+            try {
+                const res = await axios.get(`/api/emails/all`);
+                setEmails(res.data);
+                console.log(res.data);
+            } catch (error) {
+                console.error(`Failed to fetch emails: ${error}`);
+            }
+        };
+        getEmails();
+    }, []);
 
     // Fetch publications and stats on load and when filters change
     useEffect(() => {
@@ -179,15 +201,23 @@ const Home: React.FC = () => {
         getAuthors();
     }, []);
 
+    const handleViewAnalyticsClick = () => {
+        setIsModalVisible(true);
+    };
+
     const handleLogin = async () => {
         if (email && magic) {
-            setIsSubmitting(true);
-            await login(email, true);
-            setIsSubmitting(false);
+            if (emails.includes(email)) {
+                setIsSubmitting(true);
+                await login(email, true);
+                setIsSubmitting(false);
+            } else {
+                messages.current.show({severity:'error', summary:'Error', detail:'Email not found', sticky: true});
+            }
         } else {
-          console.error('Email is required or Magic is not initialized');
+            console.error('Email is required or Magic is not initialized');
         }
-      };
+    };
 
     const login = async (emailAddress: string, showUI: boolean) => {
         try {
@@ -202,7 +232,7 @@ const Home: React.FC = () => {
             console.log(`UserInfo: ${userInfo}`);
             localStorage.setItem('loginTime', Date.now().toString());
             navigate('/PiProfile');
-    
+            await magic.user.logout();
             setEmail('');
           }
         } catch (error) {
@@ -297,20 +327,37 @@ const Home: React.FC = () => {
                             </div>
                         </div>
                         <div className="flex flex-col gap-2 items-start">
-                            <h3 className="text-headingMd text-black-900 font-semibold">View PI Insights</h3>
-                            <InputText
-                            placeholder="Enter your email"
+                        {selectedAuthor && (
+                        <Button
+                        className="border-2 border-gray-300 p-2"
+                        label='View my analytics'
+                        onClick={handleViewAnalyticsClick}
+                        />
+                    )}
+                    </div>
+                    <Dialog 
+                        header="Enter your institution email" 
+                        visible={isModalVisible} 
+                        onHide={() => setIsModalVisible(false)}
+                        onClick={(e) => e.stopPropagation()}
+                        contentStyle={{ display: 'flex', alignItems: 'center', flexDirection: 'column'}} // Add this line
+                        style={{ width: '50vw', height: '50vh' }}
+                    >
+                        <Messages ref={messages} />
+                        <InputText
+                            placeholder="ex. firstname.lastname@uhn.ca"
                             value={email}
                             onChange={e => setEmail(e.target.value)}
-                            className="w-full"
-                            />
-                            <Button 
+                            className="w-full my-3"
+                        />
+                        <Button 
                             label={isSubmitting ? '' : 'Submit'} 
-                            icon={isSubmitting ? 'pi pi-spin pi-spinner' : ''} 
+                            icon={isSubmitting ? 'pi pi-spin pi-spinner' : 'pi pi-check'}
+                            className="border-2 border-gray-300 p-2"
                             onClick={handleLogin} 
-                            disabled={isSubmitting} 
-                            />
-                        </div>
+                            disabled={isSubmitting || email === ''}
+                        />
+                    </Dialog>
                         {/* <div className="flex flex-col gap-2">
                             <h3 className="text-headingMd text-black-900 font-semibold">Publication Status</h3>
                             <Dropdown
