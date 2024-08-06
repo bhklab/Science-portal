@@ -7,6 +7,10 @@ import { ListView } from '../components/ListView/ListView';
 import { Sidebar } from 'primereact/sidebar';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import Pub from '../interfaces/Pub';
+import { useMagic } from  '../hooks/magicProvider';
+import { useNavigate } from 'react-router-dom';
+import { Button } from 'primereact/button';
+        
 
 interface Option {
     name: string;
@@ -79,6 +83,12 @@ const Home: React.FC = () => {
         publications: 0,
         citations: 0
     });
+
+    const [email, setEmail] = useState<string>('');
+    const { magic } = useMagic();
+    const navigate = useNavigate();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+  
 
     // Fetch publications and stats on load and when filters change
     useEffect(() => {
@@ -169,6 +179,38 @@ const Home: React.FC = () => {
         getAuthors();
     }, []);
 
+    const handleLogin = async () => {
+        if (email && magic) {
+            setIsSubmitting(true);
+            await login(email, true);
+            setIsSubmitting(false);
+        } else {
+          console.error('Email is required or Magic is not initialized');
+        }
+      };
+
+    const login = async (emailAddress: string, showUI: boolean) => {
+        try {
+          if (magic) {
+            if (await magic.user.isLoggedIn()) {
+                await magic.user.logout();
+              }
+            const did = await magic.auth.loginWithEmailOTP({ email: emailAddress, showUI });
+            console.log(`DID Token: ${did}`);
+      
+            const userInfo = await magic.user.getInfo();
+            console.log(`UserInfo: ${userInfo}`);
+            localStorage.setItem('loginTime', Date.now().toString());
+            navigate('/PiProfile');
+    
+            setEmail('');
+          }
+        } catch (error) {
+          console.error('Login failed', error);
+        }
+      };
+    
+
     return (
         <>
             <div
@@ -253,6 +295,21 @@ const Home: React.FC = () => {
                                 <h2 className="text-heading2Xl font-semibold text-black-900">{labStats.citations}</h2>
                                 <h3 className="text-bodyMd text-black-900">Citations</h3>
                             </div>
+                        </div>
+                        <div className="flex flex-col gap-2 items-start">
+                            <h3 className="text-headingMd text-black-900 font-semibold">View PI Insights</h3>
+                            <InputText
+                            placeholder="Enter your email"
+                            value={email}
+                            onChange={e => setEmail(e.target.value)}
+                            className="w-full"
+                            />
+                            <Button 
+                            label={isSubmitting ? '' : 'Submit'} 
+                            icon={isSubmitting ? 'pi pi-spin pi-spinner' : ''} 
+                            onClick={handleLogin} 
+                            disabled={isSubmitting} 
+                            />
                         </div>
                         {/* <div className="flex flex-col gap-2">
                             <h3 className="text-headingMd text-black-900 font-semibold">Publication Status</h3>
