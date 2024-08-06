@@ -11,7 +11,6 @@ import { useMagic } from  '../hooks/magicProvider';
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
-import 'primeicons/primeicons.css';
 import { Messages } from 'primereact/messages';
         
         
@@ -90,7 +89,7 @@ const Home: React.FC = () => {
         citations: 0
     });
 
-    
+
     const [email, setEmail] = useState<string>('');
     const [emails, setEmails] = useState<string[]>([]);
     const { magic } = useMagic();
