@@ -91,7 +91,7 @@ const Home: React.FC = () => {
     const navigate = useNavigate();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-    const messages = useRef(null);
+    const messages = useRef<Messages>(null);
 
     useEffect(() => {
         const getEmails = async () => {
@@ -206,7 +206,12 @@ const Home: React.FC = () => {
                 await login(email, true);
                 setIsSubmitting(false);
             } else {
-                messages.current.show({ severity: 'error', summary: 'Error', detail: 'Email not found', sticky: true });
+                messages.current?.show({
+                    severity: 'error',
+                    summary: 'Oops',
+                    detail: 'The email entered does not match the PI email in the database.',
+                    sticky: true
+                });
             }
         } else {
             console.error('Email is required or Magic is not initialized');
@@ -332,7 +337,7 @@ const Home: React.FC = () => {
                     visible={isModalVisible}
                     onHide={() => setIsModalVisible(false)}
                     onClick={e => e.stopPropagation()}
-                    style={{ width: '600px', borderRadius: '15px' }}
+                    style={{ width: '700px', borderRadius: '15px' }}
                     modal
                     draggable={false}
                     position="bottom"
@@ -359,7 +364,7 @@ const Home: React.FC = () => {
                             onClick={handleLogin}
                             disabled={isSubmitting || email === ''}
                         />
-                        <Messages style={{ width: '100%' }} ref={messages} />
+                        <Messages ref={messages} />
                     </div>
                 </Dialog>
                 <div
