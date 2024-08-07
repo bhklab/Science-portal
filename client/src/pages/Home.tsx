@@ -7,11 +7,6 @@ import { ListView } from '../components/ListView/ListView';
 import { Sidebar } from 'primereact/sidebar';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import Pub from '../interfaces/Pub';
-import { useMagic } from '../hooks/magicProvider';
-import { useNavigate } from 'react-router-dom';
-import { Button } from 'primereact/button';
-import { Dialog } from 'primereact/dialog';
-import { Messages } from 'primereact/messages';
 
 interface Option {
     name: string;
@@ -84,27 +79,6 @@ const Home: React.FC = () => {
         publications: 0,
         citations: 0
     });
-
-    const [email, setEmail] = useState<string>('');
-    const [emails, setEmails] = useState<string[]>([]);
-    const { magic } = useMagic();
-    const navigate = useNavigate();
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-    const messages = useRef<Messages>(null);
-
-    useEffect(() => {
-        const getEmails = async () => {
-            try {
-                const res = await axios.get(`/api/emails/all`);
-                setEmails(res.data);
-                console.log(res.data);
-            } catch (error) {
-                console.error(`Failed to fetch emails: ${error}`);
-            }
-        };
-        getEmails();
-    }, []);
 
     // Fetch publications and stats on load and when filters change
     useEffect(() => {
@@ -195,50 +169,6 @@ const Home: React.FC = () => {
         getAuthors();
     }, []);
 
-    const handleViewAnalyticsClick = () => {
-        setIsModalVisible(true);
-    };
-
-    const handleLogin = async () => {
-        if (email && magic) {
-            if (emails.includes(email)) {
-                setIsSubmitting(true);
-                await login(email, true);
-                setIsSubmitting(false);
-            } else {
-                messages.current?.show({
-                    severity: 'error',
-                    summary: 'Oops',
-                    detail: 'The email entered does not match the PI email in the database.',
-                    sticky: true
-                });
-            }
-        } else {
-            console.error('Email is required or Magic is not initialized');
-        }
-    };
-
-    const login = async (emailAddress: string, showUI: boolean) => {
-        try {
-            if (magic) {
-                if (await magic.user.isLoggedIn()) {
-                    await magic.user.logout();
-                }
-                const did = await magic.auth.loginWithEmailOTP({ email: emailAddress, showUI });
-                console.log(`DID Token: ${did}`);
-
-                const userInfo = await magic.user.getInfo();
-                console.log(`UserInfo: ${userInfo}`);
-                localStorage.setItem('loginTime', Date.now().toString());
-                navigate('/PiProfile');
-                await magic.user.logout();
-                setEmail('');
-            }
-        } catch (error) {
-            console.error('Login failed', error);
-        }
-    };
-
     return (
         <>
             <div
@@ -324,52 +254,8 @@ const Home: React.FC = () => {
                                 <h3 className="text-bodyMd text-black-900">Citations</h3>
                             </div>
                         </div>
-                        <div className="flex flex-col gap-2 justify-center items-center">
-                            {selectedAuthor && (
-                                <button className="text-cyan-1000 p-2" onClick={handleViewAnalyticsClick}>
-                                    View my analytics
-                                </button>
-                            )}
-                        </div>
                     </div>
                 </Sidebar>
-                <Dialog
-                    visible={isModalVisible}
-                    onHide={() => setIsModalVisible(false)}
-                    onClick={e => e.stopPropagation()}
-                    style={{ width: '700px', borderRadius: '15px' }}
-                    modal
-                    draggable={false}
-                    position="bottom"
-                >
-                    <div className="flex flex-col justify-center items-center gap-5">
-                        <div className="flex flex-col justify-center items-center gap-1 w-full">
-                            <h2 className="text-headingLg text-black-900 w-full text-left">
-                                Enter your institution email
-                            </h2>
-                            <p className="text-bodySm text-red-800 w-full text-left">
-                                Note: You will recieve a one time code to your institution email to temporarily view
-                                your personal science portal analytics
-                            </p>
-                        </div>
-                        <InputText
-                            placeholder="ex. firstname.lastname@uhn.ca"
-                            className="pr-3 py-2 rounded border-1 border-gray-300 w-full"
-                            onChange={e => setEmail(e.target.value)}
-                        />
-                        <div className="flex flex-row justify-start w-full">
-                            {email && (
-                                <Button
-                                    label={isSubmitting ? '' : 'Submit'}
-                                    icon={isSubmitting ? 'pi pi-spin pi-spinner' : 'pi pi-search'}
-                                    className="w-24 p-2 border-1 border-black-900"
-                                    onClick={handleLogin}
-                                />
-                            )}
-                        </div>
-                        <Messages ref={messages} />
-                    </div>
-                </Dialog>
                 <div
                     className={`w-full pt-32 px-16 md:px-6 flex flex-col justify-center gap-5 ${visible ? 'mmd:hidden' : ''}`}
                 >
