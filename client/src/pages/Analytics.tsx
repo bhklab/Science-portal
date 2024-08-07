@@ -15,6 +15,8 @@ Chart.register(...registerables);
 
 interface Lab {
     name: string;
+    firstName: string;
+    lastName: string;
 }
 
 interface Author {
@@ -81,7 +83,7 @@ const Analytics: React.FC = () => {
     const [authors, setAuthors] = useState<Lab[]>([]);
 
     const viewAnalyticsRef = useRef<HTMLButtonElement | null>(null);
-    
+
     useEffect(() => {
         if (selectedAuthor && viewAnalyticsRef.current) {
             viewAnalyticsRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -152,7 +154,9 @@ const Analytics: React.FC = () => {
                 const res = await axios.get(`/api/authors/all`);
                 setAuthors(
                     res.data.map((aut: Author) => ({
-                        name: `${aut.lastName}, ${aut.firstName}`
+                        name: `${aut.lastName}, ${aut.firstName}`,
+                        firstName: `${aut.firstName}`,
+                        lastName: `${aut.lastName}`
                     }))
                 );
             } catch (error) {
@@ -209,7 +213,8 @@ const Analytics: React.FC = () => {
     return (
         <div className="pt-16">
             <h1 className="text-heading2Xl text-center font-bold py-10">Analytics</h1>
-            <div className="flex flex-col px-60 md:px-10 sm:px-0">
+            <div className="flex flex-col px-60 gap-3 md:px-10 sm:px-0">
+                <h2 className="text-headingXl font-bold py-10">Supplementary Data</h2>
                 {chartData ? (
                     <div className="chart-container relative w-full" style={{ height: '700px' }} ref={containerRef}>
                         <canvas ref={chartRef}></canvas>
@@ -225,78 +230,92 @@ const Analytics: React.FC = () => {
                     </div>
                 )}
             </div>
-            <div className="flex flex-col gap-2 items-center justify-center pb-5">
-                <h3 className="text-headingXl text-center font-bold py-5">View Personal Analytics</h3>
-                <h3 className="text-headingLg font-bold">Lab</h3>
+
+            <div className="flex flex-col px-60 gap-3 md:px-10 sm:px-0 py-10">
+                <div>
+                    <h3 className="text-headingXl text-left font-bold">Personal Principal Investigator Data</h3>
+                    <p className="text-bodySm text-red-800 w-full text-left">
+                        NOTE: You can only view your own analytics. You will recieve a one time code to your institution
+                        email to temporarily view your personal science portal statistics
+                    </p>
+                </div>
                 {authors && (
-                <Dropdown
-                    value={selectedAuthor}
-                    options={authors}
-                    optionLabel="name"
-                    placeholder="Select a lab"
-                    className="rounded border-1 border-gray-300 w-64 text-black-900"
-                    onChange={e => {
-                        e.originalEvent?.stopPropagation();
-                        setSelectedAuthor(e.value);
-                    }}
-                    filter
-                    showClear
-                    filterBy="name"
-                />
+                    <Dropdown
+                        value={selectedAuthor}
+                        options={authors}
+                        optionLabel="name"
+                        placeholder="Select a scientist"
+                        className="rounded border-1 border-gray-300 w-64 text-black-900"
+                        onChange={e => {
+                            e.originalEvent?.stopPropagation();
+                            setSelectedAuthor(e.value);
+                        }}
+                        filter
+                        showClear
+                        filterBy="name"
+                    />
                 )}
+                <div className="flex flex-col gap-2 justify-start items-start">
+                    {selectedAuthor && (
+                        <button
+                            ref={viewAnalyticsRef}
+                            className="text-blue-700 text-headingMd pb-20"
+                            onClick={handleViewAnalyticsClick}
+                        >
+                            View my analytics
+                        </button>
+                    )}
+                </div>
             </div>
-            <div className="flex flex-col gap-2 justify-center items-center">
-                {selectedAuthor && (
-                <button ref={viewAnalyticsRef} className="text-cyan-1000 text-headingMd pb-20" onClick={handleViewAnalyticsClick}>
-                    View my analytics
-                </button>
-                )}
-             </div>
-             <Dialog
-                    visible={isModalVisible}
-                    onHide={() => setIsModalVisible(false)}
-                    onClick={e => e.stopPropagation()}
-                    style={{ width: '700px', borderRadius: '15px' }}
-                    modal
-                    draggable={false}
-                    position="bottom"
-                    closable={false}
-                >
-                    <div className="flex flex-col justify-center items-center gap-5">
-                        <div className="flex flex-col gap-1 w-full">
-                            <div className="flex justify-between items-center">
-                                <h2 className="text-headingLg text-black-900 text-left">
-                                    Enter your institution email
-                                </h2>
-                                <button className="p-[10px] rounded-[4px] hover:bg-gray-100 text-right" onClick={() => setIsModalVisible(false)}>
-                                    <img src="/images/assets/close-modal-icon.svg" alt="close publication modal icon" className="w-6" />
-                                </button>
-                            </div>
-                            <p className="text-bodySm text-red-800 w-full text-left">
-                                Note: You will recieve a one time code to your institution email to temporarily view
-                                your personal science portal analytics
-                            </p>
-                        </div>
-                        <InputText
-                            placeholder="ex. firstname.lastname@uhn.ca"
-                            className="pr-3 py-2 rounded border-1 border-gray-300 w-full"
-                            onChange={e => setEmail(e.target.value)}
-                        />
-                        <div className="flex flex-row justify-start w-full">
-                            {email && (
-                                <Button
-                                    label={isSubmitting ? '' : 'Submit'}
-                                    icon={isSubmitting ? 'pi pi-spin pi-spinner' : 'pi pi-search'}
-                                    className="w-24 p-2 border-1 border-black-900"
-                                    onClick={handleLogin}
+            <Dialog
+                visible={isModalVisible}
+                onHide={() => setIsModalVisible(false)}
+                onClick={e => e.stopPropagation()}
+                style={{ width: '700px', borderRadius: '15px', height: '350px' }}
+                modal
+                draggable={false}
+                position="bottom"
+                closable={false}
+            >
+                <div className="flex flex-col justify-center items-center gap-5">
+                    <div className="flex flex-col gap-1 w-full">
+                        <div className="flex justify-between items-center">
+                            <h2 className="text-headingLg text-black-900 text-left">{`Hello ${selectedAuthor?.firstName}, please enter your institution email so we can verify it's you`}</h2>
+                            <button
+                                className="p-[10px] rounded-[4px] hover:bg-gray-100 text-right"
+                                onClick={() => setIsModalVisible(false)}
+                            >
+                                <img
+                                    src="/images/assets/close-modal-icon.svg"
+                                    alt="close publication modal icon"
+                                    className="w-6"
                                 />
-                            )}
+                            </button>
                         </div>
-                        <Messages ref={messages} />
+                        <p className="text-bodySm text-red-800 w-full text-left">
+                            Note: You will recieve a one time code to your institution email to temporarily view your
+                            personal science portal analytics
+                        </p>
                     </div>
-                </Dialog>
+                    <InputText
+                        placeholder="ex. firstname.lastname@uhn.ca"
+                        className="pr-3 py-2 rounded border-1 border-gray-300 w-full"
+                        onChange={e => setEmail(e.target.value)}
+                    />
+                    <div className="flex flex-row justify-start w-full">
+                        {email && (
+                            <Button
+                                label={isSubmitting ? '' : 'Send code'}
+                                icon={isSubmitting ? 'pi pi-spin pi-spinner' : 'pi pi-arrow-left'}
+                                className="w-32 p-2 border-2 transition ease-out delay-150 hover:-translate-y-0.5 hover:scale-110 hover:text-bold duration-200"
+                                onClick={handleLogin}
+                            />
+                        )}
+                    </div>
+                    <Messages ref={messages} />
+                </div>
+            </Dialog>
         </div>
-        
     );
 };
 
