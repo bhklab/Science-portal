@@ -342,7 +342,7 @@ const Home: React.FC = () => {
                     draggable={false}
                     position="bottom"
                 >
-                    <div className="flex flex-col justify-center items-center gap-3">
+                    <div className="flex flex-col justify-center items-center gap-5">
                         <div className="flex flex-col justify-center items-center gap-1 w-full">
                             <h2 className="text-headingLg text-black-900 w-full text-left">
                                 Enter your institution email
@@ -357,13 +357,16 @@ const Home: React.FC = () => {
                             className="pr-3 py-2 rounded border-1 border-gray-300 w-full"
                             onChange={e => setEmail(e.target.value)}
                         />
-                        <Button
-                            label={isSubmitting ? '' : 'Submit'}
-                            icon={isSubmitting ? 'pi pi-spin pi-spinner' : 'pi pi-check'}
-                            className="w-24 p-2"
-                            onClick={handleLogin}
-                            disabled={isSubmitting || email === ''}
-                        />
+                        <div className="flex flex-row justify-start w-full">
+                            {email && (
+                                <Button
+                                    label={isSubmitting ? '' : 'Submit'}
+                                    icon={isSubmitting ? 'pi pi-spin pi-spinner' : 'pi pi-search'}
+                                    className="w-24 p-2 border-1 border-black-900"
+                                    onClick={handleLogin}
+                                />
+                            )}
+                        </div>
                         <Messages ref={messages} />
                     </div>
                 </Dialog>
