@@ -4,12 +4,10 @@ import axios from 'axios';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import ResizeObserver from 'resize-observer-polyfill';
 import { Dropdown } from 'primereact/dropdown';
-import { Button } from 'primereact/button';
-import { Dialog } from 'primereact/dialog';
 import { Messages } from 'primereact/messages';
-import { InputText } from 'primereact/inputtext';
 import { useMagic } from '../hooks/magicProvider';
 import { useNavigate } from 'react-router-dom';
+import EmailModal from '../components/EmailModal/EmailModal';
 
 Chart.register(...registerables);
 
@@ -27,7 +25,7 @@ interface Author {
     primaryResearchInstitute: string;
     secondaryAppointment: string | null;
     secondaryResearchInstitute: string | null;
-    enid: string;
+    ENID: number;
 }
 
 const options = {
@@ -81,6 +79,8 @@ const Analytics: React.FC = () => {
 
     // State of new authors
     const [authors, setAuthors] = useState<Lab[]>([]);
+
+    const [emailToEnid, setEmailToEnid] = useState<{ [email: string]: string }>({});
 
     const viewAnalyticsRef = useRef<HTMLButtonElement | null>(null);
 
@@ -152,6 +152,13 @@ const Analytics: React.FC = () => {
         const getAuthors = async () => {
             try {
                 const res = await axios.get(`/api/authors/all`);
+                const emailToEnid = res.data.reduce((map: { [email: string]: string }, author: Author) => {
+                    map[author.email] = author.ENID.toString();
+                    return map;
+                }, {});
+    
+                setEmailToEnid(emailToEnid);
+
                 setAuthors(
                     res.data.map((aut: Author) => ({
                         name: `${aut.lastName}, ${aut.firstName}`,
@@ -159,6 +166,7 @@ const Analytics: React.FC = () => {
                         lastName: `${aut.lastName}`
                     }))
                 );
+                console.log(res.data);
             } catch (error) {
                 console.log(error);
             }
@@ -198,10 +206,11 @@ const Analytics: React.FC = () => {
                 const did = await magic.auth.loginWithEmailOTP({ email: emailAddress, showUI });
                 console.log(`DID Token: ${did}`);
 
+                const enid = emailToEnid[emailAddress];
                 const userInfo = await magic.user.getInfo();
                 console.log(`UserInfo: ${userInfo}`);
                 localStorage.setItem('loginTime', Date.now().toString());
-                navigate('/PiProfile');
+                navigate(`/PiProfile/${enid}`);
                 await magic.user.logout();
                 setEmail('');
             }
@@ -267,54 +276,15 @@ const Analytics: React.FC = () => {
                     )}
                 </div>
             </div>
-            <Dialog
-                visible={isModalVisible}
+            <EmailModal 
+                isVisible={isModalVisible} 
                 onHide={() => setIsModalVisible(false)}
-                onClick={e => e.stopPropagation()}
-                style={{ width: '700px', borderRadius: '15px', height: '350px' }}
-                modal
-                draggable={false}
-                position="bottom"
-                closable={false}
-            >
-                <div className="flex flex-col justify-center items-center gap-5">
-                    <div className="flex flex-col gap-1 w-full">
-                        <div className="flex justify-between items-center">
-                            <h2 className="text-headingLg text-black-900 text-left">{`Hello ${selectedAuthor?.firstName}, please enter your institution email so we can verify it's you`}</h2>
-                            <button
-                                className="p-[10px] rounded-[4px] hover:bg-gray-100 text-right"
-                                onClick={() => setIsModalVisible(false)}
-                            >
-                                <img
-                                    src="/images/assets/close-modal-icon.svg"
-                                    alt="close publication modal icon"
-                                    className="w-6"
-                                />
-                            </button>
-                        </div>
-                        <p className="text-bodySm text-red-800 w-full text-left">
-                            Note: You will recieve a one time code to your institution email to temporarily view your
-                            personal science portal analytics
-                        </p>
-                    </div>
-                    <InputText
-                        placeholder="ex. firstname.lastname@uhn.ca"
-                        className="pr-3 py-2 rounded border-1 border-gray-300 w-full"
-                        onChange={e => setEmail(e.target.value)}
-                    />
-                    <div className="flex flex-row justify-start w-full">
-                        {email && (
-                            <Button
-                                label={isSubmitting ? '' : 'Send code'}
-                                icon={isSubmitting ? 'pi pi-spin pi-spinner' : 'pi pi-arrow-left'}
-                                className="w-32 p-2 border-2 transition ease-out delay-150 hover:-translate-y-0.5 hover:scale-110 hover:text-bold duration-200"
-                                onClick={handleLogin}
-                            />
-                        )}
-                    </div>
-                    <Messages ref={messages} />
-                </div>
-            </Dialog>
+                selectedAuthor={selectedAuthor} 
+                setEmail={setEmail} 
+                handleLogin={handleLogin} 
+                isSubmitting={isSubmitting} 
+                email={email} 
+            />
         </div>
     );
 };

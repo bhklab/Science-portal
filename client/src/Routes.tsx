@@ -12,7 +12,7 @@ const ProjectRoutes = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/analytics" element={<Analytics />} />
                 <Route path="/publication/:doi" element={<Publication />} />
-                <Route path="/PiProfile" element={<PiProfile />} />
+                <Route path="/PiProfile/:enid" element={<PiProfile />} />
             </Routes>
         </React.Suspense>
     );
