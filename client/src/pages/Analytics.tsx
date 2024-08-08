@@ -156,7 +156,7 @@ const Analytics: React.FC = () => {
                     map[author.email] = author.ENID.toString();
                     return map;
                 }, {});
-    
+
                 setEmailToEnid(emailToEnid);
 
                 setAuthors(
@@ -210,7 +210,7 @@ const Analytics: React.FC = () => {
                 const userInfo = await magic.user.getInfo();
                 console.log(`UserInfo: ${userInfo}`);
                 localStorage.setItem('loginTime', Date.now().toString());
-                navigate(`/PiProfile/${enid}`);
+                navigate(`/pi-profile/${enid}`);
                 await magic.user.logout();
                 setEmail('');
             }
@@ -276,14 +276,14 @@ const Analytics: React.FC = () => {
                     )}
                 </div>
             </div>
-            <EmailModal 
-                isVisible={isModalVisible} 
+            <EmailModal
+                isVisible={isModalVisible}
                 onHide={() => setIsModalVisible(false)}
-                selectedAuthor={selectedAuthor} 
-                setEmail={setEmail} 
-                handleLogin={handleLogin} 
-                isSubmitting={isSubmitting} 
-                email={email} 
+                selectedAuthor={selectedAuthor}
+                setEmail={setEmail}
+                handleLogin={handleLogin}
+                isSubmitting={isSubmitting}
+                email={email}
             />
         </div>
     );
