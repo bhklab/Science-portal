@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
@@ -254,21 +254,6 @@ const Home: React.FC = () => {
                                 <h3 className="text-bodyMd text-black-900">Citations</h3>
                             </div>
                         </div>
-                        {/* <div className="flex flex-col gap-2">
-                            <h3 className="text-headingMd text-black-900 font-semibold">Publication Status</h3>
-                            <Dropdown
-                                value={statusFilter}
-                                options={status}
-                                optionLabel="name"
-                                placeholder="Select a status"
-                                className="rounded border-1 border-gray-300 w-64 text-black-900"
-                                showClear
-                                onChange={e => {
-                                    e.originalEvent?.stopPropagation();
-                                    setStatusFilter(e.value);
-                                }}
-                            />
-                        </div> */}
                     </div>
                 </Sidebar>
                 <div

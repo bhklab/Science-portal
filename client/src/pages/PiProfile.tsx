@@ -1,8 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Pub from '../interfaces/Pub';
+import { useNavigate } from 'react-router-dom';
+import { useMagic } from  '../hooks/magicProvider';
+import useWeb3 from  '../hooks/webProvider';
+import { Magic as MagicBase } from 'magic-sdk';
 
 const PiProfile: React.FC = () => {
+    const { magic } = useMagic();
+    const navigate = useNavigate();
+    
+    useEffect(() => {
+        const checkLoginTime = () => {
+          const loginTime = localStorage.getItem('loginTime');
+          if (loginTime) {
+            const currentTime = Date.now();
+            const oneMinute = 1 * 60 * 1000;
+    
+            if (currentTime - Number(loginTime) > oneMinute) {
+              if (magic) {
+                magic.user.logout().then(() => {
+                  navigate('/');
+                });
+              } else {
+                navigate('/');
+              }
+            }
+          }
+        };
+    
+        checkLoginTime();
+    
+        const intervalId = setInterval(checkLoginTime, 60 * 1000);
+    
+        return () => clearInterval(intervalId);
+      }, [magic, navigate]);
     return (
         <div className="py-28 smd:px-4 px-[120px] min-h-screen flex flex-col gap-4">
             <div className="flex flex-col gap-3 w-full mb-8">

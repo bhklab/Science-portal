@@ -36,8 +36,6 @@ const PublicationModalContent: React.FC<{ pub: Pub }> = ({ pub }) => {
     const trialLinks = supplementaryKeys.filter(key => trials.includes(key) && supplementary[key]);
     const miscellanousLinks = supplementaryKeys.filter(key => miscellanous.includes(key) && supplementary[key]);
 
-    console.log(codeLinks, dataLinks, supplementary); // Debug log
-
     const renderLinkSection = (title: string, links: string[]) => (
         <div className="flex flex-col gap-5">
             <h1 className="text-headingXl text-black-900 font-semibold">{title}</h1>
