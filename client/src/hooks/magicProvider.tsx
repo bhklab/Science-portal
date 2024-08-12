@@ -20,8 +20,8 @@ const MagicProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     console.log('Magic API Key:', process.env.NEXT_PUBLIC_MAGIC_API_KEY);
     console.log('Magic API Key: pk_live_ED8268E2B56DDB93');
-    if ('pk_live_ED8268E2B56DDB93') {
-      const magic = new MagicBase('pk_live_ED8268E2B56DDB93' as string, {
+    if ('pk_live_999B6A263C7586A5') {
+      const magic = new MagicBase('pk_live_999B6A263C7586A5' as string, {
         network: {
           rpcUrl: "https://rpc2.sepolia.org",
           chainId: 11155111,

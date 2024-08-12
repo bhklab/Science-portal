@@ -1,6 +1,15 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Pub from '../../interfaces/Pub';
 import { PublicationImage } from '../PublicationImage/PublicationImage';
+import { Tooltip } from 'primereact/tooltip';
+import { Dialog } from 'primereact/dialog';
+import { InputText } from 'primereact/inputtext';
+import { Button } from 'primereact/button';
+import { Messages } from 'primereact/messages';
+import { Dropdown } from 'primereact/dropdown';
+import { MultiSelect } from 'primereact/multiselect';
+        
+        
 
 const PublicationModalContent: React.FC<{ pub: Pub }> = ({ pub }) => {
     const code = ['github', 'gitlab'];
@@ -35,6 +44,9 @@ const PublicationModalContent: React.FC<{ pub: Pub }> = ({ pub }) => {
     const resultLinks = supplementaryKeys.filter(key => results.includes(key) && supplementary[key]);
     const trialLinks = supplementaryKeys.filter(key => trials.includes(key) && supplementary[key]);
     const miscellanousLinks = supplementaryKeys.filter(key => miscellanous.includes(key) && supplementary[key]);
+    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+    
+
 
     const renderLinkSection = (title: string, links: string[]) => (
         <div className="flex flex-col gap-5">
@@ -73,14 +85,166 @@ const PublicationModalContent: React.FC<{ pub: Pub }> = ({ pub }) => {
         </div>
     );
 
+    const handleAddInfo = () => {
+        setIsModalVisible(true);
+    };
+
+    const [selectedDataType, setSelectedDataType] = useState<Array<'github' | 'codeocean'>>([]);
+    const [inputs, setInputs] = useState<Array<{ type: string, value: string }>>([]);
+
+    const handleAddInput = () => {
+        if (selectedDataType && selectedDataType.length > 0) {
+            const newInputs = selectedDataType.map(type => ({ type, value: '' }));
+            setInputs([...inputs, ...newInputs]);
+            setSelectedDataType([]);
+            setIsAddDataClicked(true);
+        }
+    };
+
+    const handleInputChange = (index: number, value: string) => {
+        const newInputs = [...inputs];
+        newInputs[index].value = value;
+        setInputs(newInputs);
+    };
+
+    const handleDeleteInput = (index: number) => {
+        const newInputs = [...inputs];
+        newInputs.splice(index, 1);
+        setInputs(newInputs);
+    };
+
+    const resetFields = () => {
+        setIsAddDataClicked(false);
+        setSelectedDataType([]);
+        setInputs([]);
+    };
+
+    const [isAddDataClicked, setIsAddDataClicked] = useState(false);
+
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const inputTypes = [
+        { label: 'GitHub', value: 'GitHub' },
+        { label: 'CodeOcean', value: 'codeOcean' },
+        { label: 'geo', value: 'geo' },
+        { label: 'dbGap', value: 'dbGap' },
+        { label: 'figshare', value: 'figshare' },
+        { label: 'kaggle', value: 'kaggle' },
+        { label: 'dryad', value: 'dryad' },
+        { label: 'empiar', value: 'empiar' },
+        { label: 'gigaDb', value: 'gigaDb' },
+        { label: 'dataverse', value: 'dataverse' },
+        { label: 'IEEE', value: 'IEEE' },
+        { label: 'mendeley', value: 'mendeley' },
+        { label: 'openScienceframework', value: 'openScienceframework' },
+        { label: 'zenodo', value: 'zenodo' },
+        { label: 'gitlab', value: 'gitlab' },
+        { label: 'finngenGitbook', value: 'finngenGitbook' },
+        { label: 'pdf', value: 'pdf' },
+        { label: 'docx', value: 'docx' },
+        { label: 'clinicalTrial', value: 'clinicalTrial' },
+        { label: 'ega', value: 'ega' },
+        { label: 'zip', value: 'zip' },
+        { label: 'xlsx', value: 'xlsx' },
+        { label: 'csv', value: 'csv' },
+        { label: 'gtexPortal', value: 'gtexPortal' },
+        { label: 'proteinDataBank', value: 'proteinDataBank' },
+        { label: 'ebiAcUk', value: 'ebiAcUk' },
+        { label: 'gsea', value: 'gsea' },
+    ];
+
     return (
         <div className="flex flex-col gap-10 py-10 mmd:px-[10px] px-[120px]">
             <div className="flex flex-col gap-5 pb-10 border-b-2 border-gray-200 mmd:justify-center mmd:items-center ">
+            <div className="flex justify-between">
                 <div className="h-48 w-48 md:h-[120px] md:w-[120px] overflow-hidden border-2 border-gray-200 rounded-lg flex justify-center items-center bg-white">
                     <PublicationImage image={pub.image} />
                 </div>
+                <div className="flex items-center">
+                <Tooltip target=".info-icon" />
+                    <i 
+                    className="info-icon pi pi-flag p-[10px] rounded-[4px] hover:bg-gray-100 text-red-800" 
+                    data-pr-tooltip="Add missing information"
+                    data-pr-position="top"
+                    onClick={handleAddInfo}
+                    style={{ fontSize: '2.0rem' }}>
+                    </i>
+                </div>
+            </div>
+            <Dialog
+                visible={isModalVisible}
+                onHide={() => setIsModalVisible(false)}
+                onClick={e => e.stopPropagation()}
+                style={{ width: '700px', borderRadius: '15px', height: '600px' }}
+                modal
+                draggable={false}
+                position="bottom"
+                closable={false}
+            >
+                <div className="flex flex-col justify-center items-center gap-5">
+                    <div className="flex flex-col gap-1 w-full">
+                        <div className="flex justify-between items-center">
+                            <h2 className="text-headingLg text-black-900 text-left">Please select the supplementary data you wish to contribute</h2>
+                            <button
+                                className="p-[10px] rounded-[4px] hover:bg-gray-100 text-right"
+                                onClick={() => {
+                                    setIsModalVisible(false);
+                                    resetFields();
+                                    }}
+                            >
+                                <img
+                                    src="/images/assets/close-modal-icon.svg"
+                                    alt="close publication modal icon"
+                                    className="w-6"
+                                />
+                            </button>
+                        </div>
+                        <p className="text-bodySm text-red-800 w-full text-left">
+                            Note: A request will be sent to the Science Portal team. You will be notified regarding the outcome of your request.
+                        </p>
+                    </div>
+                    <MultiSelect
+                        value={selectedDataType} 
+                        options={inputTypes} 
+                        onChange={e => setSelectedDataType(e.value)} 
+                        placeholder="Select Data Type" 
+                        className="text-gray-700 w-full text-left border-2 border-visible"
+                        itemTemplate={(option) => <span  className="text-gray-700">{option.label}</span>}
+                    />
+                    
+                    {selectedDataType && selectedDataType.length > 0 ? (
+                        <Button 
+                            onClick={handleAddInput} 
+                            label='Add Data' 
+                            className='w-32 p-2 border-2 w-full text-left'
+                        />
+                    ) : null}
+                    
+                    {inputs.map((input, index) => (
+                    <div key={index}>
+                        <InputText 
+                            placeholder={`${input.type}`} 
+                            value={input.value} 
+                            onChange={e => handleInputChange(index, e.target.value)} 
+                            className="mr-4"
+                        />
+                        <i className="pi pi-trash p-[10px] rounded-[4px] hover:bg-gray-100" style={{ fontSize: '1.3rem' }} onClick={() => handleDeleteInput(index)}></i>
+                    </div>
+                    ))}
+                    
+                    <div className="flex flex-row justify-start w-full">
+                        {isAddDataClicked && selectedDataType && inputs.every(input => input.value.trim() !== '') && (
+                            <Button
+                                label={isSubmitting ? '' : 'Submit'}
+                                icon={isSubmitting ? 'pi pi-spin pi-spinner' : 'pi pi-arrow-left'}
+                                className="w-32 p-2 border-2 transition ease-out delay-150 hover:-translate-y-0.5 hover:scale-110 hover:text-bold duration-200"
+                                disabled={!selectedDataType}
+                            />
+                        )}
+                    </div>
+                </div>
+            </Dialog>
                 <div className="flex flex-col gap-2">
-                    <h1 className="md:text-headingMd text-heading2Xl font-semibold text-black-900 mmd:text-center">
+                    <h1 className="md:text-headingMd text-heading2Xl font-semibold text-cyan-900 mmd:text-center">
                         {pub.name}
                     </h1>
                     <p className="md:text-bodySm mmd:text-center font-light">{pub.authors}</p>
@@ -105,6 +269,12 @@ const PublicationModalContent: React.FC<{ pub: Pub }> = ({ pub }) => {
                     </a>
                 </div>
             </div>
+            {/* <div className="flex items-center">
+                    <i className="pi pi-flag p-[10px] rounded-[4px] hover:bg-gray-100 text-red-800" style={{ fontSize: '2.0rem' }}></i>
+                    <p className="text-bodySm text-red-800 ml-4">
+                        Add missing information
+                    </p>
+            </div> */}
             {codeLinks.length > 0 && renderLinkSection('Code', codeLinks)}
             {dataLinks.length > 0 && renderLinkSection('Data', dataLinks)}
             {containerLinks.length > 0 && renderLinkSection('Containers', containerLinks)}

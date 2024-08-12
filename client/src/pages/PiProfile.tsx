@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import Pub from '../interfaces/Pub';
 import { useNavigate } from 'react-router-dom';
 import { useMagic } from  '../hooks/magicProvider';
-import useWeb3 from  '../hooks/webProvider';
-import { Magic as MagicBase } from 'magic-sdk';
 
 const PiProfile: React.FC = () => {
     const { magic } = useMagic();
