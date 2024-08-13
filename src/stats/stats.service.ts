@@ -36,7 +36,7 @@ export class StatsService {
 			{ dbName: 'dryad', displayName: 'Dryad', type: 'Data' },
 			{ dbName: 'empiar', displayName: 'Empiar', type: 'Data' },
 			{ dbName: 'gigaDb', displayName: 'GigaScience Database (gigaDb)', type: 'Data' },
-			{ dbName: 'zenodo', displayName: 'Zenodo', type: 'Data' },
+			{ dbName: 'zenodo', displayName: 'Zenodo', type: 'Data' }, 
 			{ dbName: 'ega', displayName: 'European Genome-phenome Archive (EGA)', type: 'Data' },
 			{ dbName: 'xlsx', displayName: 'Excel Document (xlsx)', type: 'Data' },
 			{ dbName: 'csv', displayName: 'Comma Separated Values File (csv)', type: 'Data' },

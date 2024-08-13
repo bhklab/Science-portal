@@ -16,31 +16,31 @@ const Publication: React.FC = () => {
     const inputTypes = [
         { label: 'GitHub', value: 'GitHub' },
         { label: 'CodeOcean', value: 'codeOcean' },
-        { label: 'geo', value: 'geo' },
-        { label: 'dbGap', value: 'dbGap' },
-        { label: 'figshare', value: 'figshare' },
-        { label: 'kaggle', value: 'kaggle' },
-        { label: 'dryad', value: 'dryad' },
-        { label: 'empiar', value: 'empiar' },
-        { label: 'gigaDb', value: 'gigaDb' },
-        { label: 'dataverse', value: 'dataverse' },
+        { label: 'Gene Expression Omnibus (Geo)', value: 'geo' },
+        { label: 'Database of Genotypes and Phenotypes (dbGap)', value: 'dbGap' },
+        { label: 'Figshare', value: 'figshare' },
+        { label: 'Kaggle', value: 'kaggle' },
+        { label: 'Dryad', value: 'dryad' },
+        { label: 'Empiar', value: 'empiar' },
+        { label: 'GigaScience Database (gigaDb)', value: 'gigaDb' },
+        { label: 'Dataverse', value: 'dataverse' },
         { label: 'IEEE', value: 'IEEE' },
-        { label: 'mendeley', value: 'mendeley' },
-        { label: 'openScienceframework', value: 'openScienceframework' },
-        { label: 'zenodo', value: 'zenodo' },
-        { label: 'gitlab', value: 'gitlab' },
-        { label: 'finngenGitbook', value: 'finngenGitbook' },
-        { label: 'pdf', value: 'pdf' },
-        { label: 'docx', value: 'docx' },
-        { label: 'clinicalTrial', value: 'clinicalTrial' },
-        { label: 'ega', value: 'ega' },
-        { label: 'zip', value: 'zip' },
-        { label: 'xlsx', value: 'xlsx' },
-        { label: 'csv', value: 'csv' },
-        { label: 'gtexPortal', value: 'gtexPortal' },
-        { label: 'proteinDataBank', value: 'proteinDataBank' },
-        { label: 'ebiAcUk', value: 'ebiAcUk' },
-        { label: 'gsea', value: 'gsea' },
+        { label: 'Mendeley', value: 'mendeley' },
+        { label: 'Open Science Framework (OSF)', value: 'openScienceframework' },
+        { label: 'Zenodo', value: 'zenodo' },
+        { label: 'Gitlab', value: 'gitlab' },
+        { label: 'Finngen', value: 'finngenGitbook' },
+        { label: 'PDF', value: 'pdf' },
+        { label: 'Word Document (docx)', value: 'docx' },
+        { label: 'Clinical Trial Gov', value: 'clinicalTrial' },
+        { label: 'European Genome-phenome Archive (EGA)', value: 'ega' },
+        { label: 'Compressed Folder (zip)', value: 'zip' },
+        { label: 'Excel Document (xlsx)', value: 'xlsx' },
+        { label: 'Comma Separated Values File (csv)', value: 'csv' },
+        { label: 'Genotype-Tissue Expression (GTEx)', value: 'gtexPortal' },
+        { label: 'Protein Data Bank (PDB)', value: 'proteinDataBank' },
+        { label: 'EMBLs European Bioinformatics Institute', value: 'ebiAcUk' },
+        { label: 'Gene Set Enrichment Analysis (GSEA)', value: 'gsea' },
     ];
 
     const [selectedDataType, setSelectedDataType] = useState<string[]>([]);
@@ -84,10 +84,12 @@ const Publication: React.FC = () => {
         
         if (shouldOpenModal) {
             setIsModalVisible(true);
+            queryParams.delete('openAddDataModal');
+            window.history.replaceState({}, '', `${location.pathname}?${queryParams.toString()}`);
         } else {
             setIsModalVisible(false);
         }
-    }, [location.search]); 
+    }, [location.search, location.pathname]); 
 
     useEffect(() => {
         //Fetch publication based on DOI in the URL
