@@ -47,7 +47,15 @@ const ReusableModal: React.FC<ReusableModalProps> = ({ isVisible, onHide, pub })
         }
     };
 
+    const handleFlagClick = () => {
+        if (pub) {
+            const encodedDoi = encodeURIComponent(pub.doi);
+            window.open(`/publication/${encodedDoi}?openAddDataModal=true`, '_blank');
+        }
+    };
+
     const modalHeader = () => (
+        <>
         <div className="flex flex-row justify-between items-center align-middle">
             <button className="p-[10px] rounded-[4px] hover:bg-gray-100" onClick={handleExpandClick}>
                 <img src="/images/assets/expand-modal-icon.svg" alt="expand publication modal button" className="w-6" />
@@ -61,11 +69,12 @@ const ReusableModal: React.FC<ReusableModalProps> = ({ isVisible, onHide, pub })
                 </button>
             </div>
             <Toast ref={toast} baseZIndex={1000} position="bottom-right" />
-        </div>
+    </div>
+    </>
     );
 
     return (
-        <>
+        <div>
             <Dialog
                 visible={isVisible}
                 header={modalHeader}
@@ -76,9 +85,9 @@ const ReusableModal: React.FC<ReusableModalProps> = ({ isVisible, onHide, pub })
                 closable={false}
                 position="bottom"
             >
-                {pub && <PublicationModalContent pub={pub} />}
+                {pub && <PublicationModalContent pub={pub} onFlagClick={handleFlagClick} />}
             </Dialog>
-        </>
+        </div>
     );
 };
 
