@@ -1,99 +1,80 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMagic } from  '../hooks/magicProvider';
+import { useMagic } from '../hooks/magicProvider';
 
 const PiProfile: React.FC = () => {
     const { magic } = useMagic();
     const navigate = useNavigate();
-    
+
     useEffect(() => {
         const checkLoginTime = () => {
-          const loginTime = localStorage.getItem('loginTime');
-          if (loginTime) {
-            const currentTime = Date.now();
-            const oneMinute = 1 * 60 * 1000;
-    
-            if (currentTime - Number(loginTime) > oneMinute) {
-              if (magic) {
-                magic.user.logout().then(() => {
-                  navigate('/');
-                });
-              } else {
-                navigate('/');
-              }
+            const loginTime = localStorage.getItem('loginTime');
+            if (loginTime) {
+                const currentTime = Date.now();
+                const oneMinute = 1 * 60 * 100000000;
+
+                if (currentTime - Number(loginTime) > oneMinute) {
+                    if (magic) {
+                        magic.user.logout().then(() => {
+                            navigate('/');
+                        });
+                    } else {
+                        navigate('/');
+                    }
+                }
             }
-          }
         };
-    
+
         checkLoginTime();
-    
-        const intervalId = setInterval(checkLoginTime, 60 * 1000);
-    
+
+        const intervalId = setInterval(checkLoginTime, 60 * 1000000);
+
         return () => clearInterval(intervalId);
-      }, [magic, navigate]);
+    }, [magic, navigate]);
     return (
-        <div className="py-28 smd:px-4 px-[120px] min-h-screen flex flex-col gap-4">
-            <div className="flex flex-col gap-3 w-full mb-8">
-                <div className="flex flex-row gap-3 items-baseline">
-                    <h1 className="text-heading2Xl font-extrabold">Benjamin Haibe-Kains</h1>
-                    <h2 className="text-headingLg font-semibold">Senior Scientist</h2>
-                </div>
-                <div className="flex flex-row gap-2">
-                    <h3 className="text-headingMd font-semibold">Primary research institute:</h3>
-                    <h3 className="text-headingMd">Princess Margaret</h3>
-                </div>
-                <div className="flex flex-row gap-2">
-                    <h3 className="text-headingMd font-semibold">Email:</h3>
-                    <h3 className="text-headingMd">benjamin.haibe-kains@uhn.ca</h3>
-                </div>
-            </div>
-            <p className="text-bodySm font-semibold text-red-700">
-                Note: Only considering publications from 2022 onward within PM
-            </p>
-            <div className="flex flex-col justify-center items-center gap-8 bg-white rounded-lg p-8 smd:p-3 shadow-lg w-fit border-1 border-gray-200">
-                <div className="flex flex-row items-center smd:justify-center gap-8 flex-wrap">
-                    <div className="w-[300px] text-center">
-                        <h2 className="text-headingLg font-bold text-cyan-1000 mb-1">Total Publications</h2>
-                        <h3 className="text-headingSm font-semibold mb-4">44 publications</h3>
-                        <p className="text-bodySm">
-                            You are in the top 1% of released publications within Princess Margaret
-                        </p>
+        <div className="py-28 smd:px-4 px-[120px] min-h-screen">
+            <div className="flex flex-row gap-5">
+                <div className="flex flex-col">
+                    <div className="flex flex-col gap-5 mb-20">
+                        <div className="flex flex-col gap-2">
+                            <div className="h-[120px] w-[120px] rounded-[120px] overflow-clip">
+                                <img src="/images/PIs/benjamin-haibe-kains.jpg" alt="PI-image" />
+                            </div>
+                        </div>
+                        <div className="flex flex-col gap-2 text-black-900">
+                            <h2 className="text-heading2Xl font-semibold">Benjamin Haibe-Kains</h2>
+                            <p className="text-headingMd">Senior Scientist</p>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <div className="flex flex-row gap-2 items-center">
+                                <img src="/images/assets/briefcase-icon.svg" alt="briefcase-icon" />
+                                <p className="text-bodyMd">Princess Margaret Cancer Centre</p>
+                            </div>
+                            <div className="flex flex-row gap-2 items-center">
+                                <img src="/images/assets/mail-icon.svg" alt="mail-icon" />
+                                <p className="text-bodyMd">benjamin.haibe-kains@uhn.ca</p>
+                            </div>
+                            <div className="flex flex-row gap-2 items-center">
+                                <img src="/images/assets/globe-icon.svg" alt="globe-icon" />
+                                <a href="https://bhklab.ca" target="_blank">
+                                    <p className="text-bodyMd text-blue-600">Visit website</p>
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                    <div className="w-[300px] text-center">
-                        <h2 className="text-headingLg font-bold text-cyan-1000 mb-1">Total Citations</h2>
-                        <h3 className="text-headingSm font-semibold mb-4">500 citations</h3>
-                        <p className="text-bodySm">You are in the top 5% of publications within Princess Margaret</p>
+                    <div className="flex flex-row gap-5 text-black-900">
+                        <div className="flex flex-col gap-2">
+                            <h3 className="text-heading3Xl font-semibold">29</h3>
+                            <p className="text-bodyMd">Publications</p>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <h3 className="text-heading3Xl font-semibold">3102</h3>
+                            <p className="text-bodyMd">Citations</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div className="flex flex-row bg-white rounded-lg shadow-lg border-1 border-gray-200">
-                <div className="w-[300px] text-center border-x-1 border-gray-200 p-8 smd:p-3">
-                    <h2 className="text-headingLg font-bold text-cyan-1000 mb-1">Code Sharing</h2>
-                    <h3 className="text-headingSm font-semibold mb-4">Shared 500 pieces of code</h3>
-                    <p className="text-bodySm">You are in the top 1% of code sharing within your publications</p>
-                </div>
-                <div className="w-[300px] text-center border-r-1 border-gray-200 p-8 smd:p-3">
-                    <h2 className="text-headingLg font-bold text-cyan-1000 mb-1">Data Sharing</h2>
-                    <h3 className="text-headingSm font-semibold mb-4">Shared 500 pieces of data</h3>
-                    <p className="text-bodySm">You are in the top 1% of data sharing within your publications</p>
-                </div>
-                <div className="w-[300px] text-center border-r-1 border-gray-200 p-8 smd:p-3">
-                    <h2 className="text-headingLg font-bold text-cyan-1000 mb-1">Container Sharing</h2>
-                    <h3 className="text-headingSm font-semibold mb-4">Shared 5 containers</h3>
-                    <p className="text-bodySm">You are in the top 1% of container sharing within your publications</p>
-                </div>
-                <div className="w-[300px] text-center border-r-1 border-gray-200 p-8 smd:p-3">
-                    <h2 className="text-headingLg font-bold text-cyan-1000 mb-1">Clinical Trial Sharing</h2>
-                    <h3 className="text-headingSm font-semibold mb-4">Shared 10 clinical trials used</h3>
-                    <p className="text-bodySm">
-                        You are in the top 10% of clinical trial sharing within your publications
-                    </p>
-                </div>
-                <div className="w-[300px] text-center border-r-1 border-gray-200 p-8 smd:p-3">
-                    <h2 className="text-headingLg font-bold text-cyan-1000 mb-1">Results Sharing</h2>
-                    <h3 className="text-headingSm font-semibold mb-4">Shared 10 results</h3>
-                    <p className="text-bodySm">You are in the top 1% of result sharing within your publications</p>
-                </div>
+
+                <div className="flex flex-row gap-5"></div>
             </div>
         </div>
     );
