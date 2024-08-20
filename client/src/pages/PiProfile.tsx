@@ -6,6 +6,34 @@ const PiProfile: React.FC = () => {
     const { magic } = useMagic();
     const navigate = useNavigate();
 
+    const types = [
+        {
+            name: 'Code',
+            total: 524,
+            image: 'code-icon.svg'
+        },
+        {
+            name: 'Data Points',
+            total: 129,
+            image: 'data-icon.svg'
+        },
+        {
+            name: 'Containers',
+            total: 6,
+            image: 'containers-icon.svg'
+        },
+        {
+            name: 'Clinical Trials',
+            total: 24,
+            image: 'clinicaltrials-icon.svg'
+        },
+        {
+            name: 'Analysis Results',
+            total: 12,
+            image: 'results-icon.svg'
+        }
+    ];
+
     useEffect(() => {
         const checkLoginTime = () => {
             const loginTime = localStorage.getItem('loginTime');
@@ -32,10 +60,10 @@ const PiProfile: React.FC = () => {
         return () => clearInterval(intervalId);
     }, [magic, navigate]);
     return (
-        <div className="py-28 smd:px-4 px-[120px] min-h-screen">
-            <div className="flex flex-row gap-5">
-                <div className="flex flex-col">
-                    <div className="flex flex-col gap-5 mb-20">
+        <div className="py-28 smd:px-4 px-[120px] min-h-screen bg-white">
+            <div className="flex flex-row gap-5 flex-wrap justify-center">
+                <div className="flex flex-col min-w-[285px]">
+                    <div className="flex flex-col gap-5">
                         <div className="flex flex-col gap-2">
                             <div className="h-[120px] w-[120px] rounded-[120px] overflow-clip">
                                 <img src="/images/PIs/benjamin-haibe-kains.jpg" alt="PI-image" />
@@ -62,6 +90,7 @@ const PiProfile: React.FC = () => {
                             </div>
                         </div>
                     </div>
+                    <hr className="my-10 bg-gray-200 h-[1px]" />
                     <div className="flex flex-row gap-5 text-black-900">
                         <div className="flex flex-col gap-2">
                             <h3 className="text-heading3Xl font-semibold">29</h3>
@@ -73,8 +102,19 @@ const PiProfile: React.FC = () => {
                         </div>
                     </div>
                 </div>
-
-                <div className="flex flex-row gap-5"></div>
+                {types.map(type => (
+                    <div className="flex flex-row gap-5 flex-wrap">
+                        <div className="p-5 flex flex-row w-[440px]">
+                            <div className="flex flex-col">
+                                <div className="flex flex-row gap-1 items-center">
+                                    <img src={`/images/assets/${type.image}`} alt="container" />
+                                    <p className="text-headingXs font-semibold">{type.name}</p>
+                                </div>
+                                <h3 className="text-cyan-1100 text-headingXl">524 {type.name}</h3>
+                            </div>
+                        </div>
+                    </div>
+                ))}
             </div>
         </div>
     );

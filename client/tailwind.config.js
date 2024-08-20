@@ -18,7 +18,8 @@ module.exports = {
                     900: '#212121'
                 },
                 cyan: {
-                    1000: '#3BB6AC'
+                    1000: '#3BB6AC',
+                    1100: '#449891'
                 },
                 white: '#ffffff',
                 colors: '#edf3faff',
@@ -44,6 +45,7 @@ module.exports = {
                 headingLg: ['20px', '24px'],
                 headingMd: ['16px', '20px'],
                 headingSm: ['14px', '16px'],
+                headingXs: ['12px', '16px'],
                 bodyMd: ['14px', '20px'],
                 bodySm: ['12px', '16px']
             },
