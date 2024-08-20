@@ -10,27 +10,32 @@ const PiProfile: React.FC = () => {
         {
             name: 'Code',
             total: 524,
-            image: 'code-icon.svg'
+            image: 'code-icon.svg',
+            text: 'You are the top code snippet sharer on the Science Portal!'
         },
         {
             name: 'Data Points',
             total: 129,
-            image: 'data-icon.svg'
+            image: 'data-icon.svg',
+            text: 'You are in the top 10% of data point sharing in your publications.'
         },
         {
             name: 'Containers',
             total: 6,
-            image: 'containers-icon.svg'
+            image: 'containers-icon.svg',
+            text: 'You are in the 25th percentile of sharing containers in your publications.'
         },
         {
             name: 'Clinical Trials',
             total: 24,
-            image: 'clinicaltrials-icon.svg'
+            image: 'clinicaltrials-icon.svg',
+            text: 'You are in the top 80% of clinical trial sharing in your publications.'
         },
         {
             name: 'Analysis Results',
             total: 12,
-            image: 'results-icon.svg'
+            image: 'results-icon.svg',
+            text: 'You are in the top 10% of analysis results sharing in your publications.'
         }
     ];
 
@@ -60,8 +65,8 @@ const PiProfile: React.FC = () => {
         return () => clearInterval(intervalId);
     }, [magic, navigate]);
     return (
-        <div className="py-28 smd:px-4 px-[120px] min-h-screen bg-white">
-            <div className="flex flex-row gap-5 flex-wrap justify-center">
+        <div className="py-36 smd:px-4 px-[120px] min-h-screen bg-white">
+            <div className="flex flex-row gap-5 justify-center items-start">
                 <div className="flex flex-col min-w-[285px]">
                     <div className="flex flex-col gap-5">
                         <div className="flex flex-col gap-2">
@@ -102,19 +107,23 @@ const PiProfile: React.FC = () => {
                         </div>
                     </div>
                 </div>
-                {types.map(type => (
-                    <div className="flex flex-row gap-5 flex-wrap">
-                        <div className="p-5 flex flex-row w-[440px]">
+                <div className="flex flex-row gap-5 flex-wrap">
+                    {types.map(type => (
+                        <div className="flex flex-row gap-4 p-5 w-[440px] border-2 b-gray-200 rounded-lg">
                             <div className="flex flex-col">
-                                <div className="flex flex-row gap-1 items-center">
-                                    <img src={`/images/assets/${type.image}`} alt="container" />
+                                <div className="flex flex-row gap-1 items-center mb-1">
+                                    <img src={`/images/assets/${type.image}`} alt="supplementary type icon" />
                                     <p className="text-headingXs font-semibold">{type.name}</p>
                                 </div>
-                                <h3 className="text-cyan-1100 text-headingXl">524 {type.name}</h3>
+                                <h3 className="text-cyan-1100 text-headingXl mb-4">
+                                    {type.total} {type.name}
+                                </h3>
+                                <p className="text-bodySm">{type.text}</p>
                             </div>
+                            <img src="/images/placeholders/stats-triangle.svg" alt="" />
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
         </div>
     );
