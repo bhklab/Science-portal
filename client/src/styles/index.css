@@ -198,16 +198,20 @@ ul li a {
 }
 .p-dialog-bottom {
     top: 50% !important;
-    transform: translate(-50%, -50%) !important; /* Adjust to properly center the dialog */
+    transform: translate(-50%, -50%) !important; /* To center the dialog/modal popup */
     left: 50% !important;
 }
 
 .p-dialog-content.custom-dialog {
-    border-radius: 15px !important; /* Ensure overriding with !important */
+    border-radius: 15px !important;
+}
+
+.p-dialog-content{
+	padding: 0px !important;
 }
 
 .p-dialog-header {
-    padding: 20px 20px 0 20px !important;
+    padding: 10px 20px 10px 20px !important;
 }
 
 /* Adjusting PrimeReact dropdown label and items to have new font colours and weights */

@@ -8,6 +8,7 @@ import { useLocation } from 'react-router-dom';
 const Publication: React.FC = () => {
     const { doi } = useParams();
     const [pub, setPub] = useState<Pub | null>(null);
+    const [editMode, setEditMode] = useState<boolean>(false);
 
     useEffect(() => {
         //Fetch publication based on DOI in the URL
@@ -27,7 +28,7 @@ const Publication: React.FC = () => {
 
     return (
         <div className="pt-28 md:px-0 px-[120px] bg-white min-h-screen">
-            {pub && <PublicationModalContent pub={pub} />}
+            {pub && <PublicationModalContent pub={pub} editMode={editMode} setEditMode={setEditMode} />}
         </div>
     );
 };
