@@ -3,10 +3,16 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { PublicationDocument } from '../interfaces/publication.interface';
+import { PublicationChangesDocument } from '../interfaces/publication-changes.interface';
 
 @Injectable()
 export class PublicationService {
-    constructor(@InjectModel('Publication') private publicationModel: Model<PublicationDocument>) {}
+	constructor(
+	  @InjectModel('Publication') private publicationModel: Model<PublicationDocument>,
+	  @InjectModel('PublicationChanges') private publicationChangesModel: Model<PublicationChangesDocument>,
+	  @InjectModel('PublicationsNew') private readonly publicationsNewModel: Model<PublicationDocument>,
+	) {}
+	
 
 	//Get select publications based on criteria
     async findSelectPublications(total: number, sort: string, lab: string, name: string): Promise<PublicationDocument[]> {
@@ -74,5 +80,15 @@ export class PublicationService {
             throw new Error(`Error fetching publication by DOI: ${error}`);
         }
     }
+
+	async savePublicationChanges(pub: PublicationChangesDocument): Promise<PublicationChangesDocument> {
+		const newChange = new this.publicationChangesModel(pub);
+		return await newChange.save();
+	}
+
+	async createPublication(newPub: PublicationDocument): Promise<PublicationDocument> {
+		const createdPublication = new this.publicationsNewModel(newPub);
+		return await createdPublication.save();
+	}
 	
 }

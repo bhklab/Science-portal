@@ -2,11 +2,14 @@ import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
+import { Tooltip } from 'primereact/tooltip';
+import { Dialog } from 'primereact/dialog';
 import { CardView } from '../components/CardView/CardView';
 import { ListView } from '../components/ListView/ListView';
 import { Sidebar } from 'primereact/sidebar';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import Pub from '../interfaces/Pub';
+import NewPublicationModal from '../components/NewPublicationModal/NewPublicationModal';
 
 interface Option {
     name: string;
@@ -78,6 +81,49 @@ const Home: React.FC = () => {
     const [labStats, setLabStats] = useState<stats>({
         publications: 0,
         citations: 0
+    });
+
+    // State of new publication modal
+    const [newPublicationVisible, setNewPublicationVisible] = useState(false);
+    const [newPub, setNewPub] = useState<Pub>({
+        doi: '',
+        name: '',
+        journal: '',
+        type: 'Journal Article',
+        authors: '',
+        filteredAuthors: '',
+        affiliations: '',
+        citations: 0,
+        status: 'Published',
+        supplementary: {
+            github: '',
+            codeOcean: '',
+            geo: '',
+            dbGap: '',
+            figshare: '',
+            kaggle: '',
+            dryad: '',
+            empiar: '',
+            gigaDb: '',
+            dataverse: '',
+            IEEE: '',
+            mendeley: '',
+            openScienceframework: '',
+            zenodo: '',
+            gitlab: '',
+            finngenGitbook: '',
+            pdf: '',
+            docx: '',
+            clinicalTrial: '',
+            ega: '',
+            zip: '',
+            xlsx: '',
+            csv: '',
+            gtexPortal: '',
+            proteinDataBank: '',
+            ebiAcUk: '',
+            gsea: ''
+        }
     });
 
     // Fetch publications and stats on load and when filters change
@@ -168,6 +214,27 @@ const Home: React.FC = () => {
         };
         getAuthors();
     }, []);
+
+    const handleNewPublicationSubmit = async (formattedPub: Pub) => {
+        try {
+            await axios.post('/api/publications/new', formattedPub);
+            setNewPublicationVisible(false);
+            setNewPub({
+                doi: '',
+                name: '',
+                journal: '',
+                type: 'Journal Article',
+                authors: '',
+                filteredAuthors: '',
+                affiliations: '',
+                citations: 0,
+                status: 'Published',
+                supplementary: {}
+            });
+        } catch (error) {
+            console.error('Error submitting new publication:', error);
+        }
+    };
 
     return (
         <>
@@ -263,7 +330,17 @@ const Home: React.FC = () => {
                         <div className="flex flex-row justify-between items-center w-full">
                             <span className="">Showing {publications?.length} publications</span>
                             {cardView ? (
-                                <div className="flex flex-row gap-2">
+                                <div className="flex flex-row gap-2 justify-center items-center">
+                                    <Tooltip target=".new-pub" />
+                                    <img
+                                        src="/images/assets/plus-icon.png"
+                                        className="cursor-pointer new-pub w-4 h-4"
+                                        data-pr-tooltip="Request a new entry"
+                                        data-pr-position="left"
+                                        style={{ fontSize: '2.0rem', marginRight: '10px' }}
+                                        onClick={() => setNewPublicationVisible(true)}
+                                        alt="create new publication"
+                                    />
                                     <button onClick={() => setCardView(true)} className="hover:bg-gray-200">
                                         <img src="/images/assets/card-view-active-icon.svg" alt="card-view-active" />
                                     </button>
@@ -282,6 +359,18 @@ const Home: React.FC = () => {
                                 </div>
                             )}
                         </div>
+                        <Dialog
+                            visible={newPublicationVisible}
+                            header="Create New Publication"
+                            onHide={() => setNewPublicationVisible(false)}
+                            style={{ width: '800px' }}
+                        >
+                            <NewPublicationModal
+                                pub={newPub}
+                                setPub={setNewPub}
+                                handleSubmit={handleNewPublicationSubmit}
+                            />
+                        </Dialog>
                     </div>
                     {loaded && publications ? (
                         cardView ? (

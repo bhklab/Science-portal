@@ -1,21 +1,21 @@
 export default interface Pub {
-    _id: {
+    _id?: {
         $oid: string;
     };
-    PMID: number;
+    PMID?: number;
     doi: string;
-    date: string;
+    date?: string;
     name: string;
-    journal: string;
-    type: string;
-    authors: string;
+    journal?: string;
+    type?: string;
+    authors?: string;
     filteredAuthors?: string;
-    affiliations: string;
-    citations: number;
+    affiliations?: string;
+    citations?: number;
     dateAdded?: string;
     publisher?: string;
-    status: string;
-    image: string;
+    status?: string;
+    image?: string;
     supplementary: {
         github?: string;
         codeOcean?: string;

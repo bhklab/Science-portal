@@ -11,30 +11,35 @@ const PiProfile: React.FC = () => {
             name: 'Code',
             total: 524,
             image: 'code-icon.svg',
+            pyramid: 'pyramid-1.png',
             text: 'You are the top code snippet sharer on the Science Portal!'
         },
         {
             name: 'Data Points',
             total: 129,
             image: 'data-icon.svg',
+            pyramid: 'pyramid-2.png',
             text: 'You are in the top 10% of data point sharing in your publications.'
         },
         {
             name: 'Containers',
             total: 6,
             image: 'containers-icon.svg',
+            pyramid: 'pyramid-3.png',
             text: 'You are in the 25th percentile of sharing containers in your publications.'
         },
         {
             name: 'Clinical Trials',
             total: 24,
             image: 'clinicaltrials-icon.svg',
+            pyramid: 'pyramid-4.png',
             text: 'You are in the top 80% of clinical trial sharing in your publications.'
         },
         {
             name: 'Analysis Results',
             total: 12,
             image: 'results-icon.svg',
+            pyramid: 'pyramid-5.png',
             text: 'You are in the top 10% of analysis results sharing in your publications.'
         }
     ];
@@ -120,7 +125,13 @@ const PiProfile: React.FC = () => {
                                 </h3>
                                 <p className="text-bodySm">{type.text}</p>
                             </div>
-                            <img src="/images/placeholders/stats-triangle.svg" alt="" />
+                            <div className="flex items-center justify-center h-[100px] w-[100px] overflow-visible">
+                                <img
+                                    src={`/images/placeholders/${type.pyramid}`}
+                                    alt="pyramids"
+                                    className="object-contain overflow-visible relative"
+                                />
+                            </div>
                         </div>
                     ))}
                 </div>

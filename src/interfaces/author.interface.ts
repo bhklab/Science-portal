@@ -1,4 +1,3 @@
-// publication.interface.ts or within your publication.schema.ts
 import { Document } from 'mongoose';
 
 export interface AuthorDocument extends Document {

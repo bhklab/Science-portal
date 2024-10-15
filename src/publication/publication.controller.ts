@@ -1,5 +1,7 @@
 import { Controller, Get, Body, HttpException, HttpStatus, Param, Post } from '@nestjs/common';
 import { PublicationService } from './publication.service';
+import { PublicationDocument } from 'src/interfaces/publication.interface';
+import { PublicationChangesDocument } from '../interfaces/publication-changes.interface';
 
 @Controller('publications')
 export class PublicationController {
@@ -30,4 +32,27 @@ export class PublicationController {
             throw new HttpException(`Error retrieving publication: ${error}`, HttpStatus.NOT_FOUND);
         }
     }
+
+	@Post('changes')
+	async savePublicationChanges(@Body() pub: PublicationChangesDocument) {
+	  console.log('Received Publication Changes:', pub); // Log the incoming data for debugging
+	  try {
+		return await this.publicationService.savePublicationChanges(pub);
+	  } catch (error) {
+		console.error('Error saving publication changes:', error); // Log the error for more details
+		throw new HttpException(`Error saving publication: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
+	  }
+	}
+
+
+	@Post('new')
+	async createPublication(@Body() newPub: PublicationDocument) {
+		console.log(newPub);
+	  try {
+		const createdPublication = await this.publicationService.createPublication(newPub);
+		return createdPublication;
+	  } catch (error) {
+		throw new HttpException(`Error creating publication: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
+	  }
+	}
 }

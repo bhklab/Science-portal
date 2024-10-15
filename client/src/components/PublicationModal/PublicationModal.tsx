@@ -47,30 +47,31 @@ const ReusableModal: React.FC<ReusableModalProps> = ({ isVisible, onHide, pub })
         }
     };
 
-    const handleFlagClick = () => {
-        if (pub) {
-            const encodedDoi = encodeURIComponent(pub.doi);
-            window.open(`/publication/${encodedDoi}?openAddDataModal=true`, '_blank');
-        }
-    };
-
     const modalHeader = () => (
         <>
-        <div className="flex flex-row justify-between items-center align-middle">
-            <button className="p-[10px] rounded-[4px] hover:bg-gray-100" onClick={handleExpandClick}>
-                <img src="/images/assets/expand-modal-icon.svg" alt="expand publication modal button" className="w-6" />
-            </button>
-            <div className="flex flex-row items-center gap-2">
-                <button className="p-[10px] rounded-[4px] hover:bg-gray-100" onClick={handleCopyDoi}>
-                    <img src="/images/assets/copy-doi-icon.svg" alt="copy doi button" className="w-6" />
+            <div className="flex flex-row justify-between items-center align-middle">
+                <button className="p-[10px] rounded-[4px] hover:bg-gray-100" onClick={handleExpandClick}>
+                    <img
+                        src="/images/assets/expand-modal-icon.svg"
+                        alt="expand publication modal button"
+                        className="w-6"
+                    />
                 </button>
-                <button className="p-[10px] rounded-[4px] hover:bg-gray-100" onClick={onHide}>
-                    <img src="/images/assets/close-modal-icon.svg" alt="close publication modal icon" className="w-6" />
-                </button>
+                <div className="flex flex-row items-center gap-2">
+                    <button className="p-[10px] rounded-[4px] hover:bg-gray-100" onClick={handleCopyDoi}>
+                        <img src="/images/assets/copy-doi-icon.svg" alt="copy doi button" className="w-6" />
+                    </button>
+                    <button className="p-[10px] rounded-[4px] hover:bg-gray-100" onClick={onHide}>
+                        <img
+                            src="/images/assets/close-modal-icon.svg"
+                            alt="close publication modal icon"
+                            className="w-6"
+                        />
+                    </button>
+                </div>
+                <Toast ref={toast} baseZIndex={1000} position="bottom-right" />
             </div>
-            <Toast ref={toast} baseZIndex={1000} position="bottom-right" />
-    </div>
-    </>
+        </>
     );
 
     return (
@@ -85,7 +86,7 @@ const ReusableModal: React.FC<ReusableModalProps> = ({ isVisible, onHide, pub })
                 closable={false}
                 position="bottom"
             >
-                {pub && <PublicationModalContent pub={pub} onFlagClick={handleFlagClick} />}
+                {pub && <PublicationModalContent pub={pub} />}
             </Dialog>
         </div>
     );
