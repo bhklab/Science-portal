@@ -56,7 +56,7 @@ const options = {
             stacked: true,
             title: {
                 display: true,
-                text: '# of Links'
+                text: 'Supplementary Data'
             }
         }
     }

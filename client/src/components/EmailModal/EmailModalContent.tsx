@@ -12,17 +12,21 @@ interface ModalContentProps {
     onHide: () => void;
 }
 
-const EmailModalContent: React.FC<ModalContentProps> = ({ selectedAuthor, setEmail, handleLogin, isSubmitting, email, onHide }) => {
+const EmailModalContent: React.FC<ModalContentProps> = ({
+    selectedAuthor,
+    setEmail,
+    handleLogin,
+    isSubmitting,
+    email,
+    onHide
+}) => {
     const messages = useRef<Messages>(null);
     return (
-        <div className="flex flex-col justify-center items-center gap-5">
+        <div className="flex flex-col justify-center items-center gap-5 px-12">
             <div className="flex flex-col gap-1 w-full">
                 <div className="flex justify-between items-center">
                     <h2 className="text-headingLg text-black-900 text-left">{`Hello ${selectedAuthor?.firstName}, please enter your institution email so we can verify it's you`}</h2>
-                    <button
-                        className="p-[10px] rounded-[4px] hover:bg-gray-100 text-right"
-                        onClick={onHide}
-                    >
+                    <button className="p-[10px] rounded-[4px] hover:bg-gray-100 text-right" onClick={onHide}>
                         <img
                             src="/images/assets/close-modal-icon.svg"
                             alt="close publication modal icon"
@@ -31,8 +35,8 @@ const EmailModalContent: React.FC<ModalContentProps> = ({ selectedAuthor, setEma
                     </button>
                 </div>
                 <p className="text-bodySm text-red-800 w-full text-left">
-                    Note: You will recieve a one time code to your institution email to temporarily view your
-                    personal science portal analytics
+                    Note: You will recieve a one time code to your institution email to temporarily view your personal
+                    science portal analytics
                 </p>
             </div>
             <InputText

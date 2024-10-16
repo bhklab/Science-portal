@@ -1,10 +1,8 @@
-export default interface Pub {
+export default interface BlankPub {
     _id?: {
         $oid: string;
     };
-    PMID: number;
     doi: string;
-    date: string;
     name: string;
     journal: string;
     type: string;
@@ -12,10 +10,8 @@ export default interface Pub {
     filteredAuthors: string;
     affiliations: string;
     citations: number;
-    dateAdded: string;
-    publisher: string;
     status: string;
-    image: string;
+    publisher: string;
     supplementary: {
         github?: string;
         codeOcean?: string;

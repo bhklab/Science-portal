@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import Pub from '../../interfaces/Pub';
+import BlankPub from '../../interfaces/BlankPub';
 import { Message } from 'primereact/message';
 
 interface NewPublicationModalProps {
-    pub: Pub;
-    setPub: React.Dispatch<React.SetStateAction<Pub>>;
-    handleSubmit: (formattedPub: Pub) => void; // Accept the formatted pub object
+    pub: BlankPub;
+    setPub: React.Dispatch<React.SetStateAction<BlankPub>>;
+    handleSubmit: (formattedPub: BlankPub) => void;
 }
 
 const LINK_CATEGORIES = {
@@ -174,7 +174,7 @@ const NewPublicationModal: React.FC<NewPublicationModalProps> = ({ pub, setPub, 
                                 <div className="flex justify-between items-center">
                                     <p className="capitalize">{key.display}</p>
                                     <img
-                                        src="/images/assets/plus-icon.png"
+                                        src="/images/assets/plus-icon.svg"
                                         onClick={() => addNewLink(key.name)}
                                         className="cursor-pointer mr-[2px]"
                                         alt={`Add ${key.display}`}

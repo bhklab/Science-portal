@@ -9,6 +9,7 @@ import { ListView } from '../components/ListView/ListView';
 import { Sidebar } from 'primereact/sidebar';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import Pub from '../interfaces/Pub';
+import BlankPub from '../interfaces/BlankPub';
 import NewPublicationModal from '../components/NewPublicationModal/NewPublicationModal';
 
 interface Option {
@@ -85,7 +86,7 @@ const Home: React.FC = () => {
 
     // State of new publication modal
     const [newPublicationVisible, setNewPublicationVisible] = useState(false);
-    const [newPub, setNewPub] = useState<Pub>({
+    const [newPub, setNewPub] = useState<BlankPub>({
         doi: '',
         name: '',
         journal: '',
@@ -95,6 +96,7 @@ const Home: React.FC = () => {
         affiliations: '',
         citations: 0,
         status: 'Published',
+        publisher: '',
         supplementary: {
             github: '',
             codeOcean: '',
@@ -215,7 +217,7 @@ const Home: React.FC = () => {
         getAuthors();
     }, []);
 
-    const handleNewPublicationSubmit = async (formattedPub: Pub) => {
+    const handleNewPublicationSubmit = async (formattedPub: BlankPub) => {
         try {
             await axios.post('/api/publications/new', formattedPub);
             setNewPublicationVisible(false);
@@ -229,6 +231,7 @@ const Home: React.FC = () => {
                 affiliations: '',
                 citations: 0,
                 status: 'Published',
+                publisher: '',
                 supplementary: {}
             });
         } catch (error) {
@@ -333,11 +336,11 @@ const Home: React.FC = () => {
                                 <div className="flex flex-row gap-2 justify-center items-center">
                                     <Tooltip target=".new-pub" />
                                     <img
-                                        src="/images/assets/plus-icon.png"
-                                        className="cursor-pointer new-pub w-4 h-4"
+                                        src="/images/assets/plus-icon.svg"
+                                        className="cursor-pointer new-pub hover:bg-gray-200 p-2 rounded-md"
                                         data-pr-tooltip="Request a new entry"
                                         data-pr-position="left"
-                                        style={{ fontSize: '2.0rem', marginRight: '10px' }}
+                                        style={{ fontSize: '2.0rem' }}
                                         onClick={() => setNewPublicationVisible(true)}
                                         alt="create new publication"
                                     />
@@ -349,7 +352,17 @@ const Home: React.FC = () => {
                                     </button>
                                 </div>
                             ) : (
-                                <div className="flex flex-row gap-2">
+                                <div className="flex flex-row gap-2 justify-center items-center">
+                                    <Tooltip target=".new-pub" />
+                                    <img
+                                        src="/images/assets/plus-icon.svg"
+                                        className="cursor-pointer new-pub hover:bg-gray-200 p-3 p"
+                                        data-pr-tooltip="Request a new entry"
+                                        data-pr-position="left"
+                                        style={{ fontSize: '2.0rem' }}
+                                        onClick={() => setNewPublicationVisible(true)}
+                                        alt="create new publication"
+                                    />
                                     <button onClick={() => setCardView(true)} className="hover:bg-gray-200">
                                         <img src="/images/assets/card-view-icon.svg" alt="card-view" />
                                     </button>

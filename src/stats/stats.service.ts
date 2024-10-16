@@ -72,9 +72,6 @@ export class StatsService {
             // Filter publications for those with dates from 2022 onwards
             const filteredPublications = publications.filter(pub => new Date(pub.date) >= new Date('2022-01-02'));
     
-            // Logging filtered publications to ensure data is being filtered correctly
-            console.log('Filtered Publications:', filteredPublications.length);
-    
             const yearData = {};
     
             filteredPublications.forEach(pub => {
@@ -92,7 +89,7 @@ export class StatsService {
             });
     
             // Logging yearData to see the processed data
-            console.log('Year Data:', JSON.stringify(yearData, null, 2));
+            // console.log('Year Data:', JSON.stringify(yearData, null, 2));
     
             const labels = Object.keys(yearData).sort();
             const uniqueTypes = [...new Set(supplementary.map(({ type }) => type))];
@@ -107,7 +104,7 @@ export class StatsService {
                 };
             });
     
-            console.log(JSON.stringify({ labels, datasets }, null, 1));
+            // console.log(JSON.stringify({ labels, datasets }, null, 1));
     
             return { labels, datasets };
         } catch (error) {
