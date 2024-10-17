@@ -52,7 +52,8 @@ module.exports = {
                 headingSm: ['14px', '16px'],
                 headingXs: ['12px', '16px'],
                 bodyMd: ['14px', '20px'],
-                bodySm: ['12px', '16px']
+                bodySm: ['12px', '16px'],
+                bodyXs: ['11px', '14px']
             },
             boxShadow: {
                 card: '0px 2px 1px 0px #0000000d',
