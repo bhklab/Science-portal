@@ -3,10 +3,18 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { StatsDocument } from '../interfaces/stats.interface';
+import { AuthorDocument } from '../interfaces/author.interface';
+import { PublicationDocument } from '../interfaces/publication.interface';
+import { AuthorStats } from '../interfaces/author-stats.interface'; // Import the interface
 
 @Injectable()
 export class StatsService {
-    constructor(@InjectModel('Stats') private statsModel: Model<StatsDocument>){}
+    constructor(
+		@InjectModel('Stats') private statsModel: Model<StatsDocument>,
+		@InjectModel('Author') private authorModel: Model<AuthorDocument>,
+		@InjectModel('Publication') private publicationModel: Model<PublicationDocument>
+	){}
+	
 
 	async findLabStats(lab: string) {
 		const query = {
@@ -111,6 +119,160 @@ export class StatsService {
             throw new Error(`Error fetching supplementary stats: ${error}`);
         }
 	}
-		
+
+	async findPublicationsByAuthor(enid: string | number) {
+		try {
+			// Convert enid to a number
+			const enidNumber = Number(enid);
+	
+			const allAuthors = await this.authorModel.find({});
+	
+			const LINK_CATEGORIES = {
+				code: ['github', 'gitlab'],
+				data: ['geo', 'dbGap', 'kaggle', 'dryad', 'empiar', 'gigaDb', 'zenodo', 'ega', 'xlsx', 'csv', 'proteinDataBank'],
+				containers: ['codeOcean', 'colab'],
+				results: ['gsea', 'figshare'],
+				trials: ['clinicalTrial'],
+				miscellaneous: ['IEEE', 'pdf', 'docx', 'zip']
+			};
+	
+
+			const authorStatsMap: { [key: number]: Omit<AuthorStats, '_id'> } = {};
+			const categoryRankings: { [key: string]: [number, Omit<AuthorStats, '_id'>][] } = {};
+
+			// Initialize total contributions by category
+			const totalCategoryContributions = {
+				code: 0,
+				data: 0,
+				containers: 0,
+				results: 0,
+				trials: 0,
+				miscellaneous: 0
+			};
+	
+			let totalPublicationsForAuthor = 0;
+			let totalPublicationsForSystem = 0;
+			let authorEmail = '';
+	
+			// Calculate contributions for all authors
+			for (const author of allAuthors) {
+				const namePattern = `${author.lastName}, ${author.firstName}`;
+	
+				// Find publications for each author
+				const publications = await this.publicationModel.find({
+					filteredAuthors: { $regex: new RegExp(namePattern, 'i') }
+				});
+	
+				// Track the total number of publications for the specific author and store email
+				if (author.ENID === enidNumber) {
+					totalPublicationsForAuthor = publications.length;
+					authorEmail = author.email; // Store the author's email
+				}
+	
+				// Update the total number of publications for the system
+				totalPublicationsForSystem += publications.length;
+	
+				// Initialize stats for this author as a plain object
+				authorStatsMap[author.ENID] = {
+					name: `${author.firstName} ${author.lastName}`,
+					totalValidLinks: 0,
+					citations: 0,
+					categoryContributions: {
+						code: 0,
+						data: 0,
+						containers: 0,
+						results: 0,
+						trials: 0,
+						miscellaneous: 0
+					}
+				};
+	
+				// Calculate contributions and citations for each author
+				publications.forEach(pub => {
+					Object.keys(pub.supplementary).forEach(key => {
+						if (pub.supplementary[key] && pub.supplementary[key] !== "") {
+							const links = pub.supplementary[key].split(',').map(link => link.trim()).length;
+	
+							// Update author's stats
+							authorStatsMap[author.ENID].totalValidLinks += links;
+	
+							// Update total category contributions
+							for (const [category, keys] of Object.entries(LINK_CATEGORIES)) {
+								if (keys.includes(key)) {
+									authorStatsMap[author.ENID].categoryContributions[category] += links;
+									totalCategoryContributions[category] += links;
+								}
+							}
+						}
+					});
+	
+					// Sum citations
+					authorStatsMap[author.ENID].citations += pub.citations || 0;
+				});
+			}
+	
+			// Calculate the rankings for each category
+			Object.keys(LINK_CATEGORIES).forEach(category => {
+				const sortedAuthors: [number, Omit<AuthorStats, '_id'>][] = Object.entries(authorStatsMap)
+					.map(([authorIdStr, stats]) => [Number(authorIdStr), stats as Omit<AuthorStats, '_id'>] as [number, Omit<AuthorStats, '_id'>])
+					.sort(([, a], [, b]) => b.categoryContributions[category] - a.categoryContributions[category]);
+				categoryRankings[category] = sortedAuthors;
+			});
+	
+			// Find the specific author by their ENID
+			const authorStats = authorStatsMap[enidNumber];
+			if (!authorStats) {
+				throw new Error('Author not found');
+			}
+	
+			// Prepare a ranking object to return
+			const rankings = {};
+	
+			// Calculate the rank and percentage for the specific author
+			const categoryStats = {};
+			Object.keys(LINK_CATEGORIES).forEach(category => {
+				const sortedAuthors = categoryRankings[category];
+				const authorRank = sortedAuthors.findIndex(([authorId]) => authorId === enidNumber) + 1;
+				const totalAuthors = sortedAuthors.length;
+	
+				// Rounding percentage to whole number
+				const rankPercentage = Math.ceil((authorRank / totalAuthors) * 100);
+	
+				categoryStats[category] = {
+					total: totalCategoryContributions[category],
+					authorContributions: authorStats.categoryContributions[category],
+					rank: authorRank,
+					percentage: rankPercentage
+				};
+	
+				// Store the rank of the author in each category
+				rankings[category] = {
+					rank: authorRank,
+					totalAuthors,
+					rankPercentage
+				};
+			});
+	
+			return {
+				author: authorStats.name,
+				authorEmail,
+				totalValidLinks: authorStats.totalValidLinks,
+				totalCitations: authorStats.citations,
+				categoryStats,
+				rankings,
+				totalPublications: totalPublicationsForAuthor,
+				totalSystemPublications: totalPublicationsForSystem
+			};
+	
+		} catch (error) {
+			if (error instanceof Error) {
+				throw new Error(`Error fetching publications for author: ${error.message}`);
+			} else {
+				throw new Error('Unknown error occurred');
+			}
+		}
+	}
+	
+	
 	
 }

@@ -1,10 +1,11 @@
 import { Schema } from 'mongoose';
 
 export const AuthorSchema = new Schema({
-  	lastName: String,
-  	firstName: String,
-  	primaryResearchInstitute: String,
-  	primaryAppointment: String,
-  	email: String,
+    ENID: { type: Number, required: true },
+    lastName: { type: String, required: true },
+    firstName: { type: String, required: true },
+    primaryResearchInstitute: { type: String },
+    primaryAppointment: { type: String },
+    email: { type: String },
 }, { collection: 'authors' });
 

@@ -24,4 +24,14 @@ export class StatsController {
             throw new HttpException(`Error retrieving publications: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+	@Get('author/:enid')
+    async getAuthorStats(@Param('enid') enid: number) {
+        try {
+            const authorStats = await this.StatsService.findPublicationsByAuthor(enid);
+            return authorStats;
+        } catch (error) {
+            throw new HttpException(`Error retrieving PI stats: ${error}`, HttpStatus.NOT_FOUND);
+        }
+    }
 }
