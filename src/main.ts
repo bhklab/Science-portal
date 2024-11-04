@@ -5,9 +5,9 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.setGlobalPrefix('api');
-  await app.listen(process.env.PORT || 2000);
-  console.log("The back-end is running at https://localhost:" + process.env.PORT);
+	const app = await NestFactory.create<NestExpressApplication>(AppModule);
+	app.setGlobalPrefix('api');
+	await app.listen(process.env.PORT || 2000);
+	console.log("The back-end is running at http://localhost:" + process.env.PORT);
 }
 bootstrap();

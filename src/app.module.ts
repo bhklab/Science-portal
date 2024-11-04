@@ -7,16 +7,18 @@ import { PublicationModule } from './publication/publication.module';
 import { AuthorModule } from './author/author.module';
 import { StatsModule } from './stats/stats.module';
 import { EmailModule } from './emails/email.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [
-	MongooseModule.forRoot(process.env.MONGODB_URL),
-	PublicationModule,
-	AuthorModule,
-	StatsModule,
-  EmailModule,
-  ],
-  controllers: [AppController],
-  providers: [AppService],
+  	imports: [
+		MongooseModule.forRoot(process.env.MONGODB_URL),
+		PublicationModule,
+		AuthorModule,
+		StatsModule,
+		EmailModule,
+		AuthModule
+  	],
+  	controllers: [AppController],
+  	providers: [AppService],
 })
 export class AppModule {}

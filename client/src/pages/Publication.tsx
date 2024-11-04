@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Pub from '../interfaces/Pub';
 import PublicationModalContent from '../components/PublicationModal/PublicationModalContent';
-import { useLocation } from 'react-router-dom';
 
 const Publication: React.FC = () => {
     const { doi } = useParams();

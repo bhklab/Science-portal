@@ -65,20 +65,19 @@ export class StatsService {
 		];
 	
 		const colors = [
-			{ barColour: 'rgba(255,99,132,0.5)', borderColour: 'rgba(255,99,132,1)' },
-			{ barColour: 'rgba(54,162,235,0.5)', borderColour: 'rgba(54,162,235,1)' },
-			{ barColour: 'rgba(75,192,192,0.5)', borderColour: 'rgba(75,192,192,1)' },
-			// { barColour: 'rgba(220, 20, 60, 0.5)', borderColour: 'rgba(220, 20, 60, 1)' },
-			{ barColour: 'rgba(239, 146, 52, 0.5)', borderColour: 'rgba(239, 146, 52, 1)' },
-			{ barColour: 'rgba(148, 103, 189, 0.5)', borderColour: 'rgba(148, 103, 189, 1)' },
-			{ barColour: 'rgba(124, 252, 0, 0.5)', borderColour: 'rgba(124, 252, 0, 1)' }
+			{ barColour: 'rgba(127, 97, 219, 1)', borderColour: 'rgba(127, 97, 219, 1)' },
+			{ barColour: 'rgba(89, 113, 203, 1)', borderColour: 'rgba(89, 113, 203, 1)' },
+			{ barColour: 'rgba(89, 170, 106, 1)', borderColour: 'rgba(89, 170, 106, 1)' },
+			{ barColour: 'rgba(242, 172, 60, 1)', borderColour: 'rgba(242, 172, 60, 1)' },
+			{ barColour: 'rgba(203, 93, 56, 1)', borderColour: 'rgba(203, 93, 56, 1)' },
+			{ barColour: 'rgba(68, 152, 145, 1)', borderColour: 'rgba(68, 152, 145, 1)' }
 		];
 	
 		try {
             const publications = await this.statsModel.find({});
             
-            // Filter publications for those with dates from 2022 onwards
-            const filteredPublications = publications.filter(pub => new Date(pub.date) >= new Date('2022-01-02'));
+            // Filter publications for those with dates from 2018 onwards
+            const filteredPublications = publications.filter(pub => new Date(pub.date) >= new Date('2018-01-02'));
     
             const yearData = {};
     
@@ -108,7 +107,8 @@ export class StatsService {
                     data: labels.map(year => yearData[year][type]),
                     backgroundColor: colors[colorIndex].barColour,
                     borderColor: colors[colorIndex].borderColour,
-                    borderWidth: 1
+                    borderWidth: 0,
+					maxBarThickness: 100
                 };
             });
     
@@ -122,9 +122,7 @@ export class StatsService {
 
 	async findPublicationsByAuthor(enid: string | number) {
 		try {
-			// Convert enid to a number
 			const enidNumber = Number(enid);
-	
 			const allAuthors = await this.authorModel.find({});
 	
 			const LINK_CATEGORIES = {
@@ -136,11 +134,9 @@ export class StatsService {
 				miscellaneous: ['IEEE', 'pdf', 'docx', 'zip']
 			};
 	
-
 			const authorStatsMap: { [key: number]: Omit<AuthorStats, '_id'> } = {};
 			const categoryRankings: { [key: string]: [number, Omit<AuthorStats, '_id'>][] } = {};
-
-			// Initialize total contributions by category
+	
 			const totalCategoryContributions = {
 				code: 0,
 				data: 0,
@@ -154,25 +150,19 @@ export class StatsService {
 			let totalPublicationsForSystem = 0;
 			let authorEmail = '';
 	
-			// Calculate contributions for all authors
 			for (const author of allAuthors) {
 				const namePattern = `${author.lastName}, ${author.firstName}`;
-	
-				// Find publications for each author
 				const publications = await this.publicationModel.find({
-					filteredAuthors: { $regex: new RegExp(namePattern, 'i') }
+					authors: { $regex: new RegExp(namePattern, 'i') }
 				});
 	
-				// Track the total number of publications for the specific author and store email
 				if (author.ENID === enidNumber) {
 					totalPublicationsForAuthor = publications.length;
-					authorEmail = author.email; // Store the author's email
+					authorEmail = author.email;
 				}
 	
-				// Update the total number of publications for the system
 				totalPublicationsForSystem += publications.length;
 	
-				// Initialize stats for this author as a plain object
 				authorStatsMap[author.ENID] = {
 					name: `${author.firstName} ${author.lastName}`,
 					totalValidLinks: 0,
@@ -187,31 +177,32 @@ export class StatsService {
 					}
 				};
 	
-				// Calculate contributions and citations for each author
 				publications.forEach(pub => {
+					let hasCategoryLink = {
+						code: false,
+						data: false,
+						containers: false,
+						results: false,
+						trials: false,
+						miscellaneous: false
+					};
+	
 					Object.keys(pub.supplementary).forEach(key => {
 						if (pub.supplementary[key] && pub.supplementary[key] !== "") {
-							const links = pub.supplementary[key].split(',').map(link => link.trim()).length;
-	
-							// Update author's stats
-							authorStatsMap[author.ENID].totalValidLinks += links;
-	
-							// Update total category contributions
 							for (const [category, keys] of Object.entries(LINK_CATEGORIES)) {
-								if (keys.includes(key)) {
-									authorStatsMap[author.ENID].categoryContributions[category] += links;
-									totalCategoryContributions[category] += links;
+								if (keys.includes(key) && !hasCategoryLink[category]) {
+									hasCategoryLink[category] = true;
+									authorStatsMap[author.ENID].categoryContributions[category]++;
+									totalCategoryContributions[category]++;
 								}
 							}
 						}
 					});
 	
-					// Sum citations
 					authorStatsMap[author.ENID].citations += pub.citations || 0;
 				});
 			}
 	
-			// Calculate the rankings for each category
 			Object.keys(LINK_CATEGORIES).forEach(category => {
 				const sortedAuthors: [number, Omit<AuthorStats, '_id'>][] = Object.entries(authorStatsMap)
 					.map(([authorIdStr, stats]) => [Number(authorIdStr), stats as Omit<AuthorStats, '_id'>] as [number, Omit<AuthorStats, '_id'>])
@@ -219,33 +210,29 @@ export class StatsService {
 				categoryRankings[category] = sortedAuthors;
 			});
 	
-			// Find the specific author by their ENID
 			const authorStats = authorStatsMap[enidNumber];
 			if (!authorStats) {
 				throw new Error('Author not found');
 			}
 	
-			// Prepare a ranking object to return
 			const rankings = {};
-	
-			// Calculate the rank and percentage for the specific author
 			const categoryStats = {};
+	
 			Object.keys(LINK_CATEGORIES).forEach(category => {
 				const sortedAuthors = categoryRankings[category];
 				const authorRank = sortedAuthors.findIndex(([authorId]) => authorId === enidNumber) + 1;
 				const totalAuthors = sortedAuthors.length;
-	
-				// Rounding percentage to whole number
 				const rankPercentage = Math.ceil((authorRank / totalAuthors) * 100);
+				const openSciencePercentage = Math.ceil((authorStats.categoryContributions[category] / totalPublicationsForAuthor) * 100 )
 	
 				categoryStats[category] = {
 					total: totalCategoryContributions[category],
 					authorContributions: authorStats.categoryContributions[category],
 					rank: authorRank,
-					percentage: rankPercentage
+					percentage: rankPercentage,
+					openSciencePercentage: openSciencePercentage
 				};
 	
-				// Store the rank of the author in each category
 				rankings[category] = {
 					rank: authorRank,
 					totalAuthors,
@@ -272,6 +259,7 @@ export class StatsService {
 			}
 		}
 	}
+	
 	
 	
 	

@@ -10,7 +10,17 @@ export class AuthorController {
             const authors = await this.AuthorService.findAllAuthors();
             return authors;
         } catch (error) {
-            throw new HttpException(`Error retrieving publication: ${error}`, HttpStatus.NOT_FOUND);
+            throw new HttpException(`Error retrieving authors: ${error}`, HttpStatus.NOT_FOUND);
+        }
+    }
+	@Post('one')
+    async getOneAuthor(@Body('email') email: string) {
+		console.log("here")
+        try {
+            const authors = await this.AuthorService.findOneAuthor(email);
+            return authors;
+        } catch (error) {
+            throw new HttpException(`Error retrieving authors: ${error}`, HttpStatus.NOT_FOUND);
         }
     }
 }

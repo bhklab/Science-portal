@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
@@ -11,28 +11,11 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import Pub from '../interfaces/Pub';
 import BlankPub from '../interfaces/BlankPub';
 import NewPublicationModal from '../components/NewPublicationModal/NewPublicationModal';
+import Author from '../interfaces/Author';
+import Lab from '../interfaces/Lab';
 
 interface Option {
     name: string;
-}
-
-interface Status {
-    name: string;
-}
-
-interface Lab {
-    name: string;
-}
-
-interface Author {
-    firstName: string;
-    lastName: string;
-    email: string;
-    primaryAppointment: string;
-    primaryResearchInstitute: string;
-    secondaryAppointment: string | null;
-    secondaryResearchInstitute: string | null;
-    enid: string;
 }
 
 interface stats {
@@ -49,12 +32,9 @@ const options: Option[] = [
     { name: 'Least Citations' }
 ];
 
-const status: Status[] = [{ name: 'Published' }, { name: 'Preprint' }];
-
 const Home: React.FC = () => {
     // State of various dropdowns
     const [sort, setSort] = useState<Option | null>(null);
-    const [statusFilter, setStatusFilter] = useState<Status | null>(null);
     const [selectedAuthor, setSelectedAuthor] = useState<Lab | null>(null);
 
     // State for cardview/listview

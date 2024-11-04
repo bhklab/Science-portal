@@ -1,16 +1,16 @@
 import { Navbar } from './components';
 import ProjectRoutes from './Routes';
 import { BrowserRouter as Router } from 'react-router-dom';
-import MagicProvider from './hooks/magicProvider';
+import { AuthProvider } from './hooks/AuthContext';
 
 function App() {
     return (
         <Router>
-            <MagicProvider>
+            <AuthProvider>
                 <Navbar />
                 <ProjectRoutes />
                 {/* <Footer/> */}
-            </MagicProvider>
+            </AuthProvider>
         </Router>
     );
 }

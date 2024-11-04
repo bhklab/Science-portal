@@ -5,7 +5,13 @@ module.exports = {
     content: ['./src/**/**/*.{js,ts,jsx,tsx,html,mdx}', './src/**/*.{js,ts,jsx,tsx,html,mdx}'],
     darkMode: 'class',
     theme: {
-        screens: { md: { max: '1050px' }, smd: { max: '800px' }, mmd: { max: '700px' }, sm: { max: '550px' } },
+        screens: {
+            wrap: { max: '1260px' },
+            md: { max: '1050px' },
+            smd: { max: '800px' },
+            mmd: { max: '700px' },
+            sm: { max: '550px' }
+        },
         extend: {
             colors: {
                 black: { 900: '#000000', '900_0c': '#0000000c' },
@@ -20,11 +26,15 @@ module.exports = {
                     400: '#b5b5b5',
                     600: '#717171',
                     700: '#727272',
-                    900: '#212121'
+                    900: '#212121',
+                    1000: '#D9D9D9'
                 },
                 cyan: {
                     1000: '#3BB6AC',
                     1100: '#449891'
+                },
+                blue: {
+                    1000: '#2463BC'
                 },
                 white: '#ffffff',
                 colors: '#edf3faff',
@@ -74,6 +84,23 @@ module.exports = {
             spacing: {
                 800: '800px',
                 50: '196px'
+            },
+            backgroundImage: {
+                'gradient-blue-cyan': 'linear-gradient(to right, #449891, #5CBCB8)'
+            },
+            keyframes: {
+                show: {
+                    '0%': { opacity: 0, transform: 'scale(0.95)' },
+                    '100%': { opacity: 1, transform: 'scale(1)' }
+                },
+                hide: {
+                    '0%': { opacity: 1, transform: 'scale(1)' },
+                    '100%': { opacity: 0, transform: 'scale(0.95)' }
+                }
+            },
+            animation: {
+                show: 'show 0.3s ease-out forwards',
+                hide: 'hide 0.3s ease-in forwards'
             }
         }
     },

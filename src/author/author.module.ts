@@ -8,7 +8,7 @@ import  { AuthorSchema }  from '../schema/author.schema';
 	imports: [
 		MongooseModule.forFeature([{ name: 'Author', schema: AuthorSchema }])
 	],
-  controllers: [AuthorController], // receieve requests
-  providers: [AuthorService], // logic for conducting work upon controllers request
+  controllers: [AuthorController],
+  providers: [AuthorService],
 })
 export class AuthorModule {}
