@@ -314,7 +314,7 @@ const Home: React.FC = () => {
                             <span className="">Showing {publications?.length} publications</span>
                             {cardView ? (
                                 <div className="flex flex-row gap-2 justify-center items-center">
-                                    <Tooltip target=".new-pub" />
+                                    {/* <Tooltip target=".new-pub" />
                                     <img
                                         src="/images/assets/plus-icon.svg"
                                         className="cursor-pointer new-pub hover:bg-gray-200 p-2 rounded-md"
@@ -323,7 +323,7 @@ const Home: React.FC = () => {
                                         style={{ fontSize: '2.0rem' }}
                                         onClick={() => setNewPublicationVisible(true)}
                                         alt="create new publication"
-                                    />
+                                    /> */}
                                     <button onClick={() => setCardView(true)} className="hover:bg-gray-200">
                                         <img src="/images/assets/card-view-active-icon.svg" alt="card-view-active" />
                                     </button>
@@ -333,7 +333,7 @@ const Home: React.FC = () => {
                                 </div>
                             ) : (
                                 <div className="flex flex-row gap-2 justify-center items-center">
-                                    <Tooltip target=".new-pub" />
+                                    {/* <Tooltip target=".new-pub" />
                                     <img
                                         src="/images/assets/plus-icon.svg"
                                         className="cursor-pointer new-pub hover:bg-gray-200 p-3 p"
@@ -342,7 +342,7 @@ const Home: React.FC = () => {
                                         style={{ fontSize: '2.0rem' }}
                                         onClick={() => setNewPublicationVisible(true)}
                                         alt="create new publication"
-                                    />
+                                    /> */}
                                     <button onClick={() => setCardView(true)} className="hover:bg-gray-200">
                                         <img src="/images/assets/card-view-icon.svg" alt="card-view" />
                                     </button>

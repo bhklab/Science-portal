@@ -5,7 +5,7 @@ import Author from '../interfaces/Author';
 import { AuthContext } from '../hooks/AuthContext';
 import { ExportDropdown } from '../components/DropdownButtons/ExportDropdown';
 import { FilterDropdown } from '../components/DropdownButtons/FilterDropdown';
-import AnnualChart, { AnnualChartRef } from '../components/Charts/StatisticsPage/AnnualChart';
+import PersonalChart, { AnnualChartRef } from '../components/Charts/StatisticsPage/PersonalChart';
 
 const Profile: React.FC = () => {
     const [piData, setPiData] = useState<any>(null);
@@ -480,11 +480,9 @@ const Profile: React.FC = () => {
                                 </div>
                             )}
                         </div>
-                        <div className="flex flex-col px-10 gap-3 md:px-10 sm:px-0 bg-white border-1 border-gray-200 rounded-md">
+                        <div className="flex flex-col px-10 gap-3 md:px-10 sm:px-0 bg-white border-1 border-gray-200 rounded-md w-full">
                             <div className="flex flex-row justify-between items-center">
-                                <h1 className="text-heading2Xl font-semibold py-10">
-                                    Princess Margaret Cancer Centre Statistics
-                                </h1>
+                                <h1 className="text-heading2Xl font-semibold py-10">My Publication Statistics</h1>
                                 <div className="flex flex-row gap-4">
                                     <FilterDropdown
                                         legendItems={legendItems}
@@ -496,7 +494,7 @@ const Profile: React.FC = () => {
                             </div>
 
                             <div className="chart-container relative w-full" style={{ height: '700px' }}>
-                                <AnnualChart
+                                <PersonalChart
                                     ref={chartRef}
                                     chartData={chartData}
                                     activeLegendItems={activeLegendItems}
