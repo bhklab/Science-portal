@@ -145,17 +145,14 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                         // Skip rendering the group header and subcategories if no subcategory has a valid link and edit mode is not enabled
                         if (!editMode && !groupHasValidLinks) return null;
 
-                        const firstValidCategory = keys.find(key => isNonEmptyArray(links[key.name]));
-
                         return (
                             <div key={categoryGroup} className="flex flex-col gap-5">
                                 <h1 className="text-headingXl text-black-900 font-semibold">
                                     {capitalizeFirst(categoryGroup)}
                                 </h1>
                                 {keys.map(key => {
-                                    // Show subcategories in edit mode or show only the first valid subcategory in non-edit mode
-                                    const showCategory =
-                                        editMode || (firstValidCategory === key && isNonEmptyArray(links[key.name]));
+                                    // Show subcategories in edit mode or show all valid subcategories in non-edit mode
+                                    const showCategory = editMode || isNonEmptyArray(links[key.name]);
 
                                     if (!showCategory) return null;
 
