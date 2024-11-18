@@ -6,18 +6,23 @@ import { AuthContext } from '../hooks/AuthContext';
 import { ExportDropdown } from '../components/DropdownButtons/ExportDropdown';
 import { FilterDropdown } from '../components/DropdownButtons/FilterDropdown';
 import PersonalChart, { AnnualChartRef } from '../components/Charts/StatisticsPage/PersonalChart';
+import { useNavigate } from 'react-router-dom';
 
 const Profile: React.FC = () => {
-    const [piData, setPiData] = useState<any>(null);
-    const [toggleDetailed, setToggleDetailed] = useState(false);
-
+    // Set PI and data
     const [scientist, setScientist] = useState<Author | null>(null);
+    const [piData, setPiData] = useState<any>(null);
 
+    // Decoded jwt token of user (aka. signed in user's data)
     const authContext = useContext(AuthContext);
+
+    // Used to navigate to a new page
+    const navigate = useNavigate();
 
     // Chart variables
     const [chartData, setChartData] = useState<any | null>(null);
     const [legendItems, setLegendItems] = useState<string[]>([]);
+    const [toggleDetailed, setToggleDetailed] = useState(false);
     const [activeLegendItems, setActiveLegendItems] = useState(new Set<string>());
     const chartRef = useRef<AnnualChartRef>(null);
 
@@ -61,15 +66,14 @@ const Profile: React.FC = () => {
                 const scientistData = await axios.post(`/api/authors/one`, {
                     email: authContext?.user.email
                 });
-                console.log(scientistData.data);
-                setScientist(scientistData.data);
 
-                const enid = scientistData.data?.ENID.toString();
-                if (!enid) {
-                    console.error('ENID is not present in the response, aborting second API call.');
+                if (scientistData.data === 'Author not found') {
+                    //If the PM author doesn't exist, don't continue with the data retrieval
+                    setPiData('DNE');
                     return;
                 }
-
+                setScientist(scientistData.data);
+                const enid = scientistData.data?.ENID.toString();
                 const profileData = await axios.get(`/api/stats/author/${enid}`);
                 setPiData(profileData.data);
             } catch (error) {
@@ -121,6 +125,62 @@ const Profile: React.FC = () => {
         );
     }
 
+    //If user is not a PI render a page without stats
+    if (piData === 'DNE') {
+        return (
+            <div className="flex flex-col items-center py-36 smd:px-4 px-10 min-h-screen bg-white">
+                <div className="flex flex-row smd:flex-col gap-5 justify-center mx-auto">
+                    <div className="flex flex-col min-w-[285px]">
+                        <div className="flex flex-col gap-5 ">
+                            <div className="flex flex-col gap-2">
+                                <div className="h-[140px] w-[140px] rounded-[120px] overflow-clip">
+                                    <img src="/images/assets/default-user-icon.svg" alt="PI" />
+                                </div>
+                            </div>
+                            <div className="flex flex-col gap-2 text-black-900">
+                                <h2 className="text-heading2Xl font-semibold">
+                                    {authContext?.user.given_name} {authContext?.user.family_name}
+                                </h2>
+                                <p className="text-headingMd">{scientist?.primaryAppointment}</p>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <div className="flex flex-row gap-2 items-center">
+                                    <img src="/images/assets/briefcase-icon.svg" alt="briefcase-icon" />
+                                    <p className="text-bodyMd">Princess Margaret Cancer Centre</p>
+                                </div>
+                                <div className="flex flex-row gap-2 items-center">
+                                    <img src="/images/assets/mail-icon.svg" alt="mail-icon" />
+                                    <p className="text-bodyMd">{authContext?.user.email}</p>
+                                </div>
+                                <div className="flex flex-row gap-2 items-center">
+                                    <img src="/images/assets/globe-icon.svg" alt="globe-icon" />
+                                    <a href="https://bhklab.ca" target="_blank" rel="noreferrer">
+                                        <p className="text-bodyMd text-blue-600">Visit website</p>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <hr className="my-10 bg-gray-200 h-[1px]" />
+                        <div className="flex flex-col gap-5">
+                            <button
+                                className="w-full border-1 border-open_border shadow-button rounded-[4px] p-2 text-headingSm text-black-900 font-semibold"
+                                onClick={() => navigate('/submit-publication')}
+                            >
+                                Submit a publication
+                            </button>
+                            <button className="w-full text-blue-1100 text-sm">Send Feedback</button>
+                        </div>
+                    </div>
+                    <div className="flex items-center justify-center w-[860px] md:w-[420px]">
+                        <span className="text-headingLg font-bold text-black-900">
+                            User is not a PI at Princess Margaret Cancer Centre, no data to be loaded!
+                        </span>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     const { author, authorEmail, totalPublications, totalCitations, categoryStats } = piData;
 
     return (
@@ -135,7 +195,7 @@ const Profile: React.FC = () => {
                         </div>
                         <div className="flex flex-col gap-2 text-black-900">
                             <h2 className="text-heading2Xl font-semibold">
-                                {scientist?.firstName} {scientist?.lastName}
+                                {authContext?.user.given_name} {authContext?.user.family_name}
                             </h2>
                             <p className="text-headingMd">{scientist?.primaryAppointment}</p>
                         </div>
@@ -146,7 +206,7 @@ const Profile: React.FC = () => {
                             </div>
                             <div className="flex flex-row gap-2 items-center">
                                 <img src="/images/assets/mail-icon.svg" alt="mail-icon" />
-                                <p className="text-bodyMd">{scientist?.email}</p>
+                                <p className="text-bodyMd">{authContext?.user.email}</p>
                             </div>
                             <div className="flex flex-row gap-2 items-center">
                                 <img src="/images/assets/globe-icon.svg" alt="globe-icon" />
@@ -157,6 +217,7 @@ const Profile: React.FC = () => {
                         </div>
                     </div>
                     <hr className="my-10 bg-gray-200 h-[1px]" />
+
                     <div className="flex flex-row gap-5 text-black-900">
                         <div className="flex flex-col gap-2">
                             <h3 className="text-heading3Xl font-semibold">{totalPublications}</h3>
@@ -166,6 +227,16 @@ const Profile: React.FC = () => {
                             <h3 className="text-heading3Xl font-semibold">{totalCitations}</h3>
                             <p className="text-bodyMd">Citations</p>
                         </div>
+                    </div>
+
+                    <div className="flex flex-col gap-5">
+                        <button
+                            className="w-full border-1 border-open_border shadow-button rounded-[4px] p-2 text-headingSm text-black-900 font-semibold"
+                            onClick={() => navigate('/submit-publication')}
+                        >
+                            Submit a publication
+                        </button>
+                        <button className="w-full text-blue-1100 text-sm">Send Feedback</button>
                     </div>
                 </div>
 

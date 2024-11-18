@@ -15,7 +15,6 @@ export class AuthorController {
     }
 	@Post('one')
     async getOneAuthor(@Body('email') email: string) {
-		console.log("here")
         try {
             const authors = await this.AuthorService.findOneAuthor(email);
             return authors;

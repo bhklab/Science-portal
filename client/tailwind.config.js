@@ -34,7 +34,8 @@ module.exports = {
                     1100: '#449891'
                 },
                 blue: {
-                    1000: '#2463BC'
+                    1000: '#2463BC',
+                    1100: '#3B82F6'
                 },
                 white: '#ffffff',
                 colors: '#edf3faff',
@@ -67,7 +68,7 @@ module.exports = {
             },
             boxShadow: {
                 card: '0px 2px 1px 0px #0000000d',
-                button: '0px 1px 0px 0px #0000000d'
+                button: '0px 1px 0px 0px rgba(0, 0, 0, 0.05)'
             },
             transitionProperty: {
                 ...defaultTheme.transitionProperty,

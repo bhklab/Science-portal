@@ -25,7 +25,7 @@ export class AuthorService {
 		try {
 			const author = await this.AuthorModel.findOne({ email: email }).exec();
 			if (!author) {
-				throw new Error('Author not found');
+				return "Author not found"
 			}
 			return author;
 		} catch (error) {

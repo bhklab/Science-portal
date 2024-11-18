@@ -6,6 +6,7 @@ import Analytics from './pages/Analytics';
 import PiProfile from './pages/PiProfile';
 import Login from './pages/Login';
 import PrivateRoute from './PrivateRoute';
+import SubmitPublication from './pages/SubmitPublication';
 
 const ProjectRoutes = () => {
     return (
@@ -20,6 +21,14 @@ const ProjectRoutes = () => {
                     element={
                         // <PrivateRoute>
                         <PiProfile />
+                        // </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/submit-publication"
+                    element={
+                        // <PrivateRoute>
+                        <SubmitPublication />
                         // </PrivateRoute>
                     }
                 />
