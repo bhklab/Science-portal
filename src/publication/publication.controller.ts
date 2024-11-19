@@ -35,23 +35,23 @@ export class PublicationController {
 
 	@Post('changes')
 	async savePublicationChanges(@Body() pub: PublicationChangesDocument) {
-	  try {
-		return await this.publicationService.savePublicationChanges(pub);
-	  } catch (error) {
-		console.error('Error saving publication changes:', error);
-		throw new HttpException(`Error saving publication: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
-	  }
+		try {
+			return await this.publicationService.savePublicationChanges(pub);
+		} catch (error) {
+			console.error('Error saving publication changes:', error);
+			throw new HttpException(`Error saving publication: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 
 	@Post('new')
 	async createPublication(@Body() newPub: PublicationDocument) {
 		console.log(newPub);
-	  try {
-		const createdPublication = await this.publicationService.createPublication(newPub);
-		return createdPublication;
-	  } catch (error) {
-		throw new HttpException(`Error creating publication: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
-	  }
+		try {
+			const createdPublication = await this.publicationService.createPublication(newPub);
+			return createdPublication;
+		} catch (error) {
+			throw new HttpException(`Error creating publication: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 }

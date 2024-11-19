@@ -5,9 +5,10 @@ import { Dialog } from 'primereact/dialog';
 interface FeedbackModalProps {
     isVisible: boolean;
     setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+    submitFeedback: (subject: string, message: string) => void;
 }
 
-const FeedbackModal: React.FC<FeedbackModalProps> = ({ isVisible, setIsVisible }) => {
+const FeedbackModal: React.FC<FeedbackModalProps> = ({ isVisible, setIsVisible, submitFeedback }) => {
     return (
         <Dialog
             visible={isVisible}
@@ -18,7 +19,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({ isVisible, setIsVisible }
             closable={false}
             position="bottom"
         >
-            <FeedbackModalContent setIsVisible={setIsVisible} />
+            <FeedbackModalContent setIsVisible={setIsVisible} submitFeedback={submitFeedback} />
         </Dialog>
     );
 };

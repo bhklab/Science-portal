@@ -8,6 +8,7 @@ import { ExportDropdown } from '../components/DropdownButtons/ExportDropdown';
 import { FilterDropdown } from '../components/DropdownButtons/FilterDropdown';
 import PersonalChart, { AnnualChartRef } from '../components/Charts/StatisticsPage/PersonalChart';
 import FeedbackModal from '../components/FeedbackModal/FeedbackModal';
+import { Toast } from 'primereact/toast';
 
 const Profile: React.FC = () => {
     // Set PI and data
@@ -29,6 +30,7 @@ const Profile: React.FC = () => {
 
     // feedback modal state variables
     const [isVisible, setIsVisible] = useState<boolean>(false);
+    const toast = useRef<Toast>(null);
 
     const toggleLegendItem = (item: string) => {
         setActiveLegendItems(prev => {
@@ -128,6 +130,25 @@ const Profile: React.FC = () => {
         );
     }
 
+    const submitFeedback = async (subject: string, message: string) => {
+        try {
+            await axios.post(`/api/feedback/submit`, {
+                subject: subject,
+                message: message,
+                email: authContext?.user.email
+            });
+            toast.current?.show({
+                severity: 'success',
+                summary: 'Feedback Submitted',
+                detail: 'Your valued feedback has been sent to the Science Portal team. Lookout for a response in the coming days!',
+                life: 8000
+            });
+            setIsVisible(false);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     //If user is not a PI render a page without stats
     if (piData === 'DNE') {
         return (
@@ -169,16 +190,21 @@ const Profile: React.FC = () => {
                                 <button className="text-blue-1100 text-sm" onClick={() => setIsVisible(true)}>
                                     Send Feedback
                                 </button>
-                                <FeedbackModal isVisible={isVisible} setIsVisible={setIsVisible} />
+                                <FeedbackModal
+                                    isVisible={isVisible}
+                                    setIsVisible={setIsVisible}
+                                    submitFeedback={submitFeedback}
+                                />
                             </div>
                         </div>
                     </div>
                     <div className="flex items-center justify-center w-[860px] md:w-[420px]">
-                        <span className="text-headingLg font-bold text-black-900">
+                        <span className="text-bodyMd font-semibold text-gray-700">
                             User is not a PI at Princess Margaret Cancer Centre, no data to be loaded!
                         </span>
                     </div>
                 </div>
+                <Toast ref={toast} baseZIndex={1000} position="bottom-right" />
             </div>
         );
     }
@@ -239,9 +265,14 @@ const Profile: React.FC = () => {
                             Submit a publication
                         </button>
                         <div className="flex flex-row justify-center items-center">
-                            <button className="w-full text-blue-1100 text-sm" onClick={() => setIsVisible(true)}>
+                            <button className="text-blue-1100 text-sm" onClick={() => setIsVisible(true)}>
                                 Send Feedback
                             </button>
+                            <FeedbackModal
+                                isVisible={isVisible}
+                                setIsVisible={setIsVisible}
+                                submitFeedback={submitFeedback}
+                            />
                         </div>
                     </div>
                 </div>
@@ -581,6 +612,7 @@ const Profile: React.FC = () => {
                     </div>
                 </div>
             </div>
+            <Toast ref={toast} baseZIndex={1000} position="bottom-right" />
         </div>
     );
 };

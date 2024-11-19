@@ -1,11 +1,11 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useRef } from 'react';
 import { AuthContext } from '../../hooks/AuthContext';
 import { Dropdown } from 'primereact/dropdown';
 import { InputTextarea } from 'primereact/inputtextarea';
-import axios from 'axios';
 
 interface FeedbackModalContentProps {
     setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+    submitFeedback: (subject: string, message: string) => void;
 }
 
 const options = [
@@ -27,16 +27,10 @@ const options = [
     }
 ];
 
-const FeedbackModalContent: React.FC<FeedbackModalContentProps> = ({ setIsVisible }) => {
+const FeedbackModalContent: React.FC<FeedbackModalContentProps> = ({ setIsVisible, submitFeedback }) => {
     const authContext = useContext(AuthContext);
     const [selectedOption, setSelectedOption] = useState<string>('');
     const [message, setMessage] = useState<string>('');
-
-    const submit = async () => {
-        console.log(selectedOption);
-        console.log(message);
-        const res = await axios.post(`/api/feedback/submit`);
-    };
 
     return (
         <div className="flex flex-col gap-4 p-10 text-black-900">
@@ -74,8 +68,9 @@ const FeedbackModalContent: React.FC<FeedbackModalContentProps> = ({ setIsVisibl
                     Cancel
                 </button>
                 <button
-                    className="flex flex-row justify-center items-center px-4 py-2 text-white bg-blue-1000 rounded-md shadow-sm"
-                    onClick={() => submit()}
+                    disabled={selectedOption && message ? false : true}
+                    className={`flex flex-row justify-center items-center px-4 py-2 text-white ${selectedOption && message ? 'bg-blue-1000' : 'bg-gray-200'} rounded-md shadow-sm`}
+                    onClick={() => submitFeedback(selectedOption, message)}
                 >
                     Send Feedback
                 </button>
