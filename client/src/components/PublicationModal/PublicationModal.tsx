@@ -34,7 +34,7 @@ const ReusableModal: React.FC<ReusableModalProps> = ({ isVisible, onHide, pub })
                     toast.current?.show({
                         severity: 'success',
                         summary: 'Link Copy',
-                        detail: 'Publication page link has been copied to your clipboard',
+                        detail: 'Publication page URL has been copied to your clipboard',
                         life: 6000
                     });
                 })
@@ -42,7 +42,7 @@ const ReusableModal: React.FC<ReusableModalProps> = ({ isVisible, onHide, pub })
                     toast.current?.show({
                         severity: 'error',
                         summary: 'Error',
-                        detail: 'Failed to copy publication page link to your clipboard',
+                        detail: 'Failed to copy publication page URL to your clipboard',
                         life: 6000
                     });
                     console.error('Failed to copy Science Portal link', error);
@@ -62,19 +62,19 @@ const ReusableModal: React.FC<ReusableModalProps> = ({ isVisible, onHide, pub })
                         />
                     </button>
                     <div className="flex flex-row items-center gap-2">
+                        <Tooltip target=".adjust-icon" />
+
                         {!editMode && (
-                            <button className="p-[10px] rounded-[4px] hover:bg-gray-100 ">
-                                <Tooltip target=".adjust-icon" />
-                                <img
-                                    src="/images/assets/edit-icon.svg"
-                                    className="adjust-icon"
-                                    data-pr-tooltip="Edit supplementary data"
-                                    data-pr-position="left"
-                                    style={{ fontSize: '2.0rem' }}
-                                    onClick={() => setEditMode(!editMode)}
-                                />
+                            <button
+                                className="p-[10px] rounded-[4px] hover:bg-gray-100 adjust-icon"
+                                onClick={() => setEditMode(!editMode)}
+                                data-pr-tooltip="Edit publication resources"
+                                data-pr-position="left"
+                            >
+                                <img src="/images/assets/edit-icon.svg" style={{ fontSize: '2.0rem' }} />
                             </button>
                         )}
+
                         <button className="p-[10px] rounded-[4px] hover:bg-gray-100" onClick={handleCopyDoi}>
                             <img src="/images/assets/copy-doi-icon.svg" alt="copy doi button" className="w-6" />
                         </button>

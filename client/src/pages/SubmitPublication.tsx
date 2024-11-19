@@ -37,6 +37,8 @@ const SubmitPublication: React.FC = () => {
             gsea: ''
         })
     );
+    const [clickedTitle, setClickedTitle] = useState<boolean>(false);
+    const [clickedDoi, setClickedDoi] = useState<boolean>(false);
 
     const handleNewPublicationSubmit = async () => {
         try {
@@ -70,6 +72,11 @@ const SubmitPublication: React.FC = () => {
         });
     };
 
+    useEffect(() => {
+        console.log(clickedDoi);
+        console.log(clickedTitle);
+        console.log(newPub.name);
+    }, [clickedDoi, clickedTitle]);
     return (
         <div className="px-60 py-[85px]">
             <div className="flex flex-row justify-between items-center pb-5">
@@ -98,26 +105,32 @@ const SubmitPublication: React.FC = () => {
                                 Publication Title <span className="text-red-600"> *</span>
                             </p>
                             <InputText
-                                className={`${newPub.name ? '' : 'invalid-box'} w-full`}
+                                className={`${newPub.name === '' && clickedTitle ? 'invalid-box' : ''} w-full`}
                                 onChange={e => setNewPub({ ...newPub, name: e.target.value })}
+                                onClick={() => setClickedTitle(true)}
                             />
-                            <div className="flex flex-row gap-1">
-                                <img src="/images/assets/required-icon.svg" alt="" />
-                                <p className="text-bodySm text-red-1000">Required Field</p>
-                            </div>
+                            {newPub.name === '' && clickedTitle && (
+                                <div className="flex flex-row gap-1">
+                                    <img src="/images/assets/required-icon.svg" alt="" />
+                                    <p className="text-bodySm text-red-1000">Required Field</p>
+                                </div>
+                            )}
                         </div>
                         <div className="flex flex-col gap-1">
                             <p className="text-bodyMd">
                                 DOI <span className="text-red-600"> *</span>
                             </p>
                             <InputText
-                                className={`${newPub.doi ? '' : 'invalid-box'} w-full`}
+                                className={`${newPub.doi === '' && clickedDoi ? 'invalid-box' : ''} w-full`}
                                 onChange={e => setNewPub({ ...newPub, doi: e.target.value })}
+                                onClick={() => setClickedDoi(true)}
                             />
-                            <div className="flex flex-row gap-1">
-                                <img src="/images/assets/required-icon.svg" alt="" />
-                                <p className="text-bodySm text-red-1000">Required Field</p>
-                            </div>
+                            {newPub.doi === '' && clickedDoi && (
+                                <div className="flex flex-row gap-1">
+                                    <img src="/images/assets/required-icon.svg" alt="" />
+                                    <p className="text-bodySm text-red-1000">Required Field</p>
+                                </div>
+                            )}
                         </div>
                         <div className="flex flex-col gap-1">
                             <p className="text-bodyMd">Journal</p>
@@ -177,7 +190,7 @@ const SubmitPublication: React.FC = () => {
                                         <h1 className="text-headingXl text-black-900 font-semibold">
                                             {capitalizeFirst(categoryGroup)}
                                         </h1>
-                                        <p className="text-headingSm font-semibold text-gray-700">
+                                        <p className="text-headingSm font-medium text-gray-700">
                                             Add all relevant resource types
                                         </p>
                                         <div className="flex flex-col gap-5">
@@ -193,7 +206,7 @@ const SubmitPublication: React.FC = () => {
                                                                 onClick={() => {
                                                                     addNewLink(key.name); // Always call addNewLink, which updates the links state
                                                                 }}
-                                                                className="flex flex-row gap-1 justify-center items-center p-3 text-headingMd font-semibold rounded-full bg-gray-50 border-gray-200 text-black-900"
+                                                                className={`flex flex-row gap-1 justify-center items-center p-3 text-headingMd rounded-full font-medium bg-gray-50 border-gray-200 ${isExisting ? 'text-black-900' : 'text-gray-700'}`}
                                                             >
                                                                 {isExisting ? (
                                                                     <>
@@ -284,8 +297,6 @@ const SubmitPublication: React.FC = () => {
 };
 
 const capitalizeFirst = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
-
-const isNonEmptyArray = (arr: string[]) => Array.isArray(arr) && arr.length > 0 && arr.some(link => link.trim() !== '');
 
 const initializeLinks = (supplementary: { [key: string]: string | undefined }) => {
     const links: { [key: string]: string[] } = {};

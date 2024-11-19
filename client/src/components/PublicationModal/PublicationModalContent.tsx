@@ -125,7 +125,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                     <>
                                         {/* Pills for adding new links */}
                                         <div className="flex flex-col gap-4">
-                                            <p className="text-headingSm font-semibold text-gray-700">
+                                            <p className="text-headingSm font-medium text-gray-700">
                                                 Add all relevant resource types
                                             </p>
                                             <div className="flex flex-row flex-wrap gap-2">
@@ -138,7 +138,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                             onClick={() => {
                                                                 addNewLink(key.name); // Always call addNewLink, which updates the links state
                                                             }}
-                                                            className="flex flex-row gap-1 justify-center items-center p-3 text-headingMd font-semibold rounded-full bg-gray-50 border-gray-200 text-black-900"
+                                                            className={`flex flex-row gap-1 justify-center items-center p-3 text-headingMd rounded-full font-medium bg-gray-50 border-gray-200 ${isExisting ? 'text-black-900' : 'text-gray-700'}`}
                                                         >
                                                             {isExisting ? (
                                                                 <>
