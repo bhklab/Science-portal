@@ -12,6 +12,7 @@ export interface NewPub {
     supplementary: {
         [key: string]: string;
     };
+    submitter: string;
 }
 
 export function createDefaultNewPub(): NewPub {
@@ -54,6 +55,7 @@ export function createDefaultNewPub(): NewPub {
             proteinDataBank: '',
             ebiAcUk: '',
             gsea: ''
-        }
+        },
+        submitter: ''
     };
 }

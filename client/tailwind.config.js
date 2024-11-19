@@ -37,6 +37,9 @@ module.exports = {
                     1000: '#2463BC',
                     1100: '#3B82F6'
                 },
+                red: {
+                    1000: '#D82C0D'
+                },
                 white: '#ffffff',
                 colors: '#edf3faff',
                 open_border: '#B6B6B6',
@@ -80,7 +83,8 @@ module.exports = {
                 20: '80px'
             },
             borderWidth: {
-                1: '1px'
+                1: '1px',
+                1.5: '1.5px'
             },
             spacing: {
                 800: '800px',

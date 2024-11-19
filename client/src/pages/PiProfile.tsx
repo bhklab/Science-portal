@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import Author from '../interfaces/Author';
 import { AuthContext } from '../hooks/AuthContext';
 import { ExportDropdown } from '../components/DropdownButtons/ExportDropdown';
 import { FilterDropdown } from '../components/DropdownButtons/FilterDropdown';
 import PersonalChart, { AnnualChartRef } from '../components/Charts/StatisticsPage/PersonalChart';
-import { useNavigate } from 'react-router-dom';
+import FeedbackModal from '../components/FeedbackModal/FeedbackModal';
 
 const Profile: React.FC = () => {
     // Set PI and data
@@ -25,6 +26,9 @@ const Profile: React.FC = () => {
     const [toggleDetailed, setToggleDetailed] = useState(false);
     const [activeLegendItems, setActiveLegendItems] = useState(new Set<string>());
     const chartRef = useRef<AnnualChartRef>(null);
+
+    // feedback modal state variables
+    const [isVisible, setIsVisible] = useState<boolean>(false);
 
     const toggleLegendItem = (item: string) => {
         setActiveLegendItems(prev => {
@@ -62,7 +66,6 @@ const Profile: React.FC = () => {
     useEffect(() => {
         const fetchPiData = async () => {
             try {
-                console.log(authContext);
                 const scientistData = await axios.post(`/api/authors/one`, {
                     email: authContext?.user.email
                 });
@@ -152,12 +155,6 @@ const Profile: React.FC = () => {
                                     <img src="/images/assets/mail-icon.svg" alt="mail-icon" />
                                     <p className="text-bodyMd">{authContext?.user.email}</p>
                                 </div>
-                                <div className="flex flex-row gap-2 items-center">
-                                    <img src="/images/assets/globe-icon.svg" alt="globe-icon" />
-                                    <a href="https://bhklab.ca" target="_blank" rel="noreferrer">
-                                        <p className="text-bodyMd text-blue-600">Visit website</p>
-                                    </a>
-                                </div>
                             </div>
                         </div>
                         <hr className="my-10 bg-gray-200 h-[1px]" />
@@ -168,7 +165,12 @@ const Profile: React.FC = () => {
                             >
                                 Submit a publication
                             </button>
-                            <button className="w-full text-blue-1100 text-sm">Send Feedback</button>
+                            <div className="flex flex-row justify-center items-center">
+                                <button className="text-blue-1100 text-sm" onClick={() => setIsVisible(true)}>
+                                    Send Feedback
+                                </button>
+                                <FeedbackModal isVisible={isVisible} setIsVisible={setIsVisible} />
+                            </div>
                         </div>
                     </div>
                     <div className="flex items-center justify-center w-[860px] md:w-[420px]">
@@ -236,7 +238,11 @@ const Profile: React.FC = () => {
                         >
                             Submit a publication
                         </button>
-                        <button className="w-full text-blue-1100 text-sm">Send Feedback</button>
+                        <div className="flex flex-row justify-center items-center">
+                            <button className="w-full text-blue-1100 text-sm" onClick={() => setIsVisible(true)}>
+                                Send Feedback
+                            </button>
+                        </div>
                     </div>
                 </div>
 

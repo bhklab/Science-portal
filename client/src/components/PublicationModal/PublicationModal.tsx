@@ -78,7 +78,13 @@ const ReusableModal: React.FC<ReusableModalProps> = ({ isVisible, onHide, pub })
                         <button className="p-[10px] rounded-[4px] hover:bg-gray-100" onClick={handleCopyDoi}>
                             <img src="/images/assets/copy-doi-icon.svg" alt="copy doi button" className="w-6" />
                         </button>
-                        <button className="p-[10px] rounded-[4px] hover:bg-gray-100" onClick={onHide}>
+                        <button
+                            className="p-[10px] rounded-[4px] hover:bg-gray-100"
+                            onClick={() => {
+                                onHide();
+                                setEditMode(false);
+                            }}
+                        >
                             <img
                                 src="/images/assets/close-modal-icon.svg"
                                 alt="close publication modal icon"

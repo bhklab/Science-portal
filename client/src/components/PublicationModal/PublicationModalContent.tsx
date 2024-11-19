@@ -1,9 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import { Toast } from 'primereact/toast';
 import axios from 'axios';
 import Pub from '../../interfaces/Pub';
 import { PublicationImage } from '../PublicationImage/PublicationImage';
 import { LINK_CATEGORIES } from '../../interfaces/Links';
+import { AuthContext } from '../../hooks/AuthContext';
 
 interface PublicationModalContentProps {
     pub: Pub;
@@ -13,8 +14,8 @@ interface PublicationModalContentProps {
 
 const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, editMode, setEditMode }) => {
     const [links, setLinks] = useState<{ [key: string]: string[] }>(() => initializeLinks(pub.supplementary));
-    const [addingCategory, setAddingCategory] = useState<string | null>(null); // Tracks category for new link creation
     const toast = useRef<Toast>(null);
+    const authContext = useContext(AuthContext);
 
     const handleLinkChange = (category: string, index: number, value: string) => {
         setLinks(prevLinks => {
@@ -42,29 +43,41 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
     const handleSubmit = async () => {
         let backendPub: Pub = { ...pub };
         delete backendPub._id;
-        try {
-            const formattedSupplementary = Object.fromEntries(
-                Object.entries(links).map(([key, value]) => [key, value.join(', ')])
-            );
+        const formattedSupplementary = Object.fromEntries(
+            Object.entries(links).map(([key, value]) => [key, value.join(', ')])
+        );
+        const formatted = formattedSupplementary;
+        console.log(formattedSupplementary);
+        console.log(pub.supplementary);
+        console.log(pub.supplementary == formatted);
+        console.log(pub.supplementary === formatted);
+        console.log(typeof formatted);
+        console.log(typeof pub.supplementary);
 
-            await axios.post('/api/publications/changes', {
-                ...backendPub,
-                supplementary: formattedSupplementary,
-                dateAdded: new Date().toISOString(),
-                originalId: pub._id
-            });
+        // If the supplementary data is different than the base publication, submit request, else close edit mode
+        if (formattedSupplementary !== pub.supplementary) {
+            try {
+                await axios.post('/api/publications/changes', {
+                    ...backendPub,
+                    supplementary: formattedSupplementary,
+                    dateAdded: new Date().toISOString(),
+                    originalId: pub._id,
+                    submitter: authContext?.user.email
+                });
 
-            toast.current?.show({
-                severity: 'success',
-                summary: 'Publication Update',
-                detail: 'Request to update publication entry has been submitted',
-                life: 8000
-            });
+                toast.current?.show({
+                    severity: 'success',
+                    summary: 'Publication Update',
+                    detail: 'Request to update publication entry has been submitted',
+                    life: 8000
+                });
 
-            setEditMode(false);
-        } catch (err) {
-            console.error('Submission Error:', err);
+                setEditMode(false);
+            } catch (err) {
+                console.error('Submission Error:', err);
+            }
         }
+        setEditMode(false);
     };
 
     return (

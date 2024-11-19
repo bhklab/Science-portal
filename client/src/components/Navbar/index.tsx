@@ -5,7 +5,6 @@ import { AuthContext } from '../../hooks/AuthContext';
 
 export const Navbar: React.FC = () => {
     const location = useLocation();
-    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
     const authContext = useContext(AuthContext);
 
     return (

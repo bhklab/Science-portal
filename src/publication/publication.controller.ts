@@ -35,11 +35,10 @@ export class PublicationController {
 
 	@Post('changes')
 	async savePublicationChanges(@Body() pub: PublicationChangesDocument) {
-	  console.log('Received Publication Changes:', pub); // Log the incoming data for debugging
 	  try {
 		return await this.publicationService.savePublicationChanges(pub);
 	  } catch (error) {
-		console.error('Error saving publication changes:', error); // Log the error for more details
+		console.error('Error saving publication changes:', error);
 		throw new HttpException(`Error saving publication: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
 	  }
 	}

@@ -2,15 +2,11 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
-import { Tooltip } from 'primereact/tooltip';
-import { Dialog } from 'primereact/dialog';
 import { CardView } from '../components/CardView/CardView';
 import { ListView } from '../components/ListView/ListView';
 import { Sidebar } from 'primereact/sidebar';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import Pub from '../interfaces/Pub';
-import BlankPub from '../interfaces/BlankPub';
-import NewPublicationModal from '../components/NewPublicationModal/NewPublicationModal';
 import Author from '../interfaces/Author';
 import Lab from '../interfaces/Lab';
 
@@ -62,50 +58,6 @@ const Home: React.FC = () => {
     const [labStats, setLabStats] = useState<stats>({
         publications: 0,
         citations: 0
-    });
-
-    // State of new publication modal
-    const [newPublicationVisible, setNewPublicationVisible] = useState(false);
-    const [newPub, setNewPub] = useState<BlankPub>({
-        doi: '',
-        name: '',
-        journal: '',
-        type: 'Journal Article',
-        authors: '',
-        filteredAuthors: '',
-        affiliations: '',
-        citations: 0,
-        status: 'Published',
-        publisher: '',
-        supplementary: {
-            github: '',
-            codeOcean: '',
-            geo: '',
-            dbGap: '',
-            figshare: '',
-            kaggle: '',
-            dryad: '',
-            empiar: '',
-            gigaDb: '',
-            dataverse: '',
-            IEEE: '',
-            mendeley: '',
-            openScienceframework: '',
-            zenodo: '',
-            gitlab: '',
-            finngenGitbook: '',
-            pdf: '',
-            docx: '',
-            clinicalTrial: '',
-            ega: '',
-            zip: '',
-            xlsx: '',
-            csv: '',
-            gtexPortal: '',
-            proteinDataBank: '',
-            ebiAcUk: '',
-            gsea: ''
-        }
     });
 
     // Fetch publications and stats on load and when filters change
@@ -196,28 +148,6 @@ const Home: React.FC = () => {
         };
         getAuthors();
     }, []);
-
-    const handleNewPublicationSubmit = async (formattedPub: BlankPub) => {
-        try {
-            await axios.post('/api/publications/new', formattedPub);
-            setNewPublicationVisible(false);
-            setNewPub({
-                doi: '',
-                name: '',
-                journal: '',
-                type: 'Journal Article',
-                authors: '',
-                filteredAuthors: '',
-                affiliations: '',
-                citations: 0,
-                status: 'Published',
-                publisher: '',
-                supplementary: {}
-            });
-        } catch (error) {
-            console.error('Error submitting new publication:', error);
-        }
-    };
 
     return (
         <>
@@ -352,18 +282,6 @@ const Home: React.FC = () => {
                                 </div>
                             )}
                         </div>
-                        <Dialog
-                            visible={newPublicationVisible}
-                            header="Create New Publication"
-                            onHide={() => setNewPublicationVisible(false)}
-                            style={{ width: '800px' }}
-                        >
-                            <NewPublicationModal
-                                pub={newPub}
-                                setPub={setNewPub}
-                                handleSubmit={handleNewPublicationSubmit}
-                            />
-                        </Dialog>
                     </div>
                     {loaded && publications ? (
                         cardView ? (
