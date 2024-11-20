@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { Chart, registerables } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 Chart.register(...registerables);
 
@@ -27,6 +28,7 @@ const PersonalChart = forwardRef<AnnualChartRef, AnnualChartProps>(({ chartData,
                         hidden: !activeLegendItems.has(dataset.label)
                     }))
                 },
+                plugins: [ChartDataLabels],
                 options: {
                     plugins: {
                         title: {
@@ -49,6 +51,44 @@ const PersonalChart = forwardRef<AnnualChartRef, AnnualChartProps>(({ chartData,
                                 padding: 8,
                                 useBorderRadius: true,
                                 borderRadius: 2
+                            }
+                        },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'top',
+                            color: '#000000',
+                            formatter: (value, context) => {
+                                const datasetArray: any = [];
+                                context.chart.data.datasets.forEach((dataset, datasetIndex) => {
+                                    // Check if the dataset is visible
+                                    if (context.chart.isDatasetVisible(datasetIndex)) {
+                                        const datapoint = dataset.data[context.dataIndex];
+                                        if (datapoint !== undefined) {
+                                            datasetArray.push(datapoint);
+                                        }
+                                    }
+                                });
+
+                                // Calculate the total sum of visible data points
+                                const totalSum = datasetArray.reduce(
+                                    (total: number, datapoint: any) => total + datapoint,
+                                    0
+                                );
+
+                                // Display the sum only for the last visible dataset
+                                const visibleDatasets = context.chart.data.datasets.filter((_, datasetIndex) =>
+                                    context.chart.isDatasetVisible(datasetIndex)
+                                );
+
+                                if (
+                                    context.datasetIndex ===
+                                    context.chart.data.datasets.findIndex(
+                                        dataset => dataset === visibleDatasets[visibleDatasets.length - 1]
+                                    )
+                                ) {
+                                    return totalSum;
+                                }
+                                return '';
                             }
                         }
                     },

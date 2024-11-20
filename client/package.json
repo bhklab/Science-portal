@@ -16,6 +16,7 @@
     "@types/react-dom": "^18.2.21",
     "axios": "^1.6.8",
     "chart.js": "^4.4.3",
+    "chartjs-plugin-datalabels": "^2.2.0",
     "glamor": "^2.20.40",
     "jwt-decode": "^4.0.0",
     "primeicons": "^6.0.1",
