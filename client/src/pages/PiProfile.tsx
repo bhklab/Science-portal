@@ -214,7 +214,7 @@ const Profile: React.FC = () => {
     return (
         <div className="flex flex-col items-center py-36 smd:px-4 px-10 min-h-screen bg-white">
             <div className="flex flex-row smd:flex-col gap-5 justify-center mx-auto">
-                <div className="flex flex-col min-w-[285px]">
+                <div className="flex flex-col min-w-[285px] gap-10 sticky top-36 h-fit ">
                     <div className="flex flex-col gap-5 ">
                         <div className="flex flex-col gap-2">
                             <div className="h-[140px] w-[140px] rounded-[120px] overflow-clip">
@@ -223,7 +223,7 @@ const Profile: React.FC = () => {
                         </div>
                         <div className="flex flex-col gap-2 text-black-900">
                             <h2 className="text-heading2Xl font-semibold">
-                                {authContext?.user.given_name} {authContext?.user.family_name}
+                                {getFirstName(authContext?.user.email)} {getLastName(authContext?.user.email)}
                             </h2>
                             <p className="text-headingMd">{scientist?.primaryAppointment}</p>
                         </div>
@@ -244,8 +244,7 @@ const Profile: React.FC = () => {
                             </div>
                         </div>
                     </div>
-                    <hr className="my-10 bg-gray-200 h-[1px]" />
-
+                    <hr className="bg-gray-200 h-[1px]" />
                     <div className="flex flex-row gap-5 text-black-900">
                         <div className="flex flex-col gap-2">
                             <h3 className="text-heading3Xl font-semibold">{totalPublications}</h3>
@@ -615,6 +614,20 @@ const Profile: React.FC = () => {
             <Toast ref={toast} baseZIndex={1000} position="bottom-right" />
         </div>
     );
+};
+
+// Using the users email get their first name, then capitalize the first letter
+const getFirstName = (email: string) => {
+    let firstName = email.substring(0, email.indexOf('.'));
+    firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1);
+    return firstName;
+};
+
+// Using the users email get their last name, then capitalize the first letter
+const getLastName = (email: string) => {
+    let lastName = email.substring(email.indexOf('.') + 1, email.indexOf('@'));
+    lastName = lastName.charAt(0).toUpperCase() + lastName.slice(1);
+    return lastName;
 };
 
 export default Profile;
