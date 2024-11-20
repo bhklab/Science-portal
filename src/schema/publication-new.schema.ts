@@ -44,4 +44,4 @@ export const PublicationsNewSchema = new Schema({
     ebiAcUk: String,
     gsea: String,
   },
-});
+}, { collection: 'newpublications' });

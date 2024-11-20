@@ -1,10 +1,16 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useContext, useState, useRef } from 'react';
 import axios from 'axios';
+import { Toast } from 'primereact/toast';
 import { InputText } from 'primereact/inputtext';
+import { Calendar } from 'primereact/calendar';
 import { NewPub, createDefaultNewPub } from '../interfaces/NewPub';
 import { LINK_CATEGORIES } from '../interfaces/Links';
+import { AuthContext } from '../hooks/AuthContext';
 
 const SubmitPublication: React.FC = () => {
+    const authContext = useContext(AuthContext);
+
+    // State variables for the publication
     const [newPub, setNewPub] = useState<NewPub>(createDefaultNewPub());
     const [links, setLinks] = useState<{ [key: string]: string[] }>(
         initializeLinks({
@@ -37,17 +43,13 @@ const SubmitPublication: React.FC = () => {
             gsea: ''
         })
     );
+
+    // Manage when to show 'Required Field' popup
     const [clickedTitle, setClickedTitle] = useState<boolean>(false);
     const [clickedDoi, setClickedDoi] = useState<boolean>(false);
 
-    const handleNewPublicationSubmit = async () => {
-        try {
-            await axios.post('/api/publications/new', newPub);
-            setNewPub(createDefaultNewPub());
-        } catch (error) {
-            console.error('Error submitting new publication:', error);
-        }
-    };
+    // Toast instantiation
+    const toast = useRef<Toast>(null);
 
     const addNewLink = (category: string) => {
         setLinks(prevLinks => ({
@@ -72,18 +74,41 @@ const SubmitPublication: React.FC = () => {
         });
     };
 
-    useEffect(() => {
-        console.log(clickedDoi);
-        console.log(clickedTitle);
-        console.log(newPub.name);
-    }, [clickedDoi, clickedTitle]);
+    const submitPublication = async () => {
+        const formattedSupplementary = Object.fromEntries(
+            Object.entries(links).map(([key, value]) => [key, value.join(', ')])
+        );
+
+        try {
+            await axios.post('/api/publications/new', {
+                ...newPub,
+                supplementary: formattedSupplementary,
+                submitter: authContext?.user.email
+            });
+            toast.current?.show({
+                severity: 'success',
+                summary: 'Successful Submission',
+                detail: 'A new publication request has been successfully submitted',
+                life: 6000
+            });
+        } catch (error) {
+            toast.current?.show({
+                severity: 'error',
+                summary: 'Publication Not Submitted',
+                detail: 'The publication has not been submitted due to an error. Please try again later',
+                life: 6000
+            });
+            console.error('Error submitting new publication:', error);
+        }
+    };
+
     return (
         <div className="px-60 py-[85px]">
             <div className="flex flex-row justify-between items-center pb-5">
                 <h1 className="w-full text-heading2Xl font-semibold">Submit a Publication</h1>
                 <button
                     className="flex flex-row justify-center items-center px-5 py-2 bg-blue-1000 text-white border-blue-1000 shadow-button rounded-md"
-                    onSubmit={SubmitPublication}
+                    onClick={submitPublication}
                 >
                     Submit
                 </button>
@@ -178,6 +203,17 @@ const SubmitPublication: React.FC = () => {
                                 onChange={e => setNewPub({ ...newPub, publisher: e.target.value })}
                             />
                         </div>
+                        <div className="flex flex-col gap-1">
+                            <p className="text-bodyMd">Publish Date</p>
+                            <div className="card flex justify-content-center rounded-lg">
+                                <Calendar
+                                    value={newPub.date}
+                                    onChange={e => setNewPub({ ...newPub, date: e.value })}
+                                    style={{ borderRadius: '20px' }}
+                                    className="rounded-lg"
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <hr />
@@ -227,7 +263,7 @@ const SubmitPublication: React.FC = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    {/* Existing links */}
+                                    {/* Links */}
                                     <div className="flex flex-col gap-3 w-1/2">
                                         <div className="flex flex-col gap-5">
                                             {keys.map(key => {
@@ -292,6 +328,7 @@ const SubmitPublication: React.FC = () => {
                     })}
                 </div>
             </div>
+            <Toast ref={toast} baseZIndex={1000} position="bottom-right" />
         </div>
     );
 };

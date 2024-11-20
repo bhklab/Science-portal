@@ -46,7 +46,6 @@ export class PublicationController {
 
 	@Post('new')
 	async createPublication(@Body() newPub: PublicationDocument) {
-		console.log(newPub);
 		try {
 			const createdPublication = await this.publicationService.createPublication(newPub);
 			return createdPublication;

@@ -87,7 +87,8 @@ export class PublicationService {
 	}
 
 	async createPublication(newPub: PublicationDocument): Promise<PublicationDocument> {
-		const createdPublication = new this.publicationsNewModel(newPub);
+		const pub = {...newPub, date: newPub.date.toString().substring(0, 10)};
+		const createdPublication = new this.publicationsNewModel(pub);
 		return await createdPublication.save();
 	}
 	

@@ -9,6 +9,7 @@ export interface NewPub {
     citations: number;
     status: string;
     publisher: string;
+    date: any;
     supplementary: {
         [key: string]: string;
     };
@@ -27,6 +28,7 @@ export function createDefaultNewPub(): NewPub {
         citations: 0,
         status: 'Published',
         publisher: '',
+        date: new Date(),
         supplementary: {
             github: '',
             codeOcean: '',
