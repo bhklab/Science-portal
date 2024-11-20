@@ -87,16 +87,16 @@ const SubmitPublication: React.FC = () => {
             });
             toast.current?.show({
                 severity: 'success',
-                summary: 'Successful Submission',
-                detail: 'A new publication request has been successfully submitted',
-                life: 6000
+                summary: 'Successful Publication Submission',
+                detail: 'A new publication request has been successfully submitted. Thank you for taking time to contribute to the platform!',
+                life: 8000
             });
         } catch (error) {
             toast.current?.show({
                 severity: 'error',
                 summary: 'Publication Not Submitted',
-                detail: 'The publication has not been submitted due to an error. Please try again later',
-                life: 6000
+                detail: 'The publication has not been submitted due to an internal error. Please again later.',
+                life: 8000
             });
             console.error('Error submitting new publication:', error);
         }
@@ -107,7 +107,8 @@ const SubmitPublication: React.FC = () => {
             <div className="flex flex-row justify-between items-center pb-5">
                 <h1 className="w-full text-heading2Xl font-semibold">Submit a Publication</h1>
                 <button
-                    className="flex flex-row justify-center items-center px-5 py-2 bg-blue-1000 text-white border-blue-1000 shadow-button rounded-md"
+                    disabled={newPub.name && newPub.doi ? false : true}
+                    className={`flex flex-row justify-center items-center px-5 py-2 ${newPub.name && newPub.doi ? 'bg-blue-1000' : 'bg-gray-400'} bg-blue-1000 text-white shadow-button rounded-md`}
                     onClick={submitPublication}
                 >
                     Submit

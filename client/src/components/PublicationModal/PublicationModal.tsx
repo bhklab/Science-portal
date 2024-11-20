@@ -1,9 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useContext } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
 import { Tooltip } from 'primereact/tooltip';
 import Pub from '../../interfaces/Pub';
 import PublicationModalContent from './PublicationModalContent';
+import { AuthContext } from '../../hooks/AuthContext';
 
 interface ReusableModalProps {
     isVisible: boolean;
@@ -14,6 +15,7 @@ interface ReusableModalProps {
 const ReusableModal: React.FC<ReusableModalProps> = ({ isVisible, onHide, pub }) => {
     const toast = useRef<Toast>(null);
     const [editMode, setEditMode] = useState<boolean>(false);
+    const authContext = useContext(AuthContext);
 
     const handleExpandClick = () => {
         if (pub) {
@@ -64,7 +66,7 @@ const ReusableModal: React.FC<ReusableModalProps> = ({ isVisible, onHide, pub })
                     <div className="flex flex-row items-center gap-2">
                         <Tooltip target=".adjust-icon" />
 
-                        {!editMode && (
+                        {!editMode && authContext?.user && (
                             <button
                                 className="p-[10px] rounded-[4px] hover:bg-gray-100 adjust-icon"
                                 onClick={() => setEditMode(!editMode)}
