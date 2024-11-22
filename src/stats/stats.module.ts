@@ -11,8 +11,8 @@ import { PublicationSchema }  from '../schema/publication.schema';
 	imports: [
 		MongooseModule.forFeature([
 			{ name: 'Stats', schema: StatsSchema },
-			{name: 'Author', schema: AuthorSchema},
-			{name: 'Publication', schema: PublicationSchema}
+			{ name: 'Author', schema: AuthorSchema },
+			{ name: 'Publication', schema: PublicationSchema }
 		])
 	],
   controllers: [StatsController], // receieve requests

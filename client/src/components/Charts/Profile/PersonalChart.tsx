@@ -4,21 +4,42 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 Chart.register(...registerables);
 
-interface AnnualChartProps {
+interface Dataset {
+    label: string;
+    data: number[];
+    backgroundColor?: string;
+    borderColor?: string;
+    hidden?: boolean;
+}
+
+interface PersonalChartProps {
     chartData: any;
     activeLegendItems: Set<string>;
 }
 
-export interface AnnualChartRef {
+export interface PersonalChartRef {
     downloadChartImage: (format: string) => void;
 }
 
-const PersonalChart = forwardRef<AnnualChartRef, AnnualChartProps>(({ chartData, activeLegendItems }, ref) => {
+const PersonalChart = forwardRef<PersonalChartRef, PersonalChartProps>(({ chartData, activeLegendItems }, ref) => {
     const chartRef = useRef<HTMLCanvasElement>(null);
     const chartInstance = useRef<Chart | null>(null);
 
     useEffect(() => {
         if (chartData && chartRef.current && !chartInstance.current) {
+            // Calculate the max for stacked bars
+            const stackedMax = chartData.labels.map((_: any, index: number) =>
+                chartData.datasets.reduce((sum: number, dataset: Dataset) => {
+                    if (!dataset.hidden) {
+                        return sum + (dataset.data[index] || 0);
+                    }
+                    return sum;
+                }, 0)
+            );
+
+            const maxDataValue = Math.max(...stackedMax);
+            const buffer = 2; // Adjust buffer size as needed
+
             chartInstance.current = new Chart(chartRef.current, {
                 type: 'bar',
                 data: {
@@ -120,7 +141,8 @@ const PersonalChart = forwardRef<AnnualChartRef, AnnualChartProps>(({ chartData,
                                     size: 14,
                                     weight: 'bold'
                                 }
-                            }
+                            },
+                            max: maxDataValue + buffer
                         }
                     }
                 }

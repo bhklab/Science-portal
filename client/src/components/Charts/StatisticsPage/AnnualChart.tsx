@@ -4,6 +4,14 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 Chart.register(...registerables);
 
+interface Dataset {
+    label: string;
+    data: number[];
+    backgroundColor?: string;
+    borderColor?: string;
+    hidden?: boolean;
+}
+
 interface AnnualChartProps {
     chartData: any;
     activeLegendItems: Set<string>;
@@ -19,6 +27,19 @@ const AnnualChart = forwardRef<AnnualChartRef, AnnualChartProps>(({ chartData, a
 
     useEffect(() => {
         if (chartData && chartRef.current && !chartInstance.current) {
+            // Calculate the max for stacked bars
+            const stackedMax = chartData.labels.map((_: any, index: number) =>
+                chartData.datasets.reduce((sum: number, dataset: Dataset) => {
+                    if (!dataset.hidden) {
+                        return sum + (dataset.data[index] || 0); // Add data points for this index
+                    }
+                    return sum;
+                }, 0)
+            );
+
+            const maxDataValue = Math.max(...stackedMax); // Find the maximum stacked value
+            const buffer = 100; // Adjust buffer size as needed
+
             chartInstance.current = new Chart(chartRef.current, {
                 type: 'bar',
                 data: {
@@ -120,7 +141,8 @@ const AnnualChart = forwardRef<AnnualChartRef, AnnualChartProps>(({ chartData, a
                                     size: 14,
                                     weight: 'bold'
                                 }
-                            }
+                            },
+                            max: maxDataValue + buffer
                         }
                     }
                 }

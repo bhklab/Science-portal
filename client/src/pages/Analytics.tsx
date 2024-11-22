@@ -45,10 +45,12 @@ const Analytics: React.FC = () => {
 
     return (
         <div className="py-20 px-32 md:px-6">
-            <div className="flex flex-col px-10 gap-3 md:px-10 sm:px-0 bg-white border-1 border-gray-200 rounded-md">
+            <div className="flex flex-col px-10 sm:px-2 gap-3 bg-white border-1 border-gray-200 rounded-md">
                 <div className="flex flex-row justify-between items-center">
-                    <h1 className="text-heading2Xl font-semibold py-10">Princess Margaret Cancer Centre Statistics</h1>
-                    <div className="flex flex-row gap-4">
+                    <h1 className="text-heading2Xl sm:text-headingLg font-semibold py-10">
+                        Princess Margaret Cancer Centre Statistics
+                    </h1>
+                    <div className="flex flex-row sm:flex-col gap-4">
                         <FilterDropdown
                             legendItems={legendItems}
                             activeItems={activeLegendItems}

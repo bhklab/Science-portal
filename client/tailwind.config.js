@@ -8,9 +8,13 @@ module.exports = {
         screens: {
             wrap: { max: '1260px' },
             md: { max: '1050px' },
+            wrapSmall: { max: '950px' },
             smd: { max: '800px' },
             mmd: { max: '700px' },
-            sm: { max: '550px' }
+            sm: { max: '550px' },
+            xs: { max: '450px' },
+
+            burger: { min: '550px' }
         },
         extend: {
             colors: {

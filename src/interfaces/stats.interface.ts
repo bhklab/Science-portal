@@ -2,6 +2,7 @@ import { Document } from 'mongoose';
 
 export interface StatsDocument extends Document {
   name: string;
+  authors: string;
   date: Date;
   citations: number;
   supplementary: {

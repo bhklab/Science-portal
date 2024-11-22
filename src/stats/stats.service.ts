@@ -5,7 +5,9 @@ import { Model } from 'mongoose';
 import { StatsDocument } from '../interfaces/stats.interface';
 import { AuthorDocument } from '../interfaces/author.interface';
 import { PublicationDocument } from '../interfaces/publication.interface';
-import { AuthorStats } from '../interfaces/author-stats.interface'; // Import the interface
+import { AuthorStats } from '../interfaces/author-stats.interface';
+import { supplementary } from '../interfaces/link-types'
+import { filter } from 'rxjs';
 
 @Injectable()
 export class StatsService {
@@ -17,9 +19,12 @@ export class StatsService {
 	
 
 	async findLabStats(lab: string) {
+		console.log(lab);
 		const query = {
-			authors: { $regex: new RegExp(lab, 'i') },
+			authors: { $regex: new RegExp(`\\b${lab}\\b`, 'i') },
 		}
+
+		console.log(query);
         try {
 			const publications = await this.statsModel
 				.find(query)
@@ -33,36 +38,6 @@ export class StatsService {
     }
 
 	async findAllSupplementary() {
-		const supplementary = [
-			{ dbName: 'github', displayName: 'Github', type: 'Code' },
-			{ dbName: 'gitlab', displayName: 'Gitlab', type: 'Code' },
-			{ dbName: 'codeOcean', displayName: 'Code Ocean', type: 'Container' },
-			{ dbName: 'colab', displayName: 'Code Ocean', type: 'Container' },
-			{ dbName: 'geo', displayName: 'Gene Expression Omnibus (Geo)', type: 'Data' },
-			{ dbName: 'dbGap', displayName: 'Database of Genotypes and Phenotypes (dbGap)', type: 'Data' },
-			{ dbName: 'kaggle', displayName: 'Kaggle', type: 'Data' },
-			{ dbName: 'dryad', displayName: 'Dryad', type: 'Data' },
-			{ dbName: 'empiar', displayName: 'Empiar', type: 'Data' },
-			{ dbName: 'gigaDb', displayName: 'GigaScience Database (gigaDb)', type: 'Data' },
-			{ dbName: 'zenodo', displayName: 'Zenodo', type: 'Data' }, 
-			{ dbName: 'ega', displayName: 'European Genome-phenome Archive (EGA)', type: 'Data' },
-			{ dbName: 'xlsx', displayName: 'Excel Document (xlsx)', type: 'Data' },
-			{ dbName: 'csv', displayName: 'Comma Separated Values File (csv)', type: 'Data' },
-			{ dbName: 'proteinDataBank', displayName: 'Protein Data Bank (PDB)', type: 'Data' },
-			{ dbName: 'dataverse', displayName: 'Dataverse', type: 'Data' },
-			{ dbName: 'openScienceframework', displayName: 'Open Science Framework (OSF)', type: 'Data' },
-			{ dbName: 'finngenGitbook', displayName: 'Finngen', type: 'Data' },
-			{ dbName: 'gtexPortal', displayName: 'Genotype-Tissue Expression (GTEx)', type: 'Data' },
-			{ dbName: 'ebiAcUk', displayName: 'EMBLs European Bioinformatics Institute', type: 'Data' },
-			{ dbName: 'mendeley', displayName: 'Mendeley', type: 'Data' },
-			{ dbName: 'gsea', displayName: 'Gene Set Enrichment Analysis (GSEA)', type: 'Results' },
-			{ dbName: 'figshare', displayName: 'Figshare', type: 'Results' },
-			{ dbName: 'clinicalTrial', displayName: 'Clinical Trial Gov', type: 'Clinical Trials' },
-			// { dbName: 'IEEE', displayName: 'IEEE', type: 'Miscellanous' },
-			// { dbName: 'pdf', displayName: 'PDF', type: 'Miscellanous' },
-			// { dbName: 'docx', displayName: 'Word Document (docx)', type: 'Miscellanous' },
-			// { dbName: 'zip', displayName: 'Compressed Folder (zip)', type: 'Miscellanous' },
-		];
 	
 		const colors = [
 			{ barColour: 'rgba(127, 97, 219, 1)', borderColour: 'rgba(127, 97, 219, 1)' },
@@ -119,6 +94,70 @@ export class StatsService {
             throw new Error(`Error fetching supplementary stats: ${error}`);
         }
 	}
+
+	async findAuthorAnnualSupplementary(email: string) {
+		const colors = [
+			{ barColour: 'rgba(127, 97, 219, 1)', borderColour: 'rgba(127, 97, 219, 1)' },
+			{ barColour: 'rgba(89, 113, 203, 1)', borderColour: 'rgba(89, 113, 203, 1)' },
+			{ barColour: 'rgba(89, 170, 106, 1)', borderColour: 'rgba(89, 170, 106, 1)' },
+			{ barColour: 'rgba(242, 172, 60, 1)', borderColour: 'rgba(242, 172, 60, 1)' },
+			{ barColour: 'rgba(203, 93, 56, 1)', borderColour: 'rgba(203, 93, 56, 1)' },
+			{ barColour: 'rgba(68, 152, 145, 1)', borderColour: 'rgba(68, 152, 145, 1)' }
+		];
+	
+		try {
+			const author = await this.authorModel.findOne({ email: email }).exec();
+	
+			if (!author) {
+				throw new Error(`Author with email ${email} not found`);
+			}
+
+			const query = {
+				authors: { $regex: new RegExp(`\\b${author.lastName}, ${author.firstName}\\b`, 'i') },
+			}
+	
+			const publications = await this.statsModel
+				.find(query)
+				.collation({ locale: 'en', strength: 2 });
+
+			const filteredPublications = publications.filter(pub => new Date(pub.date) >= new Date('2018-01-02'));
+	
+			const yearData = {};
+	
+			filteredPublications.forEach(pub => {
+				const year = new Date(pub.date).getFullYear();
+				if (!yearData[year]) {
+					yearData[year] = supplementary.reduce((acc, { type }) => ({ ...acc, [type]: 0 }), {});
+				}
+	
+				supplementary.forEach(({ dbName, type }) => {
+					if (pub.supplementary[dbName]) {
+						const links = pub.supplementary[dbName].split(',').map(link => link.trim()).filter(link => link);
+						yearData[year][type] += links.length;
+					}
+				});
+			});
+	
+			const labels = Object.keys(yearData).sort();
+			const uniqueTypes = [...new Set(supplementary.map(({ type }) => type))];
+			const datasets = uniqueTypes.map((type, index) => {
+				const colorIndex = index % colors.length;
+				return {
+					label: type,
+					data: labels.map(year => yearData[year][type]),
+					backgroundColor: colors[colorIndex].barColour,
+					borderColor: colors[colorIndex].borderColour,
+					borderWidth: 0,
+					maxBarThickness: 100
+				};
+			});
+	
+			return { labels, datasets };
+		} catch (error) {
+			throw new Error(`Error fetching supplementary stats: ${error}`);
+		}
+	}
+	
 
 	async findPublicationsByAuthor(enid: string | number) {
 		try {

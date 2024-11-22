@@ -6,7 +6,7 @@ import Author from '../interfaces/Author';
 import { AuthContext } from '../hooks/AuthContext';
 import { ExportDropdown } from '../components/DropdownButtons/ExportDropdown';
 import { FilterDropdown } from '../components/DropdownButtons/FilterDropdown';
-import PersonalChart, { AnnualChartRef } from '../components/Charts/StatisticsPage/PersonalChart';
+import PersonalChart, { PersonalChartRef } from '../components/Charts/Profile/PersonalChart';
 import FeedbackModal from '../components/FeedbackModal/FeedbackModal';
 import { Toast } from 'primereact/toast';
 
@@ -26,7 +26,7 @@ const Profile: React.FC = () => {
     const [legendItems, setLegendItems] = useState<string[]>([]);
     const [toggleDetailed, setToggleDetailed] = useState(false);
     const [activeLegendItems, setActiveLegendItems] = useState(new Set<string>());
-    const chartRef = useRef<AnnualChartRef>(null);
+    const chartRef = useRef<PersonalChartRef>(null);
 
     // feedback modal state variables
     const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -46,23 +46,6 @@ const Profile: React.FC = () => {
             chartRef.current.downloadChartImage(format);
         }
     };
-
-    useEffect(() => {
-        const getChartData = async () => {
-            try {
-                const res = await axios.get('/api/stats/supplementary');
-                setChartData(res.data);
-
-                // Extract legend items (dataset labels) dynamically
-                const labels = res.data.datasets.map((dataset: any) => dataset.label);
-                setLegendItems(labels);
-                setActiveLegendItems(new Set(labels)); // Initialize all items as active
-            } catch (error) {
-                console.error('Error fetching chart data:', error);
-            }
-        };
-        getChartData();
-    }, []);
 
     // Fetch PI data from the backend if the logged in user is a PI
     useEffect(() => {
@@ -88,7 +71,9 @@ const Profile: React.FC = () => {
 
         const getChartData = async () => {
             try {
-                const res = await axios.get('/api/stats/supplementary');
+                const res = await axios.put('/api/stats/supplementary/author', {
+                    email: authContext?.user.email
+                });
                 setChartData(res.data);
 
                 // Extract legend items (dataset labels) dynamically
@@ -214,8 +199,8 @@ const Profile: React.FC = () => {
     return (
         <div className="flex flex-col items-center py-36 smd:px-4 px-10 min-h-screen bg-white">
             <div className="flex flex-row smd:flex-col gap-5 justify-center mx-auto">
-                <div className="flex flex-col min-w-[285px] gap-10 sticky top-36 h-fit ">
-                    <div className="flex flex-col gap-5 ">
+                <div className="flex flex-col min-w-[285px] gap-10 sticky smd:static top-36 h-fit smd:mb-10">
+                    <div className="flex flex-col gap-5 smd:justify-center smd:items-center ">
                         <div className="flex flex-col gap-2">
                             <div className="h-[140px] w-[140px] rounded-[120px] overflow-clip">
                                 <img src="/images/assets/default-user-icon.svg" alt="PI" />
@@ -245,7 +230,7 @@ const Profile: React.FC = () => {
                         </div>
                     </div>
                     <hr className="bg-gray-200 h-[1px]" />
-                    <div className="flex flex-row gap-5 text-black-900">
+                    <div className="flex flex-row gap-5 text-black-900 smd:justify-center ">
                         <div className="flex flex-col gap-2">
                             <h3 className="text-heading3Xl font-semibold">{totalPublications}</h3>
                             <p className="text-bodyMd">Publications</p>
@@ -256,9 +241,9 @@ const Profile: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="flex flex-col gap-5">
+                    <div className="flex flex-col gap-5 smd:items-center">
                         <button
-                            className="w-full border-1 border-open_border shadow-button rounded-[4px] p-2 text-headingSm text-black-900 font-semibold"
+                            className="w-full border-1 border-open_border shadow-button rounded-[4px] p-2 text-headingSm text-black-900 font-semibold max-w-72"
                             onClick={() => navigate('/submit-publication')}
                         >
                             Submit a publication
@@ -278,7 +263,12 @@ const Profile: React.FC = () => {
 
                 <div className="flex flex-col gap-5">
                     <div className="flex flex-row justify-between items-center w-full">
-                        <h2 className="text-headingLg font-semibold text-black-900">Publication Statistics</h2>
+                        <div className="flex flex-col">
+                            <h2 className="text-headingLg font-semibold text-black-900">Publication Statistics</h2>
+                            <p className="text-bodySm text-gray-500 ">
+                                Calculating the number of publications with each resource type
+                            </p>
+                        </div>
                         <div className="flex items-center gap-2">
                             <label htmlFor="toggle-slider" className="text-bodyMd font-medium">
                                 Detailed View
@@ -297,10 +287,10 @@ const Profile: React.FC = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="flex flex-row items-center gap-5 flex-wrap w-[860px] wrap:w-[420px]">
+                    <div className="flex flex-row items-center gap-5 flex-wrap w-[860px] wrap:w-[600px] wrapSmall:w-[450px] sm:w-[420px] xs:w-[350px] ">
                         {/* Code Section */}
                         <div
-                            className={`flex flex-col gap-5 p-5 w-[420px] border-1 border-gray-200 rounded-lg overflow-hidden`}
+                            className={`flex flex-col gap-5 p-5 w-[420px] xs:w-[350px] wrap:w-full border-1 border-gray-200 rounded-lg overflow-hidden`}
                         >
                             <div className="flex flex-row justify-between items-start gap-4">
                                 <div className="flex flex-col">
@@ -359,7 +349,7 @@ const Profile: React.FC = () => {
                         </div>
 
                         {/* Data Section */}
-                        <div className="flex flex-col gap-5 p-5 w-[420px] border-1 border-gray-200 rounded-lg overflow-hidden">
+                        <div className="flex flex-col gap-5 p-5 w-[420px] xs:[w-350px] wrap:w-full border-1 border-gray-200 rounded-lg overflow-hidden">
                             <div className="flex flex-row justify-between items-start gap-4">
                                 <div className="flex flex-col">
                                     <div className="flex flex-row gap-1 items-center mb-1">
@@ -416,7 +406,7 @@ const Profile: React.FC = () => {
                         </div>
 
                         {/* Containers Section */}
-                        <div className="flex flex-col gap-5 p-5 w-[420px] border-1 border-gray-200 rounded-lg overflow-hidden">
+                        <div className="flex flex-col gap-5 p-5 w-[420px] xs:[w-350px] wrap:w-full border-1 border-gray-200 rounded-lg overflow-hidden">
                             <div className="flex flex-row justify-between items-start gap-4">
                                 <div className="flex flex-col">
                                     <div className="flex flex-row gap-1 items-center mb-1">
@@ -475,7 +465,7 @@ const Profile: React.FC = () => {
                         </div>
 
                         {/* Clinical Trials Section */}
-                        <div className="flex flex-col gap-5 p-5 w-[420px] border-1 border-gray-200 rounded-lg overflow-hidden">
+                        <div className="flex flex-col gap-5 p-5 w-[420px] xs:[w-350px] wrap:w-full border-1 border-gray-200 rounded-lg overflow-hidden">
                             <div className="flex flex-row justify-between items-start gap-4">
                                 <div className="flex flex-col">
                                     <div className="flex flex-row gap-1 items-center mb-1">
@@ -532,7 +522,7 @@ const Profile: React.FC = () => {
                         </div>
 
                         {/* Analysis Results Section */}
-                        <div className="flex flex-col gap-5 p-5 w-[420px] border-1 border-gray-200 rounded-lg overflow-hidden">
+                        <div className="flex flex-col gap-5 p-5 w-[420px] xs:[w-350px] wrap:w-full border-1 border-gray-200 rounded-lg overflow-hidden">
                             <div className="flex flex-row justify-between items-start gap-4">
                                 <div className="flex flex-col">
                                     <div className="flex flex-row gap-1 items-center mb-1">
@@ -587,10 +577,17 @@ const Profile: React.FC = () => {
                                 </div>
                             )}
                         </div>
-                        <div className="flex flex-col px-10 gap-3 md:px-10 sm:px-0 bg-white border-1 border-gray-200 rounded-md w-full">
+                        <div className="flex flex-col gap-3 px-10 sm:px-2 bg-white border-1 border-gray-200 rounded-md w-full">
                             <div className="flex flex-row justify-between items-center">
-                                <h1 className="text-heading2Xl font-semibold py-10">My Publication Statistics</h1>
-                                <div className="flex flex-row gap-4">
+                                <div className="flex flex-col py-10">
+                                    <h1 className="text-heading2Xl sm:text-headingLg font-semibold ">
+                                        My Publication Statistics
+                                    </h1>
+                                    <p className="text-bodySm sm:text-bodyXs text-gray-500 ">
+                                        Total number of publication resources you shared each year
+                                    </p>
+                                </div>
+                                <div className="flex flex-row sm:flex-col gap-4">
                                     <FilterDropdown
                                         legendItems={legendItems}
                                         activeItems={activeLegendItems}
