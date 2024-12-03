@@ -63,6 +63,7 @@ const Profile: React.FC = () => {
                 setScientist(scientistData.data);
                 const enid = scientistData.data?.ENID.toString();
                 const profileData = await axios.get(`/api/stats/author/${enid}`);
+                console.log(profileData.data);
                 setPiData(profileData.data);
             } catch (error) {
                 console.error('Error fetching PI data:', error);
@@ -299,7 +300,7 @@ const Profile: React.FC = () => {
                                         <p className="text-headingXs font-semibold">Code</p>
                                     </div>
                                     <h3 className="text-cyan-1100 text-headingXl mb-4 font-semibold">
-                                        {categoryStats.code.authorContributions} code snippets
+                                        {categoryStats.code.authorContributions} publications with code snippets
                                     </h3>
                                     <p className="text-bodySm">
                                         You are in the{' '}
@@ -357,7 +358,7 @@ const Profile: React.FC = () => {
                                         <p className="text-headingXs font-semibold">Data</p>
                                     </div>
                                     <h3 className="text-cyan-1100 text-headingXl mb-4 font-semibold">
-                                        {categoryStats.data.authorContributions} data points
+                                        {categoryStats.data.authorContributions} publications with data points
                                     </h3>
                                     <p className="text-bodySm">
                                         You are in the{' '}
@@ -414,7 +415,7 @@ const Profile: React.FC = () => {
                                         <p className="text-headingXs font-semibold">Containers</p>
                                     </div>
                                     <h3 className="text-cyan-1100 text-headingXl mb-4 font-semibold">
-                                        {categoryStats.containers.authorContributions} containers
+                                        {categoryStats.containers.authorContributions} publications with containers
                                     </h3>
                                     <p className="text-bodySm">
                                         You are in the{' '}
@@ -473,7 +474,7 @@ const Profile: React.FC = () => {
                                         <p className="text-headingXs font-semibold">Clinical Trials</p>
                                     </div>
                                     <h3 className="text-cyan-1100 text-headingXl mb-4 font-semibold">
-                                        {categoryStats.trials.authorContributions} clinical trials
+                                        {categoryStats.trials.authorContributions} publications with clinical trials
                                     </h3>
                                     <p className="text-bodySm">
                                         You are in the{' '}
@@ -530,7 +531,7 @@ const Profile: React.FC = () => {
                                         <p className="text-headingXs font-semibold">Analysis Results</p>
                                     </div>
                                     <h3 className="text-cyan-1100 text-headingXl mb-4 font-semibold">
-                                        {categoryStats.results.authorContributions} results
+                                        {categoryStats.results.authorContributions} publications with results
                                     </h3>
                                     <p className="text-bodySm">
                                         You are in the{' '}

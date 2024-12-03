@@ -4,6 +4,7 @@ import { StatsService } from './stats.service';
 @Controller('stats')
 export class StatsController {
     constructor(private StatsService: StatsService) {}
+	// For explore page stats, this returns an authors total citations and publication strictly
 	@Post('lab')
     async getLabStats(@Body('lab') lab: string) {
         try {
@@ -36,6 +37,7 @@ export class StatsController {
         }
     }
 
+	// Using an authors employee Id find stats for the profile page, this includes ranking
 	@Get('author/:enid')
     async getAuthorStats(@Param('enid') enid: number) {
         try {
