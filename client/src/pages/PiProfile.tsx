@@ -6,14 +6,26 @@ import Author from '../interfaces/Author';
 import { AuthContext } from '../hooks/AuthContext';
 import { ExportDropdown } from '../components/DropdownButtons/ExportDropdown';
 import { FilterDropdown } from '../components/DropdownButtons/FilterDropdown';
-import PersonalChart, { PersonalChartRef } from '../components/Charts/Profile/PersonalChart';
+import PersonalBarChart, { PersonalBarChartRef } from '../components/Charts/Profile/PersonalBarChart';
+import PersonalScatterPlot, { PersonalScatterPlotRef } from '../components/Charts/Profile/PersonalScatterPlot';
 import FeedbackModal from '../components/FeedbackModal/FeedbackModal';
 import { Toast } from 'primereact/toast';
+import { Link } from 'react-scroll';
+
+interface PlatformRankings {
+    [category: string]: Array<{
+        rank: number;
+        contributions: number;
+        name: string;
+        enid: number;
+    }>;
+}
 
 const Profile: React.FC = () => {
     // Set PI and data
     const [scientist, setScientist] = useState<Author | null>(null);
     const [piData, setPiData] = useState<any>(null);
+    const [enid, setEnid] = useState<number>(-1);
 
     // Decoded jwt token of user (aka. signed in user's data)
     const authContext = useContext(AuthContext);
@@ -21,12 +33,49 @@ const Profile: React.FC = () => {
     // Used to navigate to a new page
     const navigate = useNavigate();
 
-    // Chart variables
-    const [chartData, setChartData] = useState<any | null>(null);
+    const sections = [
+        {
+            name: 'Code',
+            description: 'code snippets',
+            statIndex: 'code',
+            image: 'code-icon.svg'
+        },
+        {
+            name: 'Data',
+            description: 'data points',
+            statIndex: 'data',
+            image: 'data-icon.svg'
+        },
+        {
+            name: 'Containers',
+            description: 'containers',
+            statIndex: 'containers',
+            image: 'containers-icon.svg'
+        },
+        {
+            name: 'Clinical Trials',
+            description: 'clinical trials',
+            statIndex: 'trials',
+            image: 'clinicaltrials-icon.svg'
+        },
+        {
+            name: 'Results',
+            description: 'results',
+            statIndex: 'results',
+            image: 'results-icon.svg'
+        }
+    ];
+
+    // Bar Chart variables
+    const [barChartData, setBarChartData] = useState<any | null>(null);
     const [legendItems, setLegendItems] = useState<string[]>([]);
     const [toggleDetailed, setToggleDetailed] = useState(false);
     const [activeLegendItems, setActiveLegendItems] = useState(new Set<string>());
-    const chartRef = useRef<PersonalChartRef>(null);
+    const barChartRef = useRef<PersonalBarChartRef>(null);
+
+    // Bar Chart variables
+    const [scatterPlotData, setScatterPlotData] = useState<any | null>(null);
+    const scatterPlotRef = useRef<PersonalScatterPlotRef>(null);
 
     // feedback modal state variables
     const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -41,9 +90,15 @@ const Profile: React.FC = () => {
         });
     };
 
-    const downloadChartImage = (format: string) => {
-        if (chartRef.current) {
-            chartRef.current.downloadChartImage(format);
+    const downloadChartImage = (format: string, chartType: string) => {
+        if (chartType == 'scatter') {
+            if (scatterPlotRef.current) {
+                scatterPlotRef.current.downloadChartImage(format);
+            }
+        } else {
+            if (barChartRef.current) {
+                barChartRef.current.downloadChartImage(format);
+            }
         }
     };
 
@@ -61,9 +116,38 @@ const Profile: React.FC = () => {
                     return;
                 }
                 setScientist(scientistData.data);
-                const enid = scientistData.data?.ENID.toString();
-                const profileData = await axios.get(`/api/stats/author/${enid}`);
-                console.log(profileData.data);
+                setEnid(scientistData.data?.ENID);
+                const profileData = await axios.get(`/api/stats/author/${scientistData.data?.ENID.toString()}`);
+                const transformedData = {
+                    datasets: Object.entries(profileData.data.platformRankings).map(([category, entries]) => {
+                        const data = entries as Array<{
+                            rank: number;
+                            contributions: number;
+                            name: string;
+                            enid: number;
+                        }>;
+                        return {
+                            label: category,
+                            data: data.map(entry => ({
+                                x: entry.rank,
+                                y: entry.contributions,
+                                label: `${entry.name} (${entry.contributions} ${category} contributions, ranked ${entry.rank} at PM)`
+                            })),
+                            pointBackgroundColor: data.map(entry =>
+                                entry.enid === scientistData.data?.ENID
+                                    ? 'rgba(255, 99, 132, 1)'
+                                    : 'rgba(75, 192, 192, 1)'
+                            ),
+                            pointBorderColor: data.map(entry =>
+                                entry.enid === scientistData.data?.ENID
+                                    ? 'rgba(255, 99, 132, 1)'
+                                    : 'rgba(75, 192, 192, 1)'
+                            ),
+                            pointRadius: data.map(entry => (entry.enid === scientistData.data?.ENID ? 10 : 5))
+                        };
+                    })
+                };
+                setScatterPlotData(transformedData);
                 setPiData(profileData.data);
             } catch (error) {
                 console.error('Error fetching PI data:', error);
@@ -75,7 +159,7 @@ const Profile: React.FC = () => {
                 const res = await axios.put('/api/stats/supplementary/author', {
                     email: authContext?.user.email
                 });
-                setChartData(res.data);
+                setBarChartData(res.data);
 
                 // Extract legend items (dataset labels) dynamically
                 const labels = res.data.datasets.map((dataset: any) => dataset.label);
@@ -289,295 +373,113 @@ const Profile: React.FC = () => {
                         </div>
                     </div>
                     <div className="flex flex-row items-center gap-5 flex-wrap w-[860px] wrap:w-[600px] wrapSmall:w-[450px] sm:w-[420px] xs:w-[350px] ">
-                        {/* Code Section */}
+                        {/* Sections */}
+                        {sections.map(item => (
+                            <Link
+                                to="scatter-plot"
+                                smooth={true}
+                                duration={700}
+                                offset={-75}
+                                className="hover:cursor-pointer"
+                            >
+                                <div
+                                    className={`flex flex-col gap-5 p-5 w-[420px] xs:w-[350px] wrap:w-full border-1 border-gray-200 rounded-lg overflow-hidden`}
+                                >
+                                    <div className="flex flex-row justify-between items-start gap-4">
+                                        <div className="flex flex-col">
+                                            <div className="flex flex-row gap-1 items-center mb-1">
+                                                <img src={`/images/assets/${item.image}`} alt={item.name} />
+                                                <p className="text-headingXs font-semibold">{item.name}</p>
+                                            </div>
+                                            <h3 className="text-cyan-1100 text-headingXl mb-4 font-semibold">
+                                                {categoryStats[item.statIndex].authorContributions} publications with{' '}
+                                                {item.description}
+                                            </h3>
+                                            <p className="text-bodySm">
+                                                You are in the{' '}
+                                                <span className="font-bold">
+                                                    {categoryStats[item.statIndex].percentage < 50 ? 'top' : 'bottom'}{' '}
+                                                    {categoryStats[item.statIndex].percentage}%
+                                                </span>{' '}
+                                                of {item.name.toLowerCase()} sharing in your publications.
+                                            </p>
+                                        </div>
+                                        <div className="relative h-[100px] w-[100px] flex-shrink-0 overflow-visible">
+                                            <img
+                                                src={`/images/placeholders/${getPyramidImage(categoryStats[item.statIndex].percentage)}`}
+                                                alt="pyramids"
+                                                className="absolute bottom-0 left-0"
+                                                style={{ height: '150%', width: '200%' }}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {toggleDetailed && (
+                                        <div className="flex flex-col gap-2 animate-show">
+                                            <p className="text-bodySm">
+                                                <span className="font-bold">
+                                                    {categoryStats[item.statIndex].openSciencePercentage}% of your
+                                                    publications
+                                                </span>{' '}
+                                                share {item.name.toLowerCase()} with your community!
+                                            </p>
+                                            <div className="flex flex-row">
+                                                <div
+                                                    className="bg-gradient-blue-cyan h-1.5 rounded-l-md"
+                                                    style={{
+                                                        width: `${categoryStats[item.statIndex].openSciencePercentage}%`
+                                                    }}
+                                                />
+                                                <div
+                                                    className="bg-gray-1000 h-1.5 rounded-r-md"
+                                                    style={{
+                                                        width: `${100 - categoryStats[item.statIndex].openSciencePercentage}%`
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="flex flex-row justify-between">
+                                                <p className="text-cyan-1000 text-bodySm font-bold">
+                                                    {categoryStats[item.statIndex].authorContributions}
+                                                </p>
+                                                <p className="text-gray-700 text-bodySm font-bold">
+                                                    {totalPublications}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </Link>
+                        ))}
+                        {/* Scatter Plot */}
                         <div
-                            className={`flex flex-col gap-5 p-5 w-[420px] xs:w-[350px] wrap:w-full border-1 border-gray-200 rounded-lg overflow-hidden`}
+                            className="flex flex-col gap-3 px-10 sm:px-2 bg-white border-1 border-gray-200 rounded-md w-full"
+                            id="scatter-plot"
                         >
-                            <div className="flex flex-row justify-between items-start gap-4">
-                                <div className="flex flex-col">
-                                    <div className="flex flex-row gap-1 items-center mb-1">
-                                        <img src="/images/assets/code-icon.svg" alt="code icon" />
-                                        <p className="text-headingXs font-semibold">Code</p>
-                                    </div>
-                                    <h3 className="text-cyan-1100 text-headingXl mb-4 font-semibold">
-                                        {categoryStats.code.authorContributions} publications with code snippets
-                                    </h3>
-                                    <p className="text-bodySm">
-                                        You are in the{' '}
-                                        <span className="font-bold">
-                                            {categoryStats.code.percentage < 50 ? 'top' : 'bottom'}{' '}
-                                            {categoryStats.code.percentage}%{' '}
-                                        </span>
-                                        of code sharing in your publications.
+                            <div className="flex flex-row justify-between items-center">
+                                <div className="flex flex-col py-10">
+                                    <h1 className="text-heading2Xl sm:text-headingLg font-semibold ">
+                                        Visualized Institution Ranking
+                                    </h1>
+                                    <p className="text-bodySm sm:text-bodyXs text-gray-500 ">
+                                        Number of publications with respective resource type
                                     </p>
                                 </div>
-                                <div className="relative h-[100px] w-[100px] flex-shrink-0 overflow-visible">
-                                    <img
-                                        src={`/images/placeholders/${getPyramidImage(categoryStats.code.percentage)}`}
-                                        alt="pyramids"
-                                        className="absolute bottom-0 left-0"
-                                        style={{ height: '150%', width: '200%' }}
+                                <div className="flex flex-row sm:flex-col gap-4">
+                                    <FilterDropdown
+                                        legendItems={legendItems}
+                                        activeItems={activeLegendItems}
+                                        toggleLegendItem={toggleLegendItem}
                                     />
+                                    <ExportDropdown onDownload={downloadChartImage} chartType="scatter" />
                                 </div>
                             </div>
 
-                            {toggleDetailed && (
-                                <div className="flex flex-col gap-2 animate-show">
-                                    <p className="text-bodySm">
-                                        <span className="font-bold">
-                                            {categoryStats.code.openSciencePercentage}% of your publications
-                                        </span>{' '}
-                                        share code with your community!
-                                    </p>
-                                    <div className="flex flex-row">
-                                        <div
-                                            className="bg-gradient-blue-cyan h-1.5 rounded-l-md"
-                                            style={{ width: `${categoryStats.code.openSciencePercentage}%` }}
-                                        />
-                                        <div
-                                            className="bg-gray-1000 h-1.5 rounded-r-md"
-                                            style={{ width: `${100 - categoryStats.code.openSciencePercentage}%` }}
-                                        />
-                                    </div>
-                                    <div className="flex flex-row justify-between">
-                                        <p className="text-cyan-1000 text-bodySm font-bold">
-                                            {categoryStats.code.authorContributions}
-                                        </p>
-                                        <p className="text-gray-700 text-bodySm font-bold">{totalPublications}</p>
-                                    </div>
-                                </div>
-                            )}
+                            <div className="chart-container relative w-full" style={{ height: '700px' }}>
+                                <PersonalScatterPlot ref={scatterPlotRef} chartData={scatterPlotData} enid={enid} />
+                            </div>
                         </div>
 
-                        {/* Data Section */}
-                        <div className="flex flex-col gap-5 p-5 w-[420px] xs:[w-350px] wrap:w-full border-1 border-gray-200 rounded-lg overflow-hidden">
-                            <div className="flex flex-row justify-between items-start gap-4">
-                                <div className="flex flex-col">
-                                    <div className="flex flex-row gap-1 items-center mb-1">
-                                        <img src="/images/assets/code-icon.svg" alt="code icon" />
-                                        <p className="text-headingXs font-semibold">Data</p>
-                                    </div>
-                                    <h3 className="text-cyan-1100 text-headingXl mb-4 font-semibold">
-                                        {categoryStats.data.authorContributions} publications with data points
-                                    </h3>
-                                    <p className="text-bodySm">
-                                        You are in the{' '}
-                                        <span className="font-bold">
-                                            {categoryStats.data.percentage < 50 ? 'top' : 'bottom'}{' '}
-                                            {categoryStats.data.percentage}%{' '}
-                                        </span>
-                                        of data sharing in your publications.
-                                    </p>
-                                </div>
-                                <div className="relative h-[100px] w-[100px] flex-shrink-0 overflow-visible">
-                                    <img
-                                        src={`/images/placeholders/${getPyramidImage(categoryStats.data.percentage)}`}
-                                        alt="pyramids"
-                                        className="absolute bottom-0 left-0"
-                                        style={{ height: '150%', width: '200%' }}
-                                    />
-                                </div>
-                            </div>
-                            {toggleDetailed && (
-                                <div className="flex flex-col gap-2 animate-show">
-                                    <p className="text-bodySm">
-                                        <span className="font-bold">
-                                            {categoryStats.data.openSciencePercentage}% of your publications
-                                        </span>{' '}
-                                        share data with your community!
-                                    </p>
-                                    <div className="flex flex-row">
-                                        <div
-                                            className={`bg-gradient-blue-cyan h-1.5 rounded-l-md`}
-                                            style={{ width: `${categoryStats.data.openSciencePercentage}%` }}
-                                        />
-                                        <div
-                                            className={`bg-gray-1000 h-1.5 rounded-r-md`}
-                                            style={{ width: `${100 - categoryStats.data.openSciencePercentage}%` }}
-                                        />
-                                    </div>
-                                    <div className="flex flex-row justify-between">
-                                        <p className="text-cyan-1000 text-bodySm font-bold">
-                                            {categoryStats.data.authorContributions}
-                                        </p>
-                                        <p className="text-gray-700 text-bodySm font-bold">{totalPublications}</p>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Containers Section */}
-                        <div className="flex flex-col gap-5 p-5 w-[420px] xs:[w-350px] wrap:w-full border-1 border-gray-200 rounded-lg overflow-hidden">
-                            <div className="flex flex-row justify-between items-start gap-4">
-                                <div className="flex flex-col">
-                                    <div className="flex flex-row gap-1 items-center mb-1">
-                                        <img src="/images/assets/code-icon.svg" alt="code icon" />
-                                        <p className="text-headingXs font-semibold">Containers</p>
-                                    </div>
-                                    <h3 className="text-cyan-1100 text-headingXl mb-4 font-semibold">
-                                        {categoryStats.containers.authorContributions} publications with containers
-                                    </h3>
-                                    <p className="text-bodySm">
-                                        You are in the{' '}
-                                        <span className="font-bold">
-                                            {categoryStats.containers.percentage < 50 ? 'top' : 'bottom'}{' '}
-                                            {categoryStats.containers.percentage}%{' '}
-                                        </span>
-                                        of container sharing in your publications.
-                                    </p>
-                                </div>
-                                <div className="relative h-[100px] w-[100px] flex-shrink-0 overflow-visible">
-                                    <img
-                                        src={`/images/placeholders/${getPyramidImage(categoryStats.containers.percentage)}`}
-                                        alt="pyramids"
-                                        className="absolute bottom-0 left-0"
-                                        style={{ height: '150%', width: '200%' }}
-                                    />
-                                </div>
-                            </div>
-                            {toggleDetailed && (
-                                <div className="flex flex-col gap-2 animate-show">
-                                    <p className="text-bodySm">
-                                        <span className="font-bold">
-                                            {categoryStats.containers.openSciencePercentage}% of your publications
-                                        </span>{' '}
-                                        share containers with your community!
-                                    </p>
-                                    <div className="flex flex-row">
-                                        <div
-                                            className={`bg-gradient-blue-cyan h-1.5 rounded-l-md`}
-                                            style={{ width: `${categoryStats.containers.openSciencePercentage}%` }}
-                                        />
-                                        <div
-                                            className={`bg-gray-1000 h-1.5 rounded-r-md`}
-                                            style={{
-                                                width: `${100 - categoryStats.containers.openSciencePercentage}%`
-                                            }}
-                                        />
-                                    </div>
-                                    <div className="flex flex-row justify-between">
-                                        <p className="text-cyan-1000 text-bodySm font-bold">
-                                            {categoryStats.containers.authorContributions}
-                                        </p>
-                                        <p className="text-gray-700 text-bodySm font-bold">{totalPublications}</p>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Clinical Trials Section */}
-                        <div className="flex flex-col gap-5 p-5 w-[420px] xs:[w-350px] wrap:w-full border-1 border-gray-200 rounded-lg overflow-hidden">
-                            <div className="flex flex-row justify-between items-start gap-4">
-                                <div className="flex flex-col">
-                                    <div className="flex flex-row gap-1 items-center mb-1">
-                                        <img src="/images/assets/code-icon.svg" alt="code icon" />
-                                        <p className="text-headingXs font-semibold">Clinical Trials</p>
-                                    </div>
-                                    <h3 className="text-cyan-1100 text-headingXl mb-4 font-semibold">
-                                        {categoryStats.trials.authorContributions} publications with clinical trials
-                                    </h3>
-                                    <p className="text-bodySm">
-                                        You are in the{' '}
-                                        <span className="font-bold">
-                                            {categoryStats.trials.percentage < 50 ? 'top' : 'bottom'}{' '}
-                                            {categoryStats.trials.percentage}%{' '}
-                                        </span>
-                                        of clinical trial sharing in your publications.
-                                    </p>
-                                </div>
-                                <div className="relative h-[100px] w-[100px] flex-shrink-0 overflow-visible">
-                                    <img
-                                        src={`/images/placeholders/${getPyramidImage(categoryStats.trials.percentage)}`}
-                                        alt="pyramids"
-                                        className="absolute bottom-0 left-0"
-                                        style={{ height: '150%', width: '200%' }}
-                                    />
-                                </div>
-                            </div>
-                            {toggleDetailed && (
-                                <div className="flex flex-col gap-2 animate-show">
-                                    <p className="text-bodySm">
-                                        <span className="font-bold">
-                                            {categoryStats.trials.openSciencePercentage}% of your publications
-                                        </span>{' '}
-                                        share clinical trials with your community!
-                                    </p>
-                                    <div className="flex flex-row">
-                                        <div
-                                            className={`bg-gradient-blue-cyan h-1.5 rounded-l-md`}
-                                            style={{ width: `${categoryStats.trials.openSciencePercentage}%` }}
-                                        />
-                                        <div
-                                            className={`bg-gray-1000 h-1.5 rounded-r-md`}
-                                            style={{ width: `${100 - categoryStats.trials.openSciencePercentage}%` }}
-                                        />
-                                    </div>
-                                    <div className="flex flex-row justify-between">
-                                        <p className="text-cyan-1000 text-bodySm font-bold">
-                                            {categoryStats.trials.authorContributions}
-                                        </p>
-                                        <p className="text-gray-700 text-bodySm font-bold">{totalPublications}</p>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Analysis Results Section */}
-                        <div className="flex flex-col gap-5 p-5 w-[420px] xs:[w-350px] wrap:w-full border-1 border-gray-200 rounded-lg overflow-hidden">
-                            <div className="flex flex-row justify-between items-start gap-4">
-                                <div className="flex flex-col">
-                                    <div className="flex flex-row gap-1 items-center mb-1">
-                                        <img src="/images/assets/code-icon.svg" alt="code icon" />
-                                        <p className="text-headingXs font-semibold">Analysis Results</p>
-                                    </div>
-                                    <h3 className="text-cyan-1100 text-headingXl mb-4 font-semibold">
-                                        {categoryStats.results.authorContributions} publications with results
-                                    </h3>
-                                    <p className="text-bodySm">
-                                        You are in the{' '}
-                                        <span className="font-bold">
-                                            {categoryStats.results.percentage < 50 ? 'top' : 'bottom'}{' '}
-                                            {categoryStats.results.percentage}%{' '}
-                                        </span>
-                                        of results sharing in your publications.
-                                    </p>
-                                </div>
-                                <div className="relative h-[100px] w-[100px] flex-shrink-0 overflow-visible">
-                                    <img
-                                        src={`/images/placeholders/${getPyramidImage(categoryStats.results.percentage)}`}
-                                        alt="pyramids"
-                                        className="absolute bottom-0 left-0"
-                                        style={{ height: '150%', width: '200%' }}
-                                    />
-                                </div>
-                            </div>
-                            {toggleDetailed && (
-                                <div className="flex flex-col gap-2 animate-show">
-                                    <p className="text-bodySm">
-                                        <span className="font-bold">
-                                            {categoryStats.results.openSciencePercentage}% of your publications
-                                        </span>{' '}
-                                        share results with your community!
-                                    </p>
-                                    <div className="flex flex-row">
-                                        <div
-                                            className={`bg-gradient-blue-cyan h-1.5 rounded-l-md`}
-                                            style={{ width: `${categoryStats.results.openSciencePercentage}%` }}
-                                        />
-                                        <div
-                                            className={`bg-gray-1000 h-1.5 rounded-r-md`}
-                                            style={{ width: `${100 - categoryStats.results.openSciencePercentage}%` }}
-                                        />
-                                    </div>
-                                    <div className="flex flex-row justify-between">
-                                        <p className="text-cyan-1000 text-bodySm font-bold">
-                                            {categoryStats.results.authorContributions}
-                                        </p>
-                                        <p className="text-gray-700 text-bodySm font-bold">{totalPublications}</p>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
+                        {/* Bar Chart */}
                         <div className="flex flex-col gap-3 px-10 sm:px-2 bg-white border-1 border-gray-200 rounded-md w-full">
                             <div className="flex flex-row justify-between items-center">
                                 <div className="flex flex-col py-10">
@@ -594,14 +496,14 @@ const Profile: React.FC = () => {
                                         activeItems={activeLegendItems}
                                         toggleLegendItem={toggleLegendItem}
                                     />
-                                    <ExportDropdown onDownload={downloadChartImage} />
+                                    <ExportDropdown onDownload={downloadChartImage} chartType="bar" />
                                 </div>
                             </div>
 
                             <div className="chart-container relative w-full" style={{ height: '700px' }}>
-                                <PersonalChart
-                                    ref={chartRef}
-                                    chartData={chartData}
+                                <PersonalBarChart
+                                    ref={barChartRef}
+                                    chartData={barChartData}
                                     activeLegendItems={activeLegendItems}
                                 />
                             </div>

@@ -2,10 +2,11 @@ import React, { Fragment } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 
 interface DropdownButtonProps {
-    onDownload: (format: string) => void;
+    onDownload: (format: string, chartType: string) => void;
+    chartType: string;
 }
 
-export const ExportDropdown: React.FC<DropdownButtonProps> = ({ onDownload }) => {
+export const ExportDropdown: React.FC<DropdownButtonProps> = ({ onDownload, chartType }) => {
     return (
         <div className="flex flex-row justify-center items-center text-center bg-blue-1000 rounded-md p-2 w-[120px] ">
             <Menu as="div" className="relative inline-block text-left">
@@ -29,7 +30,7 @@ export const ExportDropdown: React.FC<DropdownButtonProps> = ({ onDownload }) =>
                             <Menu.Item>
                                 {({ active }) => (
                                     <button
-                                        onClick={() => onDownload('png')}
+                                        onClick={() => onDownload('png', chartType)}
                                         className={`${
                                             active ? 'bg-gray-100' : 'text-gray-900'
                                         } group flex w-full items-center rounded-md px-2 py-2 text-xs`}
@@ -42,7 +43,7 @@ export const ExportDropdown: React.FC<DropdownButtonProps> = ({ onDownload }) =>
                             <Menu.Item>
                                 {({ active }) => (
                                     <button
-                                        onClick={() => onDownload('jpeg')}
+                                        onClick={() => onDownload('jpeg', chartType)}
                                         className={`${
                                             active ? 'bg-gray-100' : 'text-gray-900'
                                         } group flex w-full items-center rounded-md px-2 py-2 text-xs`}

@@ -11,7 +11,7 @@ import { filter } from 'rxjs';
 
 @Injectable()
 export class StatsService {
-    constructor(
+	constructor(
 		@InjectModel('Stats') private statsModel: Model<StatsDocument>,
 		@InjectModel('Author') private authorModel: Model<AuthorDocument>,
 		@InjectModel('Publication') private publicationModel: Model<PublicationDocument>
@@ -25,17 +25,17 @@ export class StatsService {
 		}
 
 		console.log(query);
-        try {
+		try {
 			const publications = await this.statsModel
 				.find(query)
 				.collation({ locale: 'en', strength: 2 });
 			const totalCitations = publications.reduce((acc, pub) => acc + pub.citations, 0)
 
 			return {publications: publications.length, citations: totalCitations};
-        } catch (error) {
-            throw new Error(`Error fetching lab stats: ${error}`);
-        }
-    }
+		} catch (error) {
+			throw new Error(`Error fetching lab stats: ${error}`);
+		}
+	}
 
 	async findAllSupplementary() {
 	
@@ -49,52 +49,53 @@ export class StatsService {
 		];
 	
 		try {
-            const publications = await this.statsModel.find({});
-            
-            // Filter publications for those with dates from 2018 onwards
-            const filteredPublications = publications.filter(pub => new Date(pub.date) >= new Date('2018-01-02'));
-    
-            const yearData = {};
-    
-            filteredPublications.forEach(pub => {
-                const year = new Date(pub.date).getFullYear();
-                if (!yearData[year]) {
-                    yearData[year] = supplementary.reduce((acc, { type }) => ({ ...acc, [type]: 0 }), {});
-                }
-    
-                supplementary.forEach(({ dbName, type }) => {
-                    if (pub.supplementary[dbName]) {
-                        const links = pub.supplementary[dbName].split(',').map(link => link.trim()).filter(link => link);
-                        yearData[year][type] += links.length;
-                    }
-                });
-            });
-    
-            // Logging yearData to see the processed data
-            // console.log('Year Data:', JSON.stringify(yearData, null, 2));
-    
-            const labels = Object.keys(yearData).sort();
-            const uniqueTypes = [...new Set(supplementary.map(({ type }) => type))];
-            const datasets = uniqueTypes.map((type, index) => {
-                const colorIndex = index % colors.length;
-                return {
-                    label: type,
-                    data: labels.map(year => yearData[year][type]),
-                    backgroundColor: colors[colorIndex].barColour,
-                    borderColor: colors[colorIndex].borderColour,
-                    borderWidth: 0,
+			const publications = await this.statsModel.find({});
+			
+			// Filter publications for those with dates from 2018 onwards
+			const filteredPublications = publications.filter(pub => new Date(pub.date) >= new Date('2018-01-02'));
+	
+			const yearData = {};
+	
+			filteredPublications.forEach(pub => {
+				const year = new Date(pub.date).getFullYear();
+				if (!yearData[year]) {
+					yearData[year] = supplementary.reduce((acc, { type }) => ({ ...acc, [type]: 0 }), {});
+				}
+	
+				supplementary.forEach(({ dbName, type }) => {
+					if (pub.supplementary[dbName]) {
+						const links = pub.supplementary[dbName].split(',').map(link => link.trim()).filter(link => link);
+						yearData[year][type] += links.length;
+					}
+				});
+			});
+	
+			// Logging yearData to see the processed data
+			// console.log('Year Data:', JSON.stringify(yearData, null, 2));
+	
+			const labels = Object.keys(yearData).sort();
+			const uniqueTypes = [...new Set(supplementary.map(({ type }) => type))];
+			const datasets = uniqueTypes.map((type, index) => {
+				const colorIndex = index % colors.length;
+				return {
+					label: type,
+					data: labels.map(year => yearData[year][type]),
+					backgroundColor: colors[colorIndex].barColour,
+					borderColor: colors[colorIndex].borderColour,
+					borderWidth: 0,
 					maxBarThickness: 100
-                };
-            });
-    
-            // console.log(JSON.stringify({ labels, datasets }, null, 1));
-    
-            return { labels, datasets };
-        } catch (error) {
-            throw new Error(`Error fetching supplementary stats: ${error}`);
-        }
+				};
+			});
+	
+			// console.log(JSON.stringify({ labels, datasets }, null, 1));
+	
+			return { labels, datasets };
+		} catch (error) {
+			throw new Error(`Error fetching supplementary stats: ${error}`);
+		}
 	}
 
+	// Total contributions to each resource category sorted by year
 	async findAuthorAnnualSupplementary(email: string) {
 		const colors = [
 			{ barColour: 'rgba(127, 97, 219, 1)', borderColour: 'rgba(127, 97, 219, 1)' },
@@ -157,12 +158,26 @@ export class StatsService {
 			throw new Error(`Error fetching supplementary stats: ${error}`);
 		}
 	}
-	
 
+	// Author's ranking for contributions to each resource category
 	async findPublicationsByAuthor(enid: string | number) {
 		try {
 			const enidNumber = Number(enid);
-			const allAuthors = await this.authorModel.find({});
+	
+			// Fetch all authors
+			const allAuthors = await this.authorModel.find({}).lean();
+			const targetAuthor = allAuthors.find((author) => author.ENID === enidNumber);
+			if (!targetAuthor) throw new Error('Author not found');
+	
+			// Fetch all publications
+			const allPublications = await this.publicationModel.find({}).lean();
+	
+			// Group publications by author
+			const publicationsByAuthor = allAuthors.reduce((acc, author) => {
+				const authorNamePattern = new RegExp(`${author.lastName}, ${author.firstName}`, 'i');
+				acc[author.ENID] = allPublications.filter((pub) => pub.authors.match(authorNamePattern));
+				return acc;
+			}, {} as Record<number, any[]>);
 	
 			const LINK_CATEGORIES = {
 				code: ['github', 'gitlab'],
@@ -170,136 +185,123 @@ export class StatsService {
 				containers: ['codeOcean', 'colab'],
 				results: ['gsea', 'figshare'],
 				trials: ['clinicalTrial'],
-				miscellaneous: ['IEEE', 'pdf', 'docx', 'zip']
+				miscellaneous: ['IEEE', 'pdf', 'docx', 'zip'],
 			};
 	
-			const authorStatsMap: { [key: number]: Omit<AuthorStats, '_id'> } = {};
-			const categoryRankings: { [key: string]: [number, Omit<AuthorStats, '_id'>][] } = {};
+			const totalCategoryContributions = Object.keys(LINK_CATEGORIES).reduce((acc, category) => {
+				acc[category] = 0;
+				return acc;
+			}, {} as Record<string, number>);
 	
-			const totalCategoryContributions = {
-				code: 0,
-				data: 0,
-				containers: 0,
-				results: 0,
-				trials: 0,
-				miscellaneous: 0
-			};
+			const authorStatsMap: {
+				[key: number]: {
+					name: string;
+					categoryContributions: Record<string, number>;
+					totalCitations: number;
+				};
+			} = {};
 	
-			let totalPublicationsForAuthor = 0;
-			let totalPublicationsForSystem = 0;
-			let authorEmail = '';
-	
-			for (const author of allAuthors) {
-				const namePattern = `${author.lastName}, ${author.firstName}`;
-				const publications = await this.publicationModel.find({
-					authors: { $regex: new RegExp(namePattern, 'i') }
-				});
-	
-				if (author.ENID === enidNumber) {
-					totalPublicationsForAuthor = publications.length;
-					authorEmail = author.email;
-				}
-	
-				totalPublicationsForSystem += publications.length;
-	
-				authorStatsMap[author.ENID] = {
+			// Process publications for each author
+			allAuthors.forEach((author) => {
+				const publications = publicationsByAuthor[author.ENID] || [];
+				const authorStats = {
 					name: `${author.firstName} ${author.lastName}`,
-					totalValidLinks: 0,
-					citations: 0,
-					categoryContributions: {
-						code: 0,
-						data: 0,
-						containers: 0,
-						results: 0,
-						trials: 0,
-						miscellaneous: 0
-					}
+					categoryContributions: Object.keys(LINK_CATEGORIES).reduce((acc, category) => {
+						acc[category] = 0;
+						return acc;
+					}, {} as Record<string, number>),
+					totalCitations: 0,
 				};
 	
-				publications.forEach(pub => {
-					let hasCategoryLink = {
-						code: false,
-						data: false,
-						containers: false,
-						results: false,
-						trials: false,
-						miscellaneous: false
-					};
+				publications.forEach((pub) => {
+					authorStats.totalCitations += pub.citations || 0;
 	
-					Object.keys(pub.supplementary).forEach(key => {
-						if (pub.supplementary[key] && pub.supplementary[key] !== "") {
-							for (const [category, keys] of Object.entries(LINK_CATEGORIES)) {
+					// Track category contributions
+					const hasCategoryLink = Object.keys(LINK_CATEGORIES).reduce((acc, category) => {
+						acc[category] = false;
+						return acc;
+					}, {} as Record<string, boolean>);
+	
+					Object.entries(pub.supplementary || {}).forEach(([key, value]) => {
+						if (value) {
+							Object.entries(LINK_CATEGORIES).forEach(([category, keys]) => {
 								if (keys.includes(key) && !hasCategoryLink[category]) {
 									hasCategoryLink[category] = true;
-									authorStatsMap[author.ENID].categoryContributions[category]++;
+									authorStats.categoryContributions[category]++;
 									totalCategoryContributions[category]++;
 								}
-							}
+							});
 						}
 					});
-	
-					authorStatsMap[author.ENID].citations += pub.citations || 0;
 				});
-			}
 	
-			Object.keys(LINK_CATEGORIES).forEach(category => {
-				const sortedAuthors: [number, Omit<AuthorStats, '_id'>][] = Object.entries(authorStatsMap)
-					.map(([authorIdStr, stats]) => [Number(authorIdStr), stats as Omit<AuthorStats, '_id'>] as [number, Omit<AuthorStats, '_id'>])
-					.sort(([, a], [, b]) => b.categoryContributions[category] - a.categoryContributions[category]);
-				categoryRankings[category] = sortedAuthors;
+				authorStatsMap[author.ENID] = authorStats;
 			});
 	
-			const authorStats = authorStatsMap[enidNumber];
-			if (!authorStats) {
-				throw new Error('Author not found');
-			}
+			// Calculate rankings
+			const categoryRankings: { [key: string]: any[] } = {};
+			Object.keys(LINK_CATEGORIES).forEach((category) => {
+				const sortedAuthors = Object.entries(authorStatsMap)
+					.map(([enid, stats]) => ({
+						enid: Number(enid),
+						name: stats.name,
+						totalCitations: stats.totalCitations,
+						contributions: stats.categoryContributions[category],
+					}))
+					.sort((a, b) => b.contributions - a.contributions);
 	
-			const rankings = {};
-			const categoryStats = {};
+				categoryRankings[category] = sortedAuthors.map((author, index) => ({
+					...author,
+					rank: index + 1,
+				}));
+			});
 	
-			Object.keys(LINK_CATEGORIES).forEach(category => {
-				const sortedAuthors = categoryRankings[category];
-				const authorRank = sortedAuthors.findIndex(([authorId]) => authorId === enidNumber) + 1;
-				const totalAuthors = sortedAuthors.length;
+			// Format for scatter plot rankings
+			const platformRankings = Object.keys(categoryRankings).reduce((acc, category) => {
+				acc[category] = categoryRankings[category].map((entry) => ({
+					enid: entry.enid,
+					name: entry.enid === enidNumber ? entry.name : 'Anonymous',
+					contributions: entry.contributions,
+					rank: entry.rank,
+				}));
+				return acc;
+			}, {} as Record<string, any[]>);
+	
+			// Prepare category stats for target author
+			const targetAuthorStats = authorStatsMap[enidNumber];
+			if (!targetAuthorStats) throw new Error('Author has no contributions');
+	
+			const categoryStats = Object.keys(LINK_CATEGORIES).reduce((acc, category) => {
+				const authorRank = categoryRankings[category].findIndex((author) => author.enid === enidNumber) + 1;
+				const totalAuthors = categoryRankings[category].length;
 				const rankPercentage = Math.ceil((authorRank / totalAuthors) * 100);
-				const openSciencePercentage = Math.ceil((authorStats.categoryContributions[category] / totalPublicationsForAuthor) * 100 )
+				const openSciencePercentage = Math.ceil(
+					(targetAuthorStats.categoryContributions[category] / (publicationsByAuthor[enidNumber]?.length || 1)) * 100
+				);
 	
-				categoryStats[category] = {
+				acc[category] = {
 					total: totalCategoryContributions[category],
-					authorContributions: authorStats.categoryContributions[category],
+					authorContributions: targetAuthorStats.categoryContributions[category],
 					rank: authorRank,
 					percentage: rankPercentage,
-					openSciencePercentage: openSciencePercentage
+					openSciencePercentage,
 				};
 	
-				rankings[category] = {
-					rank: authorRank,
-					totalAuthors,
-					rankPercentage
-				};
-			});
+				return acc;
+			}, {} as Record<string, any>);
 	
 			return {
-				author: authorStats.name,
-				authorEmail,
-				totalValidLinks: authorStats.totalValidLinks,
-				totalCitations: authorStats.citations,
+				author: targetAuthorStats.name,
+				authorEmail: targetAuthor.email,
+				totalCitations: targetAuthorStats.totalCitations,
+				totalPublications: publicationsByAuthor[enidNumber]?.length || 0,
 				categoryStats,
-				rankings,
-				totalPublications: totalPublicationsForAuthor,
-				totalSystemPublications: totalPublicationsForSystem
+				platformRankings,
 			};
-	
 		} catch (error) {
-			if (error instanceof Error) {
-				throw new Error(`Error fetching publications for author: ${error.message}`);
-			} else {
-				throw new Error('Unknown error occurred');
-			}
+			throw new Error(
+				`Error fetching publications for author: ${error instanceof Error ? error.message : 'Unknown error'}`
+			);
 		}
-	}
-	
-	
-	
-	
+	}	
 }
