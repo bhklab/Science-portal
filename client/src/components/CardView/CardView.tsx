@@ -3,9 +3,19 @@ import { PublicationImage } from '../PublicationImage/PublicationImage';
 import Pub from '../../interfaces/Pub';
 import PublicationModal from '../PublicationModal/PublicationModal';
 import { Tooltip } from 'primereact/tooltip';
+import { LINK_CATEGORIES } from '../../interfaces/Links';
+import Supplementary from '../../interfaces/Supplementary';
 
 interface publications {
     pubs: Pub[];
+}
+
+interface Contains {
+    code: boolean;
+    container: boolean;
+    data: boolean;
+    results: boolean;
+    trials: boolean;
 }
 
 export const CardView: React.FC<publications> = ({ pubs }) => {
@@ -32,6 +42,39 @@ export const CardView: React.FC<publications> = ({ pubs }) => {
         const firstThreeAuthors = authorsArray.slice(0, 3).join('; ');
         const lastThreeAuthors = authorsArray.slice(-3).join('; ');
         return `${firstThreeAuthors} ...${lastThreeAuthors}`;
+    };
+
+    const formatIcons = (pub: Pub) => {
+        const supplementary: Supplementary = pub.supplementary;
+        let contains: Contains = { code: false, container: false, data: false, results: false, trials: false };
+        Object.entries(LINK_CATEGORIES).forEach(([category, types]) => {
+            console.log(types);
+            for (const type of types) {
+                if (supplementary[type.name as keyof Supplementary] !== '') {
+                    contains[category as keyof Contains] = true;
+                }
+            }
+        });
+
+        return (
+			<div className="flex flex-row gap-2">
+
+				{
+					contains.map((item) =>({
+								<img
+									src="/images/assets/doi-icon.svg"
+									alt="icon"
+									className="h-6 w-6 logo"
+									data-pr-tooltip="Open publication"
+								/>
+						)
+					})
+				}
+			</div>
+
+		);
+
+
     };
 
     return (
@@ -63,8 +106,9 @@ export const CardView: React.FC<publications> = ({ pubs }) => {
                                 <p>{pub.date}</p>
                                 <p>{pub.citations} citations</p>
                             </div>
-                            <div className="flex flex-row gap-2">
-                                {pub.doi && (
+							{formatIcons(pub)}
+                            {/* <div className="flex flex-row gap-2"> */}
+                                {/* {pub.doi && (
                                     <a href={`https://doi.org/${pub.doi}`} target="_blank" rel="noreferrer">
                                         <img
                                             src="/images/assets/doi-icon.svg"
@@ -98,8 +142,8 @@ export const CardView: React.FC<publications> = ({ pubs }) => {
                                             data-pr-tooltip="Open in Code Ocean"
                                         />
                                     </a>
-                                )}
-                            </div>
+                                )} */}
+                            {/* </div> */}
                         </div>
                     </div>
                 </div>
