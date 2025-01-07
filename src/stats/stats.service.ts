@@ -179,17 +179,8 @@ export class StatsService {
 				return acc;
 			}, {} as Record<number, any[]>);
 	
-			const LINK_CATEGORIES = {
-				code: ['github', 'gitlab'],
-				data: ['geo', 'dbGap', 'kaggle', 'dryad', 'empiar', 'gigaDb', 'zenodo', 'ega', 'xlsx', 'csv', 'proteinDataBank'],
-				containers: ['codeOcean', 'colab'],
-				results: ['gsea', 'figshare'],
-				trials: ['clinicalTrial'],
-				miscellaneous: ['IEEE', 'pdf', 'docx', 'zip'],
-			};
-	
-			const totalCategoryContributions = Object.keys(LINK_CATEGORIES).reduce((acc, category) => {
-				acc[category] = 0;
+			const totalCategoryContributions = supplementary.reduce((acc, { type }) => {
+				if (!acc[type]) acc[type] = 0;
 				return acc;
 			}, {} as Record<string, number>);
 	
@@ -206,8 +197,8 @@ export class StatsService {
 				const publications = publicationsByAuthor[author.ENID] || [];
 				const authorStats = {
 					name: `${author.firstName} ${author.lastName}`,
-					categoryContributions: Object.keys(LINK_CATEGORIES).reduce((acc, category) => {
-						acc[category] = 0;
+					categoryContributions: supplementary.reduce((acc, { type }) => {
+						if (!acc[type]) acc[type] = 0;
 						return acc;
 					}, {} as Record<string, number>),
 					totalCitations: 0,
@@ -216,21 +207,17 @@ export class StatsService {
 				publications.forEach((pub) => {
 					authorStats.totalCitations += pub.citations || 0;
 	
-					// Track category contributions
-					const hasCategoryLink = Object.keys(LINK_CATEGORIES).reduce((acc, category) => {
-						acc[category] = false;
-						return acc;
-					}, {} as Record<string, boolean>);
-	
-					Object.entries(pub.supplementary || {}).forEach(([key, value]) => {
-						if (value) {
-							Object.entries(LINK_CATEGORIES).forEach(([category, keys]) => {
-								if (keys.includes(key) && !hasCategoryLink[category]) {
-									hasCategoryLink[category] = true;
-									authorStats.categoryContributions[category]++;
-									totalCategoryContributions[category]++;
-								}
-							});
+					// Process supplementary links
+					supplementary.forEach(({ dbName, type }) => {
+						if (pub.supplementary?.[dbName]) {
+							const links = pub.supplementary[dbName]
+								.split(',')
+								.map((link) => link.trim())
+								.filter((link) => link);
+							if (links.length > 0) {
+								authorStats.categoryContributions[type] += 1;
+								totalCategoryContributions[type] += 1;
+							}
 						}
 					});
 				});
@@ -240,25 +227,27 @@ export class StatsService {
 	
 			// Calculate rankings
 			const categoryRankings: { [key: string]: any[] } = {};
-			Object.keys(LINK_CATEGORIES).forEach((category) => {
-				const sortedAuthors = Object.entries(authorStatsMap)
-					.map(([enid, stats]) => ({
-						enid: Number(enid),
-						name: stats.name,
-						totalCitations: stats.totalCitations,
-						contributions: stats.categoryContributions[category],
-					}))
-					.sort((a, b) => b.contributions - a.contributions);
+			supplementary.forEach(({ type }) => {
+				if (!categoryRankings[type]) {
+					const sortedAuthors = Object.entries(authorStatsMap)
+						.map(([enid, stats]) => ({
+							enid: Number(enid),
+							name: stats.name,
+							totalCitations: stats.totalCitations,
+							contributions: stats.categoryContributions[type],
+						}))
+						.sort((a, b) => b.contributions - a.contributions);
 	
-				categoryRankings[category] = sortedAuthors.map((author, index) => ({
-					...author,
-					rank: index + 1,
-				}));
+					categoryRankings[type] = sortedAuthors.map((author, index) => ({
+						...author,
+						rank: index + 1,
+					}));
+				}
 			});
 	
 			// Format for scatter plot rankings
-			const platformRankings = Object.keys(categoryRankings).reduce((acc, category) => {
-				acc[category] = categoryRankings[category].map((entry) => ({
+			const platformRankings = supplementary.reduce((acc, { type }) => {
+				acc[type] = categoryRankings[type].map((entry) => ({
 					enid: entry.enid,
 					name: entry.enid === enidNumber ? entry.name : 'Anonymous',
 					contributions: entry.contributions,
@@ -271,17 +260,19 @@ export class StatsService {
 			const targetAuthorStats = authorStatsMap[enidNumber];
 			if (!targetAuthorStats) throw new Error('Author has no contributions');
 	
-			const categoryStats = Object.keys(LINK_CATEGORIES).reduce((acc, category) => {
-				const authorRank = categoryRankings[category].findIndex((author) => author.enid === enidNumber) + 1;
-				const totalAuthors = categoryRankings[category].length;
+			const categoryStats = supplementary.reduce((acc, { type }) => {
+				const authorRank = categoryRankings[type].findIndex((author) => author.enid === enidNumber) + 1;
+				const totalAuthors = categoryRankings[type].length;
 				const rankPercentage = Math.ceil((authorRank / totalAuthors) * 100);
 				const openSciencePercentage = Math.ceil(
-					(targetAuthorStats.categoryContributions[category] / (publicationsByAuthor[enidNumber]?.length || 1)) * 100
+					(targetAuthorStats.categoryContributions[type] /
+						(publicationsByAuthor[enidNumber]?.length || 1)) *
+						100
 				);
 	
-				acc[category] = {
-					total: totalCategoryContributions[category],
-					authorContributions: targetAuthorStats.categoryContributions[category],
+				acc[type] = {
+					total: totalCategoryContributions[type],
+					authorContributions: targetAuthorStats.categoryContributions[type],
 					rank: authorRank,
 					percentage: rankPercentage,
 					openSciencePercentage,

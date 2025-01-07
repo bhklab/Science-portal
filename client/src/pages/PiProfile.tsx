@@ -12,15 +12,6 @@ import FeedbackModal from '../components/FeedbackModal/FeedbackModal';
 import { Toast } from 'primereact/toast';
 import { Link } from 'react-scroll';
 
-interface PlatformRankings {
-    [category: string]: Array<{
-        rank: number;
-        contributions: number;
-        name: string;
-        enid: number;
-    }>;
-}
-
 const Profile: React.FC = () => {
     // Set PI and data
     const [scientist, setScientist] = useState<Author | null>(null);
@@ -37,31 +28,31 @@ const Profile: React.FC = () => {
         {
             name: 'Code',
             description: 'code snippets',
-            statIndex: 'code',
+            statIndex: 'Code',
             image: 'code-icon.svg'
         },
         {
             name: 'Data',
             description: 'data points',
-            statIndex: 'data',
+            statIndex: 'Data',
             image: 'data-icon.svg'
         },
         {
             name: 'Containers',
             description: 'containers',
-            statIndex: 'containers',
+            statIndex: 'Container',
             image: 'containers-icon.svg'
         },
         {
             name: 'Clinical Trials',
             description: 'clinical trials',
-            statIndex: 'trials',
+            statIndex: 'Clinical Trials',
             image: 'clinicaltrials-icon.svg'
         },
         {
             name: 'Results',
             description: 'results',
-            statIndex: 'results',
+            statIndex: 'Results',
             image: 'results-icon.svg'
         }
     ];
@@ -70,7 +61,8 @@ const Profile: React.FC = () => {
     const [barChartData, setBarChartData] = useState<any | null>(null);
     const [legendItems, setLegendItems] = useState<string[]>([]);
     const [toggleDetailed, setToggleDetailed] = useState(false);
-    const [activeLegendItems, setActiveLegendItems] = useState(new Set<string>());
+    const [scatterActiveLegendItems, setScatterActiveLegendItems] = useState(new Set<string>());
+    const [barActiveLegendItems, setBarActiveLegendItems] = useState(new Set<string>());
     const barChartRef = useRef<PersonalBarChartRef>(null);
 
     // Bar Chart variables
@@ -81,13 +73,22 @@ const Profile: React.FC = () => {
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const toast = useRef<Toast>(null);
 
-    const toggleLegendItem = (item: string) => {
-        setActiveLegendItems(prev => {
-            const newSet = new Set(prev);
-            if (newSet.has(item)) newSet.delete(item);
-            else newSet.add(item);
-            return newSet;
-        });
+    const toggleLegendItem = (item: string, chartType: string) => {
+        if (chartType === 'scatter') {
+            setScatterActiveLegendItems(prev => {
+                const newSet = new Set(prev);
+                if (newSet.has(item)) newSet.delete(item);
+                else newSet.add(item);
+                return newSet;
+            });
+        } else if (chartType === 'bar') {
+            setBarActiveLegendItems(prev => {
+                const newSet = new Set(prev);
+                if (newSet.has(item)) newSet.delete(item);
+                else newSet.add(item);
+                return newSet;
+            });
+        }
     };
 
     const downloadChartImage = (format: string, chartType: string) => {
@@ -111,12 +112,13 @@ const Profile: React.FC = () => {
                 });
 
                 if (scientistData.data === 'Author not found') {
-                    //If the PM author doesn't exist, don't continue with the data retrieval
+                    // If the PM author doesn't exist, don't continue with the data retrieval
                     setPiData('DNE');
                     return;
                 }
                 setScientist(scientistData.data);
                 setEnid(scientistData.data?.ENID);
+
                 const profileData = await axios.get(`/api/stats/author/${scientistData.data?.ENID.toString()}`);
                 const transformedData = {
                     datasets: Object.entries(profileData.data.platformRankings).map(([category, entries]) => {
@@ -148,6 +150,11 @@ const Profile: React.FC = () => {
                     })
                 };
                 setScatterPlotData(transformedData);
+
+                // Extract labels for the legend
+                const labels = transformedData.datasets.map(dataset => dataset.label!); // Ensure label is not undefined
+                setLegendItems(labels);
+                setScatterActiveLegendItems(new Set(labels));
                 setPiData(profileData.data);
             } catch (error) {
                 console.error('Error fetching PI data:', error);
@@ -162,9 +169,9 @@ const Profile: React.FC = () => {
                 setBarChartData(res.data);
 
                 // Extract legend items (dataset labels) dynamically
-                const labels = res.data.datasets.map((dataset: any) => dataset.label);
+                const labels = res.data.datasets.map((dataset: { label: string }) => dataset.label);
                 setLegendItems(labels);
-                setActiveLegendItems(new Set(labels)); // Initialize all items as active
+                setBarActiveLegendItems(new Set(labels));
             } catch (error) {
                 console.error('Error fetching chart data:', error);
             }
@@ -280,6 +287,7 @@ const Profile: React.FC = () => {
     }
 
     const { author, authorEmail, totalPublications, totalCitations, categoryStats } = piData;
+    console.log(categoryStats);
 
     return (
         <div className="flex flex-col items-center py-36 smd:px-4 px-10 min-h-screen bg-white">
@@ -467,15 +475,21 @@ const Profile: React.FC = () => {
                                 <div className="flex flex-row sm:flex-col gap-4">
                                     <FilterDropdown
                                         legendItems={legendItems}
-                                        activeItems={activeLegendItems}
+                                        activeItems={scatterActiveLegendItems}
                                         toggleLegendItem={toggleLegendItem}
+                                        chartType="scatter"
                                     />
                                     <ExportDropdown onDownload={downloadChartImage} chartType="scatter" />
                                 </div>
                             </div>
 
                             <div className="chart-container relative w-full" style={{ height: '700px' }}>
-                                <PersonalScatterPlot ref={scatterPlotRef} chartData={scatterPlotData} enid={enid} />
+                                <PersonalScatterPlot
+                                    ref={scatterPlotRef}
+                                    chartData={scatterPlotData}
+                                    activeLegendItems={scatterActiveLegendItems}
+                                    enid={enid}
+                                />
                             </div>
                         </div>
 
@@ -493,8 +507,9 @@ const Profile: React.FC = () => {
                                 <div className="flex flex-row sm:flex-col gap-4">
                                     <FilterDropdown
                                         legendItems={legendItems}
-                                        activeItems={activeLegendItems}
+                                        activeItems={barActiveLegendItems}
                                         toggleLegendItem={toggleLegendItem}
+                                        chartType="bar"
                                     />
                                     <ExportDropdown onDownload={downloadChartImage} chartType="bar" />
                                 </div>
@@ -504,7 +519,7 @@ const Profile: React.FC = () => {
                                 <PersonalBarChart
                                     ref={barChartRef}
                                     chartData={barChartData}
-                                    activeLegendItems={activeLegendItems}
+                                    activeLegendItems={barActiveLegendItems}
                                 />
                             </div>
                         </div>
