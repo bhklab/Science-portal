@@ -154,7 +154,7 @@ const Profile: React.FC = () => {
                 // Extract labels for the legend
                 const labels = transformedData.datasets.map(dataset => dataset.label!); // Ensure label is not undefined
                 setLegendItems(labels);
-                setScatterActiveLegendItems(new Set(labels));
+                setScatterActiveLegendItems(new Set(['Code']));
                 setPiData(profileData.data);
             } catch (error) {
                 console.error('Error fetching PI data:', error);
@@ -287,7 +287,6 @@ const Profile: React.FC = () => {
     }
 
     const { author, authorEmail, totalPublications, totalCitations, categoryStats } = piData;
-    console.log(categoryStats);
 
     return (
         <div className="flex flex-col items-center py-36 smd:px-4 px-10 min-h-screen bg-white">
@@ -314,12 +313,12 @@ const Profile: React.FC = () => {
                                 <img src="/images/assets/mail-icon.svg" alt="mail-icon" />
                                 <p className="text-bodyMd">{authContext?.user.email}</p>
                             </div>
-                            <div className="flex flex-row gap-2 items-center">
+                            {/* <div className="flex flex-row gap-2 items-center">
                                 <img src="/images/assets/globe-icon.svg" alt="globe-icon" />
                                 <a href="https://bhklab.ca" target="_blank" rel="noreferrer">
                                     <p className="text-bodyMd text-blue-600">Visit website</p>
                                 </a>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                     <hr className="bg-gray-200 h-[1px]" />
@@ -389,6 +388,7 @@ const Profile: React.FC = () => {
                                 duration={700}
                                 offset={-75}
                                 className="hover:cursor-pointer"
+                                onClick={() => setScatterActiveLegendItems(new Set([`${item.statIndex}`]))}
                             >
                                 <div
                                     className={`flex flex-col gap-5 p-5 w-[420px] xs:w-[350px] wrap:w-full border-1 border-gray-200 rounded-lg overflow-hidden`}
