@@ -92,7 +92,7 @@ const Profile: React.FC = () => {
     };
 
     const downloadChartImage = (format: string, chartType: string) => {
-        if (chartType == 'scatter') {
+        if (chartType === 'scatter') {
             if (scatterPlotRef.current) {
                 scatterPlotRef.current.downloadChartImage(format);
             }
@@ -181,7 +181,7 @@ const Profile: React.FC = () => {
             fetchPiData();
             getChartData();
         }
-    }, []);
+    }, [authContext?.user]);
 
     // Map percentage to pyramid image
     const getPyramidImage = (percentage: number) => {
