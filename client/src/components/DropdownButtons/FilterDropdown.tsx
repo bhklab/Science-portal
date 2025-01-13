@@ -5,10 +5,16 @@ import { ChevronDownIcon } from '@heroicons/react/20/solid';
 interface FilterDropdownProps {
     legendItems: string[];
     activeItems: Set<string>;
-    toggleLegendItem: (item: string) => void;
+    toggleLegendItem: (item: string, chartType: string) => void;
+    chartType: string;
 }
 
-export const FilterDropdown: React.FC<FilterDropdownProps> = ({ legendItems, activeItems, toggleLegendItem }) => {
+export const FilterDropdown: React.FC<FilterDropdownProps> = ({
+    legendItems,
+    activeItems,
+    toggleLegendItem,
+    chartType
+}) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -63,7 +69,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({ legendItems, act
                                         <input
                                             type="checkbox"
                                             checked={activeItems.has(item)}
-                                            onChange={() => toggleLegendItem(item)}
+                                            onChange={() => toggleLegendItem(item, chartType)}
                                             className="mr-2 rounded-sm"
                                         />
                                         <span className="text-xs">{item}</span>

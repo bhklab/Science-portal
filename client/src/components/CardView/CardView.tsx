@@ -3,9 +3,19 @@ import { PublicationImage } from '../PublicationImage/PublicationImage';
 import Pub from '../../interfaces/Pub';
 import PublicationModal from '../PublicationModal/PublicationModal';
 import { Tooltip } from 'primereact/tooltip';
+import { LINK_CATEGORIES } from '../../interfaces/Links';
+import Supplementary from '../../interfaces/Supplementary';
 
 interface publications {
     pubs: Pub[];
+}
+
+interface Contains {
+    code: boolean;
+    container: boolean;
+    data: boolean;
+    results: boolean;
+    trials: boolean;
 }
 
 export const CardView: React.FC<publications> = ({ pubs }) => {
@@ -32,6 +42,50 @@ export const CardView: React.FC<publications> = ({ pubs }) => {
         const firstThreeAuthors = authorsArray.slice(0, 3).join('; ');
         const lastThreeAuthors = authorsArray.slice(-3).join('; ');
         return `${firstThreeAuthors} ...${lastThreeAuthors}`;
+    };
+
+    const formatIcons = (pub: Pub) => {
+        const supplementary: Supplementary = pub.supplementary;
+
+        // Initialize the 'contains' object to track the presence of links in each category
+        let contains: Contains = { code: false, container: false, data: false, results: false, trials: false };
+
+        // Map category names to their corresponding icon file paths
+        const categoryIcons: Record<string, string> = {
+            code: '/images/assets/code-icon.svg',
+            containers: '/images/assets/containers-icon.svg',
+            data: '/images/assets/data-icon.svg',
+            results: '/images/assets/results-icon.svg',
+            trials: '/images/assets/clinicaltrials-icon.svg'
+        };
+
+        // Check which categories have non-empty supplementary data, excluding 'miscellaneous'
+        Object.entries(LINK_CATEGORIES).forEach(([category, types]) => {
+            if (category === 'miscellaneous') return; // Skip 'miscellaneous'
+            for (const type of types) {
+                if (supplementary[type.name as keyof Supplementary]?.trim()) {
+                    contains[category as keyof Contains] = true;
+                    break; // Stop checking further types for this category
+                }
+            }
+        });
+
+        // Render icons for categories that have supplementary links
+        return (
+            <div className="flex flex-row gap-2">
+                {Object.entries(contains).map(([category, isPresent]) =>
+                    isPresent ? (
+                        <img
+                            key={category}
+                            src={categoryIcons[category]}
+                            alt={`${category} icon`}
+                            className="h-5 w-5 logo"
+                            data-pr-tooltip={`Publication includes ${category}`}
+                        />
+                    ) : null
+                )}
+            </div>
+        );
     };
 
     return (
@@ -63,43 +117,7 @@ export const CardView: React.FC<publications> = ({ pubs }) => {
                                 <p>{pub.date}</p>
                                 <p>{pub.citations} citations</p>
                             </div>
-                            <div className="flex flex-row gap-2">
-                                {pub.doi && (
-                                    <a href={`https://doi.org/${pub.doi}`} target="_blank" rel="noreferrer">
-                                        <img
-                                            src="/images/assets/doi-icon.svg"
-                                            alt="icon"
-                                            className="h-6 w-6 logo"
-                                            data-pr-tooltip="Open publication"
-                                        />
-                                    </a>
-                                )}
-
-                                {pub.supplementary.github && (
-                                    <a href={pub.supplementary.github.split(',')[0]} target="_blank" rel="noreferrer">
-                                        <img
-                                            src="/images/assets/github-icon.svg"
-                                            alt="icon"
-                                            className="h-6 w-6 logo"
-                                            data-pr-tooltip="Open in Github"
-                                        />
-                                    </a>
-                                )}
-                                {pub.supplementary.codeOcean && (
-                                    <a
-                                        href={pub.supplementary.codeOcean.split(',')[0]}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                    >
-                                        <img
-                                            src="/images/assets/codeocean-icon.png"
-                                            alt="icon"
-                                            className="h-6 w-6 logo"
-                                            data-pr-tooltip="Open in Code Ocean"
-                                        />
-                                    </a>
-                                )}
-                            </div>
+                            {formatIcons(pub)}
                         </div>
                     </div>
                 </div>
