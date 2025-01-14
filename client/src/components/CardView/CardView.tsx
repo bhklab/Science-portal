@@ -16,6 +16,7 @@ interface Contains {
     data: boolean;
     results: boolean;
     trials: boolean;
+    miscellaneous: boolean;
 }
 
 export const CardView: React.FC<publications> = ({ pubs }) => {
@@ -48,7 +49,14 @@ export const CardView: React.FC<publications> = ({ pubs }) => {
         const supplementary: Supplementary = pub.supplementary;
 
         // Initialize the 'contains' object to track the presence of links in each category
-        let contains: Contains = { code: false, container: false, data: false, results: false, trials: false };
+        let contains: Contains = {
+            code: false,
+            container: false,
+            data: false,
+            results: false,
+            trials: false,
+            miscellaneous: false
+        };
 
         // Map category names to their corresponding icon file paths
         const categoryIcons: Record<string, string> = {
@@ -56,12 +64,11 @@ export const CardView: React.FC<publications> = ({ pubs }) => {
             containers: '/images/assets/containers-icon.svg',
             data: '/images/assets/data-icon.svg',
             results: '/images/assets/results-icon.svg',
-            trials: '/images/assets/clinicaltrials-icon.svg'
+            trials: '/images/assets/clinicaltrials-icon.svg',
+            miscellaneous: '/images/assets/miscellaneous-icon.svg'
         };
 
-        // Check which categories have non-empty supplementary data, excluding 'miscellaneous'
         Object.entries(LINK_CATEGORIES).forEach(([category, types]) => {
-            if (category === 'miscellaneous') return; // Skip 'miscellaneous'
             for (const type of types) {
                 if (supplementary[type.name as keyof Supplementary]?.trim()) {
                     contains[category as keyof Contains] = true;
@@ -80,7 +87,7 @@ export const CardView: React.FC<publications> = ({ pubs }) => {
                             src={categoryIcons[category]}
                             alt={`${category} icon`}
                             className="h-5 w-5 logo"
-                            data-pr-tooltip={`Publication includes ${category}`}
+                            data-pr-tooltip={`Publication includes ${category} ${category === 'miscellaneous' ? 'data' : ''}`}
                         />
                     ) : null
                 )}
