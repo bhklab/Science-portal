@@ -1,67 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   version="1.1"
-   id="svg2190"
-   xml:space="preserve"
-   width="682.66669"
-   height="682.66669"
-   viewBox="0 0 682.66669 682.66669"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg"><defs
-     id="defs2194"><clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath2204"><path
-         d="M 0,512 H 512 V 0 H 0 Z"
-         id="path2202" /></clipPath></defs><g
-     id="g2196"
-     transform="matrix(1.3333333,0,0,-1.3333333,0,682.66667)"><g
-       id="g2198"><g
-         id="g2200"
-         clip-path="url(#clipPath2204)"><g
-           id="g2206"
-           transform="translate(496,236)"><path
-             d="M 0,0 -120,-40 V -221 L 0,-181 Z"
-             style="fill:none;stroke:#000000;stroke-width:30;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
-             id="path2208" /></g><g
-           id="g2210"
-           transform="translate(256,236)"><path
-             d="M 0,0 120,-40 V -221 L 0,-181 Z"
-             style="fill:none;stroke:#000000;stroke-width:30;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
-             id="path2212" /></g><g
-           id="g2214"
-           transform="translate(496,236)"><path
-             d="M 0,0 -120,-40 -240,0 -120,40 Z"
-             style="fill:none;stroke:#000000;stroke-width:30;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
-             id="path2216" /></g><g
-           id="g2218"
-           transform="translate(256,236)"><path
-             d="M 0,0 -120,-40 V -221 L 0,-181 Z"
-             style="fill:none;stroke:#000000;stroke-width:30;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
-             id="path2220" /></g><g
-           id="g2222"
-           transform="translate(16,236)"><path
-             d="M 0,0 120,-40 V -221 L 0,-181 Z"
-             style="fill:none;stroke:#000000;stroke-width:30;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
-             id="path2224" /></g><g
-           id="g2226"
-           transform="translate(256,236)"><path
-             d="M 0,0 -120,-40 -240,0 -120,40 Z"
-             style="fill:none;stroke:#000000;stroke-width:30;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
-             id="path2228" /></g><g
-           id="g2230"
-           transform="translate(376,457)"><path
-             d="M 0,0 -120,-40 V -221 L 0,-181 Z"
-             style="fill:none;stroke:#000000;stroke-width:30;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
-             id="path2232" /></g><g
-           id="g2234"
-           transform="translate(136,457)"><path
-             d="M 0,0 120,-40 V -221 L 0,-181 Z"
-             style="fill:none;stroke:#000000;stroke-width:30;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
-             id="path2236" /></g><g
-           id="g2238"
-           transform="translate(376,457)"><path
-             d="M 0,0 -120,-40 -240,0 -120,40 Z"
-             style="fill:none;stroke:#000000;stroke-width:30;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
-             id="path2240" /></g></g></g></g></svg>
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="mask0_4651_17470" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="20">
+<rect width="20" height="20" fill="#D9D9D9"/>
+</mask>
+<g mask="url(#mask0_4651_17470)">
+<path d="M9.16667 16.1868V10.4785L4.16667 7.58268V13.291L9.16667 16.1868ZM10.8333 16.1868L15.8333 13.291V7.58268L10.8333 10.4785V16.1868ZM10 9.04102L14.9375 6.18685L10 3.33268L5.0625 6.18685L10 9.04102ZM3.33333 14.7493C3.06944 14.5966 2.86458 14.3952 2.71875 14.1452C2.57292 13.8952 2.5 13.6174 2.5 13.3118V6.68685C2.5 6.38129 2.57292 6.10352 2.71875 5.85352C2.86458 5.60352 3.06944 5.40213 3.33333 5.24935L9.16667 1.89518C9.43056 1.7424 9.70833 1.66602 10 1.66602C10.2917 1.66602 10.5694 1.7424 10.8333 1.89518L16.6667 5.24935C16.9306 5.40213 17.1354 5.60352 17.2813 5.85352C17.4271 6.10352 17.5 6.38129 17.5 6.68685V13.3118C17.5 13.6174 17.4271 13.8952 17.2813 14.1452C17.1354 14.3952 16.9306 14.5966 16.6667 14.7493L10.8333 18.1035C10.5694 18.2563 10.2917 18.3327 10 18.3327C9.70833 18.3327 9.43056 18.2563 9.16667 18.1035L3.33333 14.7493Z" fill="#1C1B1F"/>
+</g>
+</svg>

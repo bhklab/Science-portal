@@ -6,6 +6,7 @@ module.exports = {
     darkMode: 'class',
     theme: {
         screens: {
+            lg: { max: '1500px' },
             wrap: { max: '1260px' },
             md: { max: '1050px' },
             wrapSmall: { max: '950px' },
