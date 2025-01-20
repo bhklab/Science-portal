@@ -82,6 +82,7 @@ export class PublicationService {
     }
 
 	async savePublicationChanges(pub: PublicationChangesDocument): Promise<PublicationChangesDocument> {
+		console.log(pub);
 		const newChange = new this.publicationChangesModel(pub);
 		return await newChange.save();
 	}

@@ -46,13 +46,8 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
         const formattedSupplementary = Object.fromEntries(
             Object.entries(links).map(([key, value]) => [key, value.join(', ')])
         );
-        const formatted = formattedSupplementary;
+
         console.log(formattedSupplementary);
-        console.log(pub.supplementary);
-        console.log(pub.supplementary == formatted);
-        console.log(pub.supplementary === formatted);
-        console.log(typeof formatted);
-        console.log(typeof pub.supplementary);
 
         // If the supplementary data is different than the base publication, submit request, else close edit mode
         if (formattedSupplementary !== pub.supplementary) {
@@ -62,7 +57,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                     supplementary: formattedSupplementary,
                     dateAdded: new Date().toISOString(),
                     originalId: pub._id,
-                    submitter: authContext?.user.email
+                    submitterEmail: authContext?.user.email
                 });
 
                 toast.current?.show({

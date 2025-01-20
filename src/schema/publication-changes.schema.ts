@@ -43,6 +43,8 @@ export const PublicationChangesSchema = new Schema({
     proteinDataBank: { type: String },
     ebiAcUk: { type: String },
     gsea: { type: String },
+	other: { type: String },
   },
   originalId: { type: String },
+  submitterEmail: {type: String}
 });
