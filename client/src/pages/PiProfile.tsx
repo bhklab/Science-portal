@@ -60,17 +60,17 @@ const Profile: React.FC = () => {
     // Bar Chart variables
     const [barChartData, setBarChartData] = useState<any | null>(null);
     const [legendItems, setLegendItems] = useState<string[]>([]);
-    const [toggleDetailed, setToggleDetailed] = useState(false);
-    const [scatterActiveLegendItems, setScatterActiveLegendItems] = useState(new Set<string>());
     const [barActiveLegendItems, setBarActiveLegendItems] = useState(new Set<string>());
     const barChartRef = useRef<PersonalBarChartRef>(null);
 
-    // Bar Chart variables
+    // Scatter Chart variables
     const [scatterPlotData, setScatterPlotData] = useState<any | null>(null);
+    const [scatterActiveLegendItems, setScatterActiveLegendItems] = useState(new Set<string>());
     const scatterPlotRef = useRef<PersonalScatterPlotRef>(null);
 
     // feedback modal state variables
     const [isVisible, setIsVisible] = useState<boolean>(false);
+    const [toggleDetailed, setToggleDetailed] = useState(false);
     const toast = useRef<Toast>(null);
 
     const toggleLegendItem = (item: string, chartType: string) => {
@@ -458,6 +458,7 @@ const Profile: React.FC = () => {
                                 </div>
                             </Link>
                         ))}
+
                         {/* Scatter Plot */}
                         <div
                             className="flex flex-col gap-3 px-10 sm:px-2 bg-white border-1 border-gray-200 rounded-md w-full"
@@ -466,7 +467,7 @@ const Profile: React.FC = () => {
                             <div className="flex flex-row justify-between items-center">
                                 <div className="flex flex-col py-10">
                                     <h1 className="text-heading2Xl sm:text-headingLg font-semibold ">
-                                        Visualized Institution Ranking
+                                        My Resource Sharing Rank
                                     </h1>
                                     <p className="text-bodySm sm:text-bodyXs text-gray-500 ">
                                         Number of publications with respective resource type
@@ -483,7 +484,7 @@ const Profile: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className="chart-container relative w-full" style={{ height: '700px' }}>
+                            <div className="chart-container relative w-full" style={{ height: '450px' }}>
                                 <PersonalScatterPlot
                                     ref={scatterPlotRef}
                                     chartData={scatterPlotData}
@@ -501,7 +502,8 @@ const Profile: React.FC = () => {
                                         My Publication Statistics
                                     </h1>
                                     <p className="text-bodySm sm:text-bodyXs text-gray-500 ">
-                                        Total number of publication resources you shared each year
+                                        <span className="font-bold text-gray-500">Total</span> publication resources
+                                        shared by year
                                     </p>
                                 </div>
                                 <div className="flex flex-row sm:flex-col gap-4">
