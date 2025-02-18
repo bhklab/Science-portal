@@ -56,7 +56,8 @@ export function createDefaultNewPub(): NewPub {
             gtexPortal: '',
             proteinDataBank: '',
             ebiAcUk: '',
-            gsea: ''
+            gsea: '',
+            other: ''
         },
         submitter: ''
     };

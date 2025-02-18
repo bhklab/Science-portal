@@ -43,6 +43,7 @@ export interface PublicationDocument extends Document {
     proteinDataBank: string;
     ebiAcUk: string;
     gsea: string;
+	other: string;
   };
 }
 

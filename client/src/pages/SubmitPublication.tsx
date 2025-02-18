@@ -40,7 +40,8 @@ const SubmitPublication: React.FC = () => {
             gtexPortal: '',
             proteinDataBank: '',
             ebiAcUk: '',
-            gsea: ''
+            gsea: '',
+            other: ''
         })
     );
 

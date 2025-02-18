@@ -43,5 +43,6 @@ export const PublicationsNewSchema = new Schema({
     proteinDataBank: String,
     ebiAcUk: String,
     gsea: String,
+	other: String,
   },
 }, { collection: 'newpublications' });
