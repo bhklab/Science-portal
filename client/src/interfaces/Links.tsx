@@ -31,5 +31,5 @@ export const LINK_CATEGORIES = {
         { name: 'docx', display: 'Word Documents' },
         { name: 'zip', display: 'Compressed Files' }
     ],
-    other: [{ name: 'other', display: 'Any other link' }]
+    other: [{ name: 'otherLinks', display: 'Any other link' }]
 };

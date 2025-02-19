@@ -13,10 +13,19 @@ interface PublicationModalContentProps {
 }
 
 const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, editMode, setEditMode }) => {
+    // ---- State for the "supplementary" links ----
     const [links, setLinks] = useState<{ [key: string]: string[] }>(() => initializeLinks(pub.supplementary));
+
+    /**
+     * Make sure otherLinks is always an array. If pub.otherLinks is
+     * undefined, default to [] so it's never "possibly undefined."
+     */
+    const [otherLinks, setOtherLinks] = useState<Pub['otherLinks']>(pub.otherLinks ?? []);
+
     const toast = useRef<Toast>(null);
     const authContext = useContext(AuthContext);
 
+    // ---- Manage changes in the "supplementary" links ----
     const handleLinkChange = (category: string, index: number, value: string) => {
         setLinks(prevLinks => {
             const updatedLinks = { ...prevLinks };
@@ -40,21 +49,47 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
         });
     };
 
+    // ---- Manage changes in the "otherLinks" array ----
+    const addNewOtherLink = () => {
+        // Use "prev ?? []" just to be extra safe when spreading
+        setOtherLinks(prev => [...(prev ?? []), { name: '', description: '', link: '' }]);
+    };
+
+    const handleOtherLinkChange = (index: number, field: keyof Pub['otherLinks'][number], value: string) => {
+        setOtherLinks(prev => {
+            // Again, default to [] if somehow prev is undefined
+            const updated = [...(prev ?? [])];
+            updated[index] = { ...updated[index], [field]: value };
+            return updated;
+        });
+    };
+
+    const deleteOtherLink = (index: number) => {
+        setOtherLinks(prev => {
+            return (prev ?? []).filter((_, i) => i !== index);
+        });
+    };
+
+    // ---- Handle submission combining both supplementary & otherLinks ----
     const handleSubmit = async () => {
-        let backendPub: Pub = { ...pub };
+        const backendPub: Pub = { ...pub };
         delete backendPub._id;
+
+        // Convert each array back to comma-separated strings
         const formattedSupplementary = Object.fromEntries(
             Object.entries(links).map(([key, value]) => [key, value.join(', ')])
         );
 
-        console.log(formattedSupplementary);
+        // Check if changes occurred
+        const supplementaryChanged = JSON.stringify(formattedSupplementary) !== JSON.stringify(pub.supplementary);
+        const otherLinksChanged = JSON.stringify(otherLinks) !== JSON.stringify(pub.otherLinks);
 
-        // If the supplementary data is different than the base publication, submit request, else close edit mode
-        if (formattedSupplementary !== pub.supplementary) {
+        if (supplementaryChanged || otherLinksChanged) {
             try {
                 await axios.post('/api/publications/changes', {
                     ...backendPub,
                     supplementary: formattedSupplementary,
+                    otherLinks: otherLinks,
                     dateAdded: new Date().toISOString(),
                     originalId: pub._id,
                     submitterEmail: authContext?.user.email
@@ -71,8 +106,10 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
             } catch (err) {
                 console.error('Submission Error:', err);
             }
+        } else {
+            // If nothing changed, just close edit mode
+            setEditMode(false);
         }
-        setEditMode(false);
     };
 
     return (
@@ -92,6 +129,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                     </button>
                 </div>
             )}
+
             <div className="flex flex-col gap-10 py-10 mmd:px-[10px] px-[120px]">
                 {/* Header Section */}
                 <HeaderSection
@@ -107,7 +145,15 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                 {/* Render Link Categories */}
                 <div className="flex flex-col gap-5">
                     {Object.entries(LINK_CATEGORIES).map(([categoryGroup, keys]) => {
-                        const groupHasValidLinks = keys.some(key => isNonEmptyArray(links[key.name]));
+                        // Check if group has valid links. For "otherLinks," handle separately.
+                        const groupHasValidLinks = keys.some(key => {
+                            if (key.name === 'otherLinks') {
+                                return isNonEmptyOtherLinksArray(otherLinks);
+                            }
+                            return isNonEmptyArray(links[key.name]);
+                        });
+
+                        // If not in edit mode and no valid links, skip
                         if (!editMode && !groupHasValidLinks) return null;
 
                         return (
@@ -125,15 +171,25 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                             </p>
                                             <div className="flex flex-row flex-wrap gap-2">
                                                 {keys.map(key => {
-                                                    const isExisting = Boolean(links[key.name]?.length); // Check dynamically if the category has links
+                                                    // If it's otherLinks, check length on the array.
+                                                    const isExisting =
+                                                        key.name === 'otherLinks'
+                                                            ? otherLinks.length > 0
+                                                            : Boolean(links[key.name]?.length);
 
                                                     return (
                                                         <button
                                                             key={key.name}
                                                             onClick={() => {
-                                                                addNewLink(key.name); // Always call addNewLink, which updates the links state
+                                                                if (key.name === 'otherLinks') {
+                                                                    addNewOtherLink();
+                                                                } else {
+                                                                    addNewLink(key.name);
+                                                                }
                                                             }}
-                                                            className={`flex flex-row gap-1 justify-center items-center p-3 text-headingMd rounded-full font-medium bg-gray-50 border-gray-200 ${isExisting ? 'text-black-900' : 'text-gray-700'}`}
+                                                            className={`flex flex-row gap-1 justify-center items-center p-3 text-headingMd rounded-full font-medium bg-gray-50 border-gray-200 ${
+                                                                isExisting ? 'text-black-900' : 'text-gray-700'
+                                                            }`}
                                                         >
                                                             {isExisting ? (
                                                                 <>
@@ -145,7 +201,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                                     {key.display}
                                                                 </>
                                                             ) : (
-                                                                `${key.display}`
+                                                                key.display
                                                             )}
                                                         </button>
                                                     );
@@ -159,78 +215,186 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                 <div className="flex flex-col gap-3">
                                     <div className="flex flex-col gap-5">
                                         {keys.map(key => {
-                                            const categoryLinks = links[key.name];
-                                            if (!categoryLinks || categoryLinks.length === 0) return null;
+                                            if (key.name === 'otherLinks') {
+                                                // Render the "otherLinks" array
+                                                if (otherLinks.length === 0) return null;
 
-                                            return (
-                                                <div
-                                                    key={key.name}
-                                                    className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200 w-full hover:bg-gray-100 hover:text-gray"
-                                                >
-                                                    <div className="flex justify-between items-center">
-                                                        <p className="capitalize">{key.display}</p>
-                                                        {editMode && (
-                                                            <img
-                                                                src="/images/assets/plus-icon.svg"
-                                                                alt="Add Link"
-                                                                className="cursor-pointer"
-                                                                onClick={() => addNewLink(key.name)}
-                                                            />
-                                                        )}
+                                                return (
+                                                    <div
+                                                        key={key.name}
+                                                        className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200 w-full hover:bg-gray-100 hover:text-gray"
+                                                    >
+                                                        <div className="flex justify-between items-center">
+                                                            <p className="capitalize">{key.display}</p>
+                                                            {editMode && (
+                                                                <img
+                                                                    src="/images/assets/plus-icon.svg"
+                                                                    alt="Add Link"
+                                                                    className="cursor-pointer"
+                                                                    onClick={() => addNewOtherLink()}
+                                                                />
+                                                            )}
+                                                        </div>
+                                                        <div className="flex flex-col gap-3">
+                                                            {otherLinks.map((item, index) =>
+                                                                editMode ? (
+                                                                    <div
+                                                                        key={`otherLinks-${index}`}
+                                                                        className="flex flex-col gap-2 p-3 border-2 border-gray-300 rounded-md"
+                                                                    >
+                                                                        <label className="text-sm text-gray-600">
+                                                                            Name
+                                                                        </label>
+                                                                        <input
+                                                                            type="text"
+                                                                            value={item.name}
+                                                                            onChange={e =>
+                                                                                handleOtherLinkChange(
+                                                                                    index,
+                                                                                    'name',
+                                                                                    e.target.value
+                                                                                )
+                                                                            }
+                                                                            className="border p-2 rounded w-full mb-2"
+                                                                        />
+
+                                                                        <label className="text-sm text-gray-600">
+                                                                            Description
+                                                                        </label>
+                                                                        <input
+                                                                            type="text"
+                                                                            value={item.description}
+                                                                            onChange={e =>
+                                                                                handleOtherLinkChange(
+                                                                                    index,
+                                                                                    'description',
+                                                                                    e.target.value
+                                                                                )
+                                                                            }
+                                                                            className="border p-2 rounded w-full mb-2"
+                                                                        />
+
+                                                                        <label className="text-sm text-gray-600">
+                                                                            Link
+                                                                        </label>
+                                                                        <input
+                                                                            type="text"
+                                                                            value={item.link}
+                                                                            onChange={e =>
+                                                                                handleOtherLinkChange(
+                                                                                    index,
+                                                                                    'link',
+                                                                                    e.target.value
+                                                                                )
+                                                                            }
+                                                                            className="border p-2 rounded w-full mb-2"
+                                                                        />
+
+                                                                        <div className="flex justify-end">
+                                                                            <img
+                                                                                src="/images/assets/trashcan-icon.svg"
+                                                                                alt="Delete"
+                                                                                onClick={() => deleteOtherLink(index)}
+                                                                                className="cursor-pointer"
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                ) : (
+                                                                    <a
+                                                                        key={`otherLinks-${index}`}
+                                                                        href={item.link}
+                                                                        target="_blank"
+                                                                        rel="noreferrer"
+                                                                        className="flex flex-col gap-1 p-2 border-2 border-gray-200 rounded-md hover:border-gray-400"
+                                                                    >
+                                                                        <p className="font-semibold">{item.name}</p>
+                                                                        <p className="text-sm text-gray-600">
+                                                                            {item.description}
+                                                                        </p>
+                                                                        <p className="break-all text-blue-600 underline">
+                                                                            {item.link}
+                                                                        </p>
+                                                                    </a>
+                                                                )
+                                                            )}
+                                                        </div>
                                                     </div>
-                                                    <div className="flex flex-col gap-3">
-                                                        {categoryLinks.map((link, index) =>
-                                                            editMode ? (
-                                                                <div
-                                                                    key={`${key.name}-${index}`}
-                                                                    className="flex flex-row gap-2 items-center"
-                                                                >
-                                                                    <img
-                                                                        src={`/images/assets/${key.name.toLowerCase()}-icon.png`}
-                                                                        alt={key.name}
-                                                                        className="h-6 w-6"
-                                                                    />
-                                                                    <input
-                                                                        type="text"
-                                                                        value={link}
-                                                                        onChange={e =>
-                                                                            handleLinkChange(
-                                                                                key.name,
-                                                                                index,
-                                                                                e.target.value
-                                                                            )
-                                                                        }
-                                                                        className="border-2 border-gray-300 p-2 rounded-md w-full"
-                                                                    />
-                                                                    <img
-                                                                        src="/images/assets/trashcan-icon.svg"
-                                                                        alt="Delete"
-                                                                        onClick={() => deleteLink(key.name, index)}
-                                                                        className="cursor-pointer"
-                                                                    />
-                                                                </div>
-                                                            ) : (
-                                                                <a
-                                                                    key={`${key.name}-${index}`}
-                                                                    href={link}
-                                                                    target="_blank"
-                                                                    rel="noreferrer"
-                                                                    className="flex flex-row gap-2 items-center hover:text-blue-500"
-                                                                >
-                                                                    <img
-                                                                        src={`/images/assets/${key.name.toLowerCase()}-icon.png`}
-                                                                        alt={key.name}
-                                                                        className="h-6 w-6"
-                                                                    />
-                                                                    <p className="text-bodyMd mmd:text-bodySm break-all">
-                                                                        {link}
-                                                                    </p>
-                                                                </a>
-                                                            )
-                                                        )}
+                                                );
+                                            } else {
+                                                // Handle "supplementary" links
+                                                const categoryLinks = links[key.name];
+                                                if (!categoryLinks || categoryLinks.length === 0) return null;
+
+                                                return (
+                                                    <div
+                                                        key={key.name}
+                                                        className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200 w-full hover:bg-gray-100 hover:text-gray"
+                                                    >
+                                                        <div className="flex justify-between items-center">
+                                                            <p className="capitalize">{key.display}</p>
+                                                            {editMode && (
+                                                                <img
+                                                                    src="/images/assets/plus-icon.svg"
+                                                                    alt="Add Link"
+                                                                    className="cursor-pointer"
+                                                                    onClick={() => addNewLink(key.name)}
+                                                                />
+                                                            )}
+                                                        </div>
+                                                        <div className="flex flex-col gap-3">
+                                                            {categoryLinks.map((link, index) =>
+                                                                editMode ? (
+                                                                    <div
+                                                                        key={`${key.name}-${index}`}
+                                                                        className="flex flex-row gap-2 items-center"
+                                                                    >
+                                                                        <img
+                                                                            src={`/images/assets/${key.name.toLowerCase()}-icon.png`}
+                                                                            alt={key.name}
+                                                                            className="h-6 w-6"
+                                                                        />
+                                                                        <input
+                                                                            type="text"
+                                                                            value={link}
+                                                                            onChange={e =>
+                                                                                handleLinkChange(
+                                                                                    key.name,
+                                                                                    index,
+                                                                                    e.target.value
+                                                                                )
+                                                                            }
+                                                                            className="border-2 border-gray-300 p-2 rounded-md w-full"
+                                                                        />
+                                                                        <img
+                                                                            src="/images/assets/trashcan-icon.svg"
+                                                                            alt="Delete"
+                                                                            onClick={() => deleteLink(key.name, index)}
+                                                                            className="cursor-pointer"
+                                                                        />
+                                                                    </div>
+                                                                ) : (
+                                                                    <a
+                                                                        key={`${key.name}-${index}`}
+                                                                        href={link}
+                                                                        target="_blank"
+                                                                        rel="noreferrer"
+                                                                        className="flex flex-row gap-2 items-center hover:text-blue-500"
+                                                                    >
+                                                                        <img
+                                                                            src={`/images/assets/${key.name.toLowerCase()}-icon.png`}
+                                                                            alt={key.name}
+                                                                            className="h-6 w-6"
+                                                                        />
+                                                                        <p className="text-bodyMd mmd:text-bodySm break-all">
+                                                                            {link}
+                                                                        </p>
+                                                                    </a>
+                                                                )
+                                                            )}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            );
+                                                );
+                                            }
                                         })}
                                     </div>
                                 </div>
@@ -239,18 +403,29 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                     })}
                 </div>
             </div>
+
             <Toast ref={toast} baseZIndex={1000} position="bottom-right" />
         </div>
     );
 };
 
-// Utility function to check if an array has non-empty values
-const isNonEmptyArray = (arr: string[]) => Array.isArray(arr) && arr.length > 0 && arr.some(link => link.trim() !== '');
+/* -------------------------------------------------------------------------- */
+/*                          Utility Functions & Components                    */
+/* -------------------------------------------------------------------------- */
+
+// Utility function to check if an array of strings has non-empty values
+const isNonEmptyArray = (arr: string[] | undefined) =>
+    Array.isArray(arr) && arr.length > 0 && arr.some(link => link.trim() !== '');
+
+// Utility function for otherLinks array
+const isNonEmptyOtherLinksArray = (
+    arr: Pub['otherLinks'] // This is always an array in our component state now
+) => Array.isArray(arr) && arr.length > 0 && arr.some(item => !!item.link);
 
 // Initialize links from supplementary data
-const initializeLinks = (supplementary: { [key: string]: string | undefined }) => {
+const initializeLinks = (supplementary: { [key: string]: string | undefined } = {}) => {
     const links: { [key: string]: string[] } = {};
-    Object.entries(supplementary || {}).forEach(([key, value]) => {
+    Object.entries(supplementary).forEach(([key, value]) => {
         links[key] = value ? value.split(',').map(link => link.trim()) : [];
     });
     return links;

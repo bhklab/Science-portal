@@ -43,8 +43,12 @@ export interface PublicationChangesDocument extends Document {
 		proteinDataBank: string;
 		ebiAcUk: string;
 		gsea: string;
-		other: string;
-	  };	
-	  originalId: string;
-	  SubmittterEmail: string;	
+	};
+	otherLinks: {
+        name: string;
+        description: string;
+        link: string;
+    }[];
+	originalId: string;
+	SubmittterEmail: string;	
   }
