@@ -17,10 +17,12 @@
     "@types/react-dom": "^18.2.21",
     "axios": "^1.6.8",
     "chart.js": "^4.4.3",
+    "chartjs-chart-box-and-violin-plot": "^4.0.0",
     "chartjs-plugin-datalabels": "^2.2.0",
     "glamor": "^2.20.40",
     "jwt-decode": "^4.0.0",
     "plotly.js": "^2.35.3",
+    "plotly.js-dist": "^3.0.0",
     "primeicons": "^6.0.1",
     "primereact": "^10.5.1",
     "react": "^18.2.0",
@@ -63,6 +65,8 @@
     ]
   },
   "devDependencies": {
+    "@types/plotly.js": "^2.35.2",
+    "@types/react-plotly.js": "^2.6.3",
     "@types/react-scroll": "^1.8.10",
     "prettier": "^3.2.5"
   }

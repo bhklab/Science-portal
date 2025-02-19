@@ -44,6 +44,10 @@ export default interface Pub {
         proteinDataBank?: string;
         ebiAcUk?: string;
         gsea?: string;
-        other?: string;
+        other?: {
+            name: string;
+            description: string;
+            link: string;
+        }[];
     };
 }

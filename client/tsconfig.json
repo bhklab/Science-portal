@@ -20,9 +20,9 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-	"typeRoots": ["./node_modules/@types", "./src/types"]
+	"typeRoots": ["./node_modules/@types", "./@types"],
+	"baseUrl": "./src"
   },
   "include": [
-    "src"
-, "tailwind.config.js"  ]
+    "src", "tailwind.config.js", "@types"  ]
 }
