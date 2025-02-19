@@ -8,6 +8,7 @@ import { ExportDropdown } from '../components/DropdownButtons/ExportDropdown';
 import { FilterDropdown } from '../components/DropdownButtons/FilterDropdown';
 import PersonalBarChart, { PersonalBarChartRef } from '../components/Charts/Profile/PersonalBarChart';
 import PersonalScatterPlot, { PersonalScatterPlotRef } from '../components/Charts/Profile/PersonalScatterPlot';
+import PersonalViolinPlot, { PersonalViolinPlotRef } from '../components/Charts/Profile/PersonalViolinPlot';
 import FeedbackModal from '../components/FeedbackModal/FeedbackModal';
 import { Toast } from 'primereact/toast';
 import { Link } from 'react-scroll';
@@ -68,6 +69,11 @@ const Profile: React.FC = () => {
     const [scatterActiveLegendItems, setScatterActiveLegendItems] = useState(new Set<string>());
     const scatterPlotRef = useRef<PersonalScatterPlotRef>(null);
 
+    // Violin Chart variables
+    const [violinPlotData, setViolinPlotData] = useState<any | null>(null);
+    const [violinActiveLegendItems, setViolinActiveLegendItems] = useState(new Set<string>());
+    const violinPlotRef = useRef<PersonalViolinPlotRef>(null);
+
     // feedback modal state variables
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const [toggleDetailed, setToggleDetailed] = useState(false);
@@ -88,17 +94,28 @@ const Profile: React.FC = () => {
                 else newSet.add(item);
                 return newSet;
             });
+        } else if (chartType === 'violin') {
+            setViolinActiveLegendItems(prev => {
+                const newSet = new Set(prev);
+                if (newSet.has(item)) newSet.delete(item);
+                else newSet.add(item);
+                return newSet;
+            });
         }
     };
 
-    const downloadChartImage = (format: string, chartType: string) => {
+    const downloadChartImage = (format: 'jpeg' | 'png' | 'webp' | 'svg', chartType: string) => {
         if (chartType === 'scatter') {
             if (scatterPlotRef.current) {
                 scatterPlotRef.current.downloadChartImage(format);
             }
-        } else {
+        } else if (chartType === 'bar') {
             if (barChartRef.current) {
                 barChartRef.current.downloadChartImage(format);
+            }
+        } else if (chartType === 'violin') {
+            if (violinPlotRef.current) {
+                violinPlotRef.current.downloadChartImage(format);
             }
         }
     };
@@ -120,7 +137,8 @@ const Profile: React.FC = () => {
                 setEnid(scientistData.data?.ENID);
 
                 const profileData = await axios.get(`/api/stats/author/${scientistData.data?.ENID.toString()}`);
-                const transformedData = {
+
+                const transformedScatterData = {
                     datasets: Object.entries(profileData.data.platformRankings).map(([category, entries]) => {
                         const data = entries as Array<{
                             rank: number;
@@ -128,6 +146,7 @@ const Profile: React.FC = () => {
                             name: string;
                             enid: number;
                         }>;
+
                         return {
                             label: category,
                             data: data.map(entry => ({
@@ -149,12 +168,39 @@ const Profile: React.FC = () => {
                         };
                     })
                 };
-                setScatterPlotData(transformedData);
+
+                setScatterPlotData(transformedScatterData);
+
+                const transformedViolinData = {
+                    labels: Object.keys(profileData.data.platformRankings),
+                    datasets: Object.entries(profileData.data.platformRankings).map(([category, entries]) => {
+                        const data = entries as Array<{ contributions: number; enid: number; name: string }>;
+
+                        return {
+                            label: category,
+                            data: data.map(entry => entry.contributions),
+                            pointBackgroundColor: data.map(entry =>
+                                entry.enid === scientistData.data?.ENID
+                                    ? 'rgba(255, 99, 132, 1)'
+                                    : 'rgba(75, 192, 192, 1)'
+                            ),
+                            pointRadius: data.map(entry => (entry.enid === scientistData.data?.ENID ? 10 : 5)),
+                            labels: data.map(
+                                entry => `${entry.name} (${entry.contributions} ${category} contributions)`
+                            ),
+                            enidList: data.map(entry => entry.enid)
+                        };
+                    })
+                };
+
+                setViolinPlotData(transformedViolinData);
 
                 // Extract labels for the legend
-                const labels = transformedData.datasets.map(dataset => dataset.label!); // Ensure label is not undefined
+                const labels = transformedScatterData.datasets.map(dataset => dataset.label!);
                 setLegendItems(labels);
                 setScatterActiveLegendItems(new Set(['Code']));
+                setViolinActiveLegendItems(new Set(labels));
+
                 setPiData(profileData.data);
             } catch (error) {
                 console.error('Error fetching PI data:', error);
@@ -459,6 +505,44 @@ const Profile: React.FC = () => {
                             </Link>
                         ))}
 
+                        {/*Violin Plot*/}
+                        <div className="flex flex-col gap-3 px-10 sm:px-2 bg-white border-1 border-gray-200 rounded-md w-full">
+                            <div className="flex flex-row justify-between items-center">
+                                <div className="flex flex-col py-10">
+                                    <h1 className="text-heading2Xl sm:text-headingLg font-semibold ">
+                                        Violin Plot Example
+                                    </h1>
+                                    <p className="text-bodySm sm:text-bodyXs text-gray-500 ">
+                                        Violin plot representing data distribution across categories
+                                    </p>
+                                </div>
+                                <div className="flex flex-row sm:flex-col gap-4">
+                                    <FilterDropdown
+                                        legendItems={legendItems}
+                                        activeItems={violinActiveLegendItems}
+                                        toggleLegendItem={toggleLegendItem}
+                                        chartType="violin"
+                                    />
+
+                                    <ExportDropdown
+                                        onDownload={format =>
+                                            downloadChartImage(format as 'jpeg' | 'png' | 'webp' | 'svg', 'violin')
+                                        }
+                                        chartType="violin"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="chart-container relative w-full" style={{ height: '500px' }}>
+                                <PersonalViolinPlot
+                                    ref={violinPlotRef}
+                                    chartData={violinPlotData}
+                                    activeLegendItems={violinActiveLegendItems}
+                                    enid={enid}
+                                />
+                            </div>
+                        </div>
+
                         {/* Scatter Plot */}
                         <div
                             className="flex flex-col gap-3 px-10 sm:px-2 bg-white border-1 border-gray-200 rounded-md w-full"
@@ -480,7 +564,12 @@ const Profile: React.FC = () => {
                                         toggleLegendItem={toggleLegendItem}
                                         chartType="scatter"
                                     />
-                                    <ExportDropdown onDownload={downloadChartImage} chartType="scatter" />
+                                    <ExportDropdown
+                                        onDownload={format =>
+                                            downloadChartImage(format as 'jpeg' | 'png' | 'webp' | 'svg', 'scatter')
+                                        }
+                                        chartType="scatter"
+                                    />
                                 </div>
                             </div>
 
@@ -513,7 +602,12 @@ const Profile: React.FC = () => {
                                         toggleLegendItem={toggleLegendItem}
                                         chartType="bar"
                                     />
-                                    <ExportDropdown onDownload={downloadChartImage} chartType="bar" />
+                                    <ExportDropdown
+                                        onDownload={format =>
+                                            downloadChartImage(format as 'jpeg' | 'png' | 'webp' | 'svg', 'bar')
+                                        }
+                                        chartType="bar"
+                                    />
                                 </div>
                             </div>
 
