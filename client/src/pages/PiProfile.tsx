@@ -25,6 +25,7 @@ const Profile: React.FC = () => {
     // Used to navigate to a new page
     const navigate = useNavigate();
 
+    // UPDATED: Ensure statIndex matches the new "type" strings from your stats data
     const sections = [
         {
             name: 'Code',
@@ -41,13 +42,13 @@ const Profile: React.FC = () => {
         {
             name: 'Containers',
             description: 'containers',
-            statIndex: 'Container',
+            statIndex: 'Containers',
             image: 'containers-icon.svg'
         },
         {
-            name: 'Clinical Trials',
+            name: 'Trials',
             description: 'clinical trials',
-            statIndex: 'Clinical Trials',
+            statIndex: 'Trials',
             image: 'clinicaltrials-icon.svg'
         },
         {
@@ -56,6 +57,12 @@ const Profile: React.FC = () => {
             statIndex: 'Results',
             image: 'results-icon.svg'
         }
+        // {
+        // 	name: 'Packages',
+        // 	description: 'software packages',
+        // 	statIndex: 'Packages',
+        // 	image: 'packages-icon.svg'
+        // },
     ];
 
     // Bar Chart variables
@@ -138,6 +145,7 @@ const Profile: React.FC = () => {
 
                 const profileData = await axios.get(`/api/stats/author/${scientistData.data?.ENID.toString()}`);
 
+                // Build scatterPlotData
                 const transformedScatterData = {
                     datasets: Object.entries(profileData.data.platformRankings).map(([category, entries]) => {
                         const data = entries as Array<{
@@ -168,9 +176,9 @@ const Profile: React.FC = () => {
                         };
                     })
                 };
-
                 setScatterPlotData(transformedScatterData);
 
+                // Build violinPlotData
                 const transformedViolinData = {
                     labels: Object.keys(profileData.data.platformRankings),
                     datasets: Object.entries(profileData.data.platformRankings).map(([category, entries]) => {
@@ -192,14 +200,15 @@ const Profile: React.FC = () => {
                         };
                     })
                 };
-
                 setViolinPlotData(transformedViolinData);
 
                 // Extract labels for the legend
-                const labels = transformedScatterData.datasets.map(dataset => dataset.label!);
-                setLegendItems(labels);
+                const scatterLabels = transformedScatterData.datasets.map(dataset => dataset.label!);
+                setLegendItems(scatterLabels);
+
+                // By default, show only "Code" in the scatter plot's legend
                 setScatterActiveLegendItems(new Set(['Code']));
-                setViolinActiveLegendItems(new Set(labels));
+                setViolinActiveLegendItems(new Set(scatterLabels));
 
                 setPiData(profileData.data);
             } catch (error) {
@@ -214,7 +223,7 @@ const Profile: React.FC = () => {
                 });
                 setBarChartData(res.data);
 
-                // Extract legend items (dataset labels) dynamically
+                // Extract legend items (dataset labels) from the bar chart data
                 const labels = res.data.datasets.map((dataset: { label: string }) => dataset.label);
                 setLegendItems(labels);
                 setBarActiveLegendItems(new Set(labels));
@@ -256,8 +265,8 @@ const Profile: React.FC = () => {
     const submitFeedback = async (subject: string, message: string) => {
         try {
             await axios.post(`/api/feedback/submit`, {
-                subject: subject,
-                message: message,
+                subject,
+                message,
                 email: authContext?.user.email
             });
             toast.current?.show({
@@ -272,7 +281,7 @@ const Profile: React.FC = () => {
         }
     };
 
-    //If user is not a PI render a page without stats
+    // If user is not a PI, render a page without stats
     if (piData === 'DNE') {
         return (
             <div className="flex flex-col items-center py-36 smd:px-4 px-10 min-h-screen bg-white">
@@ -332,8 +341,22 @@ const Profile: React.FC = () => {
         );
     }
 
+    // Finally, if user is a PI, show stats
     const { author, authorEmail, totalPublications, totalCitations, categoryStats } = piData;
 
+    const getFirstName = (email: string) => {
+        let firstName = email.substring(0, email.indexOf('.'));
+        firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1);
+        return firstName;
+    };
+
+    const getLastName = (email: string) => {
+        let lastName = email.substring(email.indexOf('.') + 1, email.indexOf('@'));
+        lastName = lastName.charAt(0).toUpperCase() + lastName.slice(1);
+        return lastName;
+    };
+
+    // Render
     return (
         <div className="flex flex-col items-center py-36 smd:px-4 px-10 min-h-screen bg-white">
             <div className="flex flex-row smd:flex-col gap-5 justify-center mx-auto">
@@ -435,6 +458,7 @@ const Profile: React.FC = () => {
                                 offset={-75}
                                 className="hover:cursor-pointer"
                                 onClick={() => setScatterActiveLegendItems(new Set([`${item.statIndex}`]))}
+                                key={item.name}
                             >
                                 <div
                                     className={`flex flex-col gap-5 p-5 w-[420px] xs:w-[350px] wrap:w-full border-1 border-gray-200 rounded-lg overflow-hidden`}
@@ -460,7 +484,9 @@ const Profile: React.FC = () => {
                                         </div>
                                         <div className="relative h-[100px] w-[100px] flex-shrink-0 overflow-visible">
                                             <img
-                                                src={`/images/placeholders/${getPyramidImage(categoryStats[item.statIndex].percentage)}`}
+                                                src={`/images/placeholders/${getPyramidImage(
+                                                    categoryStats[item.statIndex].percentage
+                                                )}`}
                                                 alt="pyramids"
                                                 className="absolute bottom-0 left-0"
                                                 style={{ height: '150%', width: '200%' }}
@@ -487,7 +513,9 @@ const Profile: React.FC = () => {
                                                 <div
                                                     className="bg-gray-1000 h-1.5 rounded-r-md"
                                                     style={{
-                                                        width: `${100 - categoryStats[item.statIndex].openSciencePercentage}%`
+                                                        width: `${
+                                                            100 - categoryStats[item.statIndex].openSciencePercentage
+                                                        }%`
                                                     }}
                                                 />
                                             </div>
@@ -505,7 +533,7 @@ const Profile: React.FC = () => {
                             </Link>
                         ))}
 
-                        {/*Violin Plot*/}
+                        {/* Violin Plot */}
                         <div className="flex flex-col gap-3 px-10 sm:px-2 bg-white border-1 border-gray-200 rounded-md w-full">
                             <div className="flex flex-row justify-between items-center">
                                 <div className="flex flex-col py-10">
@@ -625,20 +653,6 @@ const Profile: React.FC = () => {
             <Toast ref={toast} baseZIndex={1000} position="bottom-right" />
         </div>
     );
-};
-
-// Using the users email get their first name, then capitalize the first letter
-const getFirstName = (email: string) => {
-    let firstName = email.substring(0, email.indexOf('.'));
-    firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1);
-    return firstName;
-};
-
-// Using the users email get their last name, then capitalize the first letter
-const getLastName = (email: string) => {
-    let lastName = email.substring(email.indexOf('.') + 1, email.indexOf('@'));
-    lastName = lastName.charAt(0).toUpperCase() + lastName.slice(1);
-    return lastName;
 };
 
 export default Profile;

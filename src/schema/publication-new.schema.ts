@@ -32,6 +32,12 @@ export const PublicationsNewSchema = new Schema({
 		xlsx: { type: [String] },
 		csv: { type: [String] },
 		proteinDataBank: { type: [String] },
+		dataverse: { type: [String] },
+		openScienceFramework: { type: [String] },
+		finngenGitbook: { type: [String] },
+		gtexPortal: { type: [String] },
+		ebiAcUk: { type: [String] },
+		mendeley: { type: [String] },
 		R: { type: [String] }
 		},
 		containers: {

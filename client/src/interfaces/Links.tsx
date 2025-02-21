@@ -14,7 +14,13 @@ export const LINK_CATEGORIES = {
         { name: 'ega', display: 'European Genome-phenome Archive' },
         { name: 'xlsx', display: 'Excel Sheets' },
         { name: 'csv', display: 'Comma-separated Value Files' },
-        { name: 'proteinDataBank', display: 'Protein Data Bank' }
+        { name: 'proteinDataBank', display: 'Protein Data Bank' },
+        { name: 'dataverse', display: 'Dataverse' },
+        { name: 'openScienceFramework', display: 'Open Science Framework' },
+        { name: 'finngenGitbook', display: 'FinnGen' },
+        { name: 'gtexPortal', display: 'Genotype-Tissue Expression' },
+        { name: 'mendeley', display: 'Mendeley' },
+        { name: 'R', display: 'R' }
     ],
     containers: [
         { name: 'codeOcean', display: 'Code Ocean Capsules' },

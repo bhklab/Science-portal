@@ -27,6 +27,12 @@ export interface NewPub {
             xlsx?: string[];
             csv?: string[];
             proteinDataBank?: string[];
+            dataverse: string[];
+            openScienceFramework: string[];
+            finngenGitbook: string[];
+            gtexPortal: string[];
+            ebiAcUk: string[];
+            mendeley: string[];
             R?: string[];
         };
         containers?: {
@@ -90,6 +96,12 @@ export function createDefaultNewPub(): NewPub {
                 xlsx: [],
                 csv: [],
                 proteinDataBank: [],
+                dataverse: [],
+                openScienceFramework: [],
+                finngenGitbook: [],
+                gtexPortal: [],
+                ebiAcUk: [],
+                mendeley: [],
                 R: []
             },
             containers: {

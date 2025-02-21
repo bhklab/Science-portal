@@ -33,6 +33,12 @@ export default interface Pub {
             xlsx: string[];
             csv: string[];
             proteinDataBank: string[];
+            dataverse: string[];
+            openScienceFramework: string[];
+            finngenGitbook: string[];
+            gtexPortal: string[];
+            ebiAcUk: string[];
+            mendeley: string[];
             R: string[];
         };
         containers: {

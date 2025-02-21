@@ -22,6 +22,12 @@ export interface StatsDocument extends Document {
 		xlsx?: string[];
 		csv?: string[];
 		proteinDataBank?: string[];
+		dataverse: { type: [String] },
+		openScienceFramework: { type: [String] },
+		finngenGitbook: { type: [String] },
+		gtexPortal: { type: [String] },
+		ebiAcUk: { type: [String] },
+		mendeley: { type: [String] },
 		R?: string[];
 	};
 	containers?: {
