@@ -16,34 +16,46 @@ export interface PublicationDocument extends Document {
   status: string;
   image: string;
   supplementary: {
-    github: string;
-    codeOcean: string;
-    geo: string;
-    dbGap: string;
-    figshare: string;
-    kaggle: string;
-    dryad: string;
-    empiar: string;
-    gigaDb: string;
-    dataverse: string;
-    IEEE: string;
-    mendeley: string;
-    openScienceframework: string;
-    zenodo: string;
-    gitlab: string;
-    finngenGitbook: string;
-    pdf: string;
-    docx: string;
-    clinicalTrial: string;
-    ega: string;
-    zip: string;
-    xlsx: string;
-    csv: string;
-    gtexPortal: string;
-    proteinDataBank: string;
-    ebiAcUk: string;
-    gsea: string;
-	other: string;
+	code?: {
+		github?: string[];
+		gitlab?: string[];
+	};
+	data?: {
+		geo?: string[];
+		dbGap?: string[];
+		kaggle?: string[];
+		dryad?: string[];
+		empiar?: string[];
+		gigaDb?: string[];
+		zenodo?: string[];
+		ega?: string[];
+		xlsx?: string[];
+		csv?: string[];
+		proteinDataBank?: string[];
+		R?: string[];
+	};
+	containers?: {
+		codeOcean?: string[];
+		colab?: string[];
+	};
+	results?: {
+		gsea?: string[];
+		figshare?: string[];
+	};
+	trials?: {
+		clinicalTrial?: string[];
+	};
+	packages?: {
+		bioconductor?: string[];
+		pypi?: string[];
+		CRAN?: string[];
+	};
+	miscellaneous?: {
+		IEEE?: string[];
+		pdf?: string[];
+		docx?: string[];
+		zip?: string[];
+	};
   };
 }
 

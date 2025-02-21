@@ -25,6 +25,11 @@ export const LINK_CATEGORIES = {
         { name: 'figshare', display: 'Figshare' }
     ],
     trials: [{ name: 'clinicalTrial', display: 'Clinical Trials' }],
+    packages: [
+        { name: 'bioconductor', display: 'Bioconductor' },
+        { name: 'pypi', display: 'Pypi' },
+        { name: 'CRAN', display: 'CRAN' }
+    ],
     miscellaneous: [
         { name: 'IEEE', display: 'Institute of Electrical and Electronics Engineers' },
         { name: 'pdf', display: 'PDFs' },

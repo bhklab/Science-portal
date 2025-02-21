@@ -10,48 +10,26 @@ import { AuthContext } from '../hooks/AuthContext';
 const SubmitPublication: React.FC = () => {
     const authContext = useContext(AuthContext);
 
-    // State variables for the publication
+    // State for the main publication info
     const [newPub, setNewPub] = useState<NewPub>(createDefaultNewPub());
-    const [links, setLinks] = useState<{ [key: string]: string[] }>(
-        initializeLinks({
-            github: '',
-            codeOcean: '',
-            geo: '',
-            dbGap: '',
-            figshare: '',
-            kaggle: '',
-            dryad: '',
-            empiar: '',
-            gigaDb: '',
-            dataverse: '',
-            IEEE: '',
-            mendeley: '',
-            openScienceframework: '',
-            zenodo: '',
-            gitlab: '',
-            finngenGitbook: '',
-            pdf: '',
-            docx: '',
-            clinicalTrial: '',
-            ega: '',
-            zip: '',
-            xlsx: '',
-            csv: '',
-            gtexPortal: '',
-            proteinDataBank: '',
-            ebiAcUk: '',
-            gsea: '',
-            other: ''
-        })
-    );
+
+    // State for the "flat" subcategory->arrayOfStrings link structure
+    const [links, setLinks] = useState<{ [key: string]: string[] }>(initializeLinks({}));
+
+    // State for the "otherLinks" array (objects with name/description/link)
+    const [otherLinks, setOtherLinks] = useState<NewPub['otherLinks']>([]);
 
     // Manage when to show 'Required Field' popup
     const [clickedTitle, setClickedTitle] = useState<boolean>(false);
     const [clickedDoi, setClickedDoi] = useState<boolean>(false);
 
-    // Toast instantiation
     const toast = useRef<Toast>(null);
 
+    /* -------------------------------------------------------------------------- */
+    /*                             Link Handlers                                  */
+    /* -------------------------------------------------------------------------- */
+
+    // For all subcategories that store an array of strings
     const addNewLink = (category: string) => {
         setLinks(prevLinks => ({
             ...prevLinks,
@@ -61,42 +39,65 @@ const SubmitPublication: React.FC = () => {
 
     const handleLinkChange = (category: string, index: number, value: string) => {
         setLinks(prevLinks => {
-            const updatedLinks = { ...prevLinks };
-            updatedLinks[category][index] = value;
-            return updatedLinks;
+            const updated = { ...prevLinks };
+            updated[category][index] = value;
+            return updated;
         });
     };
 
     const deleteLink = (category: string, index: number) => {
         setLinks(prevLinks => {
-            const updatedLinks = { ...prevLinks };
-            updatedLinks[category] = updatedLinks[category].filter((_, idx) => idx !== index);
-            return updatedLinks;
+            const updated = { ...prevLinks };
+            updated[category] = updated[category].filter((_, idx) => idx !== index);
+            return updated;
         });
     };
 
+    // Add a new otherLink object
+    const addNewOtherLink = () => {
+        setOtherLinks(prev => [...prev, { name: '', description: '', link: '' }]);
+    };
+
+    // Update one field otherLink entry
+    const handleOtherLinkFieldChange = (index: number, field: 'name' | 'description' | 'link', value: string) => {
+        setOtherLinks(prev => {
+            const updated = [...prev];
+            updated[index] = { ...updated[index], [field]: value };
+            return updated;
+        });
+    };
+
+    // Delete an otherLink entry
+    const deleteOtherLink = (index: number) => {
+        setOtherLinks(prev => prev.filter((_, i) => i !== index));
+    };
+
     const submitPublication = async () => {
-        const formattedSupplementary = Object.fromEntries(
-            Object.entries(links).map(([key, value]) => [key, value.join(', ')])
-        );
+        // Build the nested supplementary object from `links`:
+        const updatedSupplementary = convertLinksToSupplementary(links);
 
         try {
-            await axios.post('/api/publications/new', {
+            // Construct the final object to send
+            const updatedPub: NewPub = {
                 ...newPub,
-                supplementary: formattedSupplementary,
+                supplementary: updatedSupplementary,
+                otherLinks,
                 submitter: authContext?.user.email
-            });
+            };
+
+            await axios.post('/api/publications/new', updatedPub);
+
             toast.current?.show({
                 severity: 'success',
                 summary: 'Successful Publication Submission',
-                detail: 'A new publication request has been successfully submitted. Thank you for taking time to contribute to the platform!',
+                detail: 'A new publication request has been successfully submitted. Thank you for contributing!',
                 life: 8000
             });
         } catch (error) {
             toast.current?.show({
                 severity: 'error',
                 summary: 'Publication Not Submitted',
-                detail: 'The publication has not been submitted due to an internal error. Please again later.',
+                detail: 'The publication has not been submitted due to an internal error. Please try again later.',
                 life: 8000
             });
             console.error('Error submitting new publication:', error);
@@ -105,28 +106,36 @@ const SubmitPublication: React.FC = () => {
 
     return (
         <div className="px-60 py-[85px]">
+            {/* Header / Submit Button */}
             <div className="flex flex-row justify-between items-center pb-5">
                 <h1 className="w-full text-heading2Xl font-semibold">Submit a Publication</h1>
                 <button
                     disabled={newPub.name && newPub.doi ? false : true}
-                    className={`flex flex-row justify-center items-center px-5 py-2 ${newPub.name && newPub.doi ? 'bg-blue-1000' : 'bg-gray-400'} bg-blue-1000 text-white shadow-button rounded-md`}
+                    className={`flex flex-row justify-center items-center px-5 py-2 ${
+                        newPub.name && newPub.doi ? 'bg-blue-1000' : 'bg-gray-400'
+                    } text-white shadow-button rounded-md`}
                     onClick={submitPublication}
                 >
                     Submit
                 </button>
             </div>
+
+            {/* Publication Form */}
             <div className="flex flex-col gap-10 text-black-900">
                 <hr />
 
+                {/* Basic Publication Details */}
                 <div className="flex items-start self-stretch gap-5">
                     <div className="flex flex-col items-start gap-2">
                         <h2 className="text-headingXl font-semibold">Publication Details</h2>
                         <p className="text-bodyMd">
-                            Include all relevant information for your publication. We are only accepting articles that
-                            are published after 2017.
+                            Include all relevant information for your publication. We are only accepting articles
+                            published after 2017.
                         </p>
                     </div>
+
                     <div className="flex flex-col gap-4 w-full">
+                        {/* Title */}
                         <div className="flex flex-col gap-1">
                             <p className="text-bodyMd">
                                 Publication Title <span className="text-red-600"> *</span>
@@ -143,6 +152,8 @@ const SubmitPublication: React.FC = () => {
                                 </div>
                             )}
                         </div>
+
+                        {/* DOI */}
                         <div className="flex flex-col gap-1">
                             <p className="text-bodyMd">
                                 DOI <span className="text-red-600"> *</span>
@@ -159,6 +170,8 @@ const SubmitPublication: React.FC = () => {
                                 </div>
                             )}
                         </div>
+
+                        {/* Journal */}
                         <div className="flex flex-col gap-1">
                             <p className="text-bodyMd">Journal</p>
                             <InputText
@@ -166,6 +179,8 @@ const SubmitPublication: React.FC = () => {
                                 onChange={e => setNewPub({ ...newPub, journal: e.target.value })}
                             />
                         </div>
+
+                        {/* Type */}
                         <div className="flex flex-col gap-1">
                             <p className="text-bodyMd">Type</p>
                             <InputText
@@ -176,6 +191,8 @@ const SubmitPublication: React.FC = () => {
                                 Tell us what type of publication this is. An article, review, etc.
                             </p>
                         </div>
+
+                        {/* Authors */}
                         <div className="flex flex-col gap-1">
                             <p className="text-bodyMd">Authors</p>
                             <InputText
@@ -184,10 +201,12 @@ const SubmitPublication: React.FC = () => {
                             />
                             <p className="text-bodySm text-gray-700">
                                 List co-authors in this format: LastName, FirstName with a semi-colon separating each
-                                individual author. Authors tagged here will be able see the data shared in publication
-                                on their personal statistics page.
+                                individual author. Authors tagged here will be able to see the data shared in
+                                publication on their personal statistics page.
                             </p>
                         </div>
+
+                        {/* Affiliations */}
                         <div className="flex flex-col gap-1">
                             <p className="text-bodyMd">Affiliations</p>
                             <InputText
@@ -198,6 +217,8 @@ const SubmitPublication: React.FC = () => {
                                 List all affiliations made with this publication, no matter how small.
                             </p>
                         </div>
+
+                        {/* Publisher */}
                         <div className="flex flex-col gap-1">
                             <p className="text-bodyMd">Publisher</p>
                             <InputText
@@ -205,6 +226,8 @@ const SubmitPublication: React.FC = () => {
                                 onChange={e => setNewPub({ ...newPub, publisher: e.target.value })}
                             />
                         </div>
+
+                        {/* Publish Date */}
                         <div className="flex flex-col gap-1">
                             <p className="text-bodyMd">Publish Date</p>
                             <div className="card flex justify-content-center rounded-lg">
@@ -218,35 +241,39 @@ const SubmitPublication: React.FC = () => {
                         </div>
                     </div>
                 </div>
-                <hr />
-                <div className="flex flex-col gap-5">
-                    {Object.entries(LINK_CATEGORIES).map(([categoryGroup, keys]) => {
-                        return (
-                            <>
-                                <div key={categoryGroup} className="flex flex-row gap-4">
-                                    <div className="flex flex-col gap-2 w-1/2">
-                                        <h1 className="text-headingXl text-black-900 font-semibold">
-                                            {capitalizeFirst(categoryGroup)}
-                                        </h1>
-                                        <p className="text-headingSm font-medium text-gray-700">
-                                            Add all relevant resource types
-                                        </p>
-                                        <div className="flex flex-col gap-5">
-                                            {/* Pills for adding new links */}
-                                            <div className="flex flex-col gap-4">
-                                                <div className="flex flex-row flex-wrap gap-2">
-                                                    {keys.map(key => {
-                                                        const isExisting = Boolean(links[key.name]?.length); // Check dynamically if the category has links
 
+                <hr />
+
+                {/* Link categories (code, data, containers, etc.) */}
+                <div className="flex flex-col gap-5">
+                    {Object.entries(LINK_CATEGORIES).map(([categoryGroup, keys]) => (
+                        <React.Fragment key={categoryGroup}>
+                            <div className="flex flex-row gap-4">
+                                {/* Left half: instructions & "Add Link" pills */}
+                                <div className="flex flex-col gap-2 w-1/2">
+                                    <h1 className="text-headingXl text-black-900 font-semibold">
+                                        {capitalizeFirst(categoryGroup)}
+                                    </h1>
+                                    <p className="text-headingSm font-medium text-gray-700">
+                                        Add all relevant resource types
+                                    </p>
+
+                                    <div className="flex flex-col gap-5">
+                                        {/* Pills for adding new links */}
+                                        <div className="flex flex-col gap-4">
+                                            <div className="flex flex-row flex-wrap gap-2">
+                                                {keys.map(key => {
+                                                    if (key.name === 'otherLinks') {
+                                                        const hasOtherLinks = otherLinks.length > 0;
                                                         return (
                                                             <button
                                                                 key={key.name}
-                                                                onClick={() => {
-                                                                    addNewLink(key.name); // Always call addNewLink, which updates the links state
-                                                                }}
-                                                                className={`flex flex-row gap-1 justify-center items-center p-3 text-headingMd rounded-full font-medium bg-gray-50 border-gray-200 ${isExisting ? 'text-black-900' : 'text-gray-700'}`}
+                                                                onClick={addNewOtherLink}
+                                                                className={`flex flex-row gap-1 justify-center items-center p-3 text-headingMd 
+																			rounded-full font-medium bg-gray-50 border-gray-200 
+																			${hasOtherLinks ? 'text-black-900' : 'text-gray-700'}`}
                                                             >
-                                                                {isExisting ? (
+                                                                {hasOtherLinks ? (
                                                                     <>
                                                                         <img
                                                                             src="/images/assets/checkmark-icon.svg"
@@ -256,22 +283,135 @@ const SubmitPublication: React.FC = () => {
                                                                         {key.display}
                                                                     </>
                                                                 ) : (
-                                                                    `${key.display}`
+                                                                    key.display
                                                                 )}
                                                             </button>
                                                         );
-                                                    })}
-                                                </div>
+                                                    }
+
+                                                    // Otherwise, it's a normal subcategory
+                                                    const isExisting = Boolean(links[key.name]?.length);
+                                                    return (
+                                                        <button
+                                                            key={key.name}
+                                                            onClick={() => addNewLink(key.name)}
+                                                            className={`flex flex-row gap-1 justify-center items-center p-3 text-headingMd rounded-full font-medium bg-gray-50 border-gray-200 ${
+                                                                isExisting ? 'text-black-900' : 'text-gray-700'
+                                                            }`}
+                                                        >
+                                                            {isExisting ? (
+                                                                <>
+                                                                    <img
+                                                                        src="/images/assets/checkmark-icon.svg"
+                                                                        alt="Checkmark"
+                                                                        className="inline-block"
+                                                                    />
+                                                                    {key.display}
+                                                                </>
+                                                            ) : (
+                                                                key.display
+                                                            )}
+                                                        </button>
+                                                    );
+                                                })}
                                             </div>
                                         </div>
                                     </div>
-                                    {/* Links */}
-                                    <div className="flex flex-col gap-3 w-1/2">
-                                        <div className="flex flex-col gap-5">
-                                            {keys.map(key => {
-                                                const categoryLinks = links[key.name];
-                                                if (!categoryLinks || categoryLinks.length === 0) return null;
+                                </div>
 
+                                {/* Right half: show input fields for each subcategory that has links */}
+                                <div className="flex flex-col gap-3 w-1/2">
+                                    <div className="flex flex-col gap-5">
+                                        {keys.map(key => {
+                                            if (key.name === 'otherLinks') {
+                                                if (otherLinks.length < 1) {
+                                                    return null;
+                                                }
+                                                return (
+                                                    <div
+                                                        key={key.name}
+                                                        className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200 w-full hover:bg-gray-100 hover:text-gray"
+                                                    >
+                                                        <div className="flex justify-between items-center">
+                                                            <p className="capitalize">{key.display}</p>
+                                                            <img
+                                                                src="/images/assets/plus-icon.svg"
+                                                                alt="Add Link"
+                                                                className="cursor-pointer"
+                                                                onClick={addNewOtherLink}
+                                                            />
+                                                        </div>
+
+                                                        <div className="flex flex-col gap-3">
+                                                            {otherLinks.map((item, index) => (
+                                                                <div
+                                                                    key={`otherLinks-${index}`}
+                                                                    className="flex flex-col gap-2 p-3 border-1 border-gray-300 rounded-md"
+                                                                >
+                                                                    <label className="text-sm text-gray-600">
+                                                                        Name
+                                                                    </label>
+                                                                    <InputText
+                                                                        value={item.name}
+                                                                        onChange={e =>
+                                                                            handleOtherLinkFieldChange(
+                                                                                index,
+                                                                                'name',
+                                                                                e.target.value
+                                                                            )
+                                                                        }
+                                                                        className="border p-2 rounded w-full mb-2"
+                                                                    />
+
+                                                                    <label className="text-sm text-gray-600">
+                                                                        Description
+                                                                    </label>
+                                                                    <InputText
+                                                                        value={item.description}
+                                                                        onChange={e =>
+                                                                            handleOtherLinkFieldChange(
+                                                                                index,
+                                                                                'description',
+                                                                                e.target.value
+                                                                            )
+                                                                        }
+                                                                        className="border p-2 rounded w-full mb-2"
+                                                                    />
+
+                                                                    <label className="text-sm text-gray-600">
+                                                                        Link
+                                                                    </label>
+                                                                    <InputText
+                                                                        value={item.link}
+                                                                        onChange={e =>
+                                                                            handleOtherLinkFieldChange(
+                                                                                index,
+                                                                                'link',
+                                                                                e.target.value
+                                                                            )
+                                                                        }
+                                                                        className="border p-2 rounded w-full mb-2"
+                                                                    />
+
+                                                                    <div className="flex justify-end">
+                                                                        <img
+                                                                            src="/images/assets/trashcan-icon.svg"
+                                                                            alt="Delete"
+                                                                            onClick={() => deleteOtherLink(index)}
+                                                                            className="cursor-pointer"
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            } else {
+                                                // For normal subcategories
+                                                const categoryLinks = links[key.name];
+                                                if (!categoryLinks || categoryLinks.length === 0) {
+                                                    return null;
+                                                }
                                                 return (
                                                     <div
                                                         key={key.name}
@@ -320,29 +460,85 @@ const SubmitPublication: React.FC = () => {
                                                         </div>
                                                     </div>
                                                 );
-                                            })}
-                                        </div>
+                                            }
+                                        })}
                                     </div>
                                 </div>
-                                <hr />
-                            </>
-                        );
-                    })}
+                            </div>
+                            <hr />
+                        </React.Fragment>
+                    ))}
                 </div>
             </div>
+
             <Toast ref={toast} baseZIndex={1000} position="bottom-right" />
         </div>
     );
 };
 
-const capitalizeFirst = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
+/* -------------------------------------------------------------------------- */
+/*                               Helper Functions                             */
+/* -------------------------------------------------------------------------- */
 
-const initializeLinks = (supplementary: { [key: string]: string | undefined }) => {
+/**
+ * Convert the flat dictionary of arrays (key => string[]) into the nested
+ * structure required by `newPub.supplementary`.
+ */
+function convertLinksToSupplementary(links: { [key: string]: string[] }) {
+    return {
+        code: {
+            github: links['github'] ?? [],
+            gitlab: links['gitlab'] ?? []
+        },
+        data: {
+            geo: links['geo'] ?? [],
+            dbGap: links['dbGap'] ?? [],
+            kaggle: links['kaggle'] ?? [],
+            dryad: links['dryad'] ?? [],
+            empiar: links['empiar'] ?? [],
+            gigaDb: links['gigaDb'] ?? [],
+            zenodo: links['zenodo'] ?? [],
+            ega: links['ega'] ?? [],
+            xlsx: links['xlsx'] ?? [],
+            csv: links['csv'] ?? [],
+            proteinDataBank: links['proteinDataBank'] ?? [],
+            R: links['R'] ?? []
+        },
+        containers: {
+            codeOcean: links['codeOcean'] ?? [],
+            colab: links['colab'] ?? []
+        },
+        results: {
+            gsea: links['gsea'] ?? [],
+            figshare: links['figshare'] ?? []
+        },
+        trials: {
+            clinicalTrial: links['clinicalTrial'] ?? []
+        },
+        packages: {
+            bioconductor: links['bioconductor'] ?? [],
+            pypi: links['pypi'] ?? [],
+            CRAN: links['CRAN'] ?? []
+        },
+        miscellaneous: {
+            IEEE: links['IEEE'] ?? [],
+            pdf: links['pdf'] ?? [],
+            docx: links['docx'] ?? [],
+            zip: links['zip'] ?? []
+        }
+    };
+}
+
+const initializeLinks = (supplementary: { [key: string]: string[] }) => {
     const links: { [key: string]: string[] } = {};
-    Object.entries(supplementary || {}).forEach(([key, value]) => {
-        links[key] = value ? value.split(',').map(link => link.trim()) : [];
+    Object.values(LINK_CATEGORIES).forEach(subCategories => {
+        subCategories.forEach(({ name }) => {
+            links[name] = supplementary[name] ?? [];
+        });
     });
     return links;
 };
+
+const capitalizeFirst = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
 
 export default SubmitPublication;

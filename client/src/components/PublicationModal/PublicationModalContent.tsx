@@ -12,52 +12,53 @@ interface PublicationModalContentProps {
     setEditMode: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, editMode, setEditMode }) => {
-    // ---- State for the "supplementary" links ----
-    const [links, setLinks] = useState<{ [key: string]: string[] }>(() => initializeLinks(pub.supplementary));
+interface LinksState {
+    [category: string]: {
+        [subCategory: string]: string[];
+    };
+}
 
-    /**
-     * Make sure otherLinks is always an array. If pub.otherLinks is
-     * undefined, default to [] so it's never "possibly undefined."
-     */
+const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, editMode, setEditMode }) => {
+    const [links, setLinks] = useState<LinksState>(() => initializeLinks({ ...pub.supplementary }));
     const [otherLinks, setOtherLinks] = useState<Pub['otherLinks']>(pub.otherLinks ?? []);
 
     const toast = useRef<Toast>(null);
     const authContext = useContext(AuthContext);
 
     // ---- Manage changes in the "supplementary" links ----
-    const handleLinkChange = (category: string, index: number, value: string) => {
+    const handleLinkChange = (category: string, subCategory: string, index: number, value: string) => {
         setLinks(prevLinks => {
             const updatedLinks = { ...prevLinks };
-            updatedLinks[category][index] = value;
+            updatedLinks[category][subCategory][index] = value;
             return updatedLinks;
         });
     };
 
-    const addNewLink = (category: string) => {
+    const addNewLink = (category: string, subCategory: string) => {
         setLinks(prevLinks => ({
             ...prevLinks,
-            [category]: [...(prevLinks[category] || []), '']
+            [category]: {
+                ...prevLinks[category],
+                [subCategory]: [...(prevLinks[category]?.[subCategory] || []), '']
+            }
         }));
     };
 
-    const deleteLink = (category: string, index: number) => {
+    const deleteLink = (category: string, subCategory: string, index: number) => {
         setLinks(prevLinks => {
             const updatedLinks = { ...prevLinks };
-            updatedLinks[category] = updatedLinks[category].filter((_, idx) => idx !== index);
+            updatedLinks[category][subCategory] = updatedLinks[category][subCategory].filter((_, i) => i !== index);
             return updatedLinks;
         });
     };
 
     // ---- Manage changes in the "otherLinks" array ----
     const addNewOtherLink = () => {
-        // Use "prev ?? []" just to be extra safe when spreading
         setOtherLinks(prev => [...(prev ?? []), { name: '', description: '', link: '' }]);
     };
 
     const handleOtherLinkChange = (index: number, field: keyof Pub['otherLinks'][number], value: string) => {
         setOtherLinks(prev => {
-            // Again, default to [] if somehow prev is undefined
             const updated = [...(prev ?? [])];
             updated[index] = { ...updated[index], [field]: value };
             return updated;
@@ -70,25 +71,21 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
         });
     };
 
-    // ---- Handle submission combining both supplementary & otherLinks ----
+    // Handle submission
     const handleSubmit = async () => {
+        // Create a new object to submit (avoid sending _id)
         const backendPub: Pub = { ...pub };
         delete backendPub._id;
 
-        // Convert each array back to comma-separated strings
-        const formattedSupplementary = Object.fromEntries(
-            Object.entries(links).map(([key, value]) => [key, value.join(', ')])
-        );
-
         // Check if changes occurred
-        const supplementaryChanged = JSON.stringify(formattedSupplementary) !== JSON.stringify(pub.supplementary);
+        const supplementaryChanged = JSON.stringify(links) !== JSON.stringify(pub.supplementary);
         const otherLinksChanged = JSON.stringify(otherLinks) !== JSON.stringify(pub.otherLinks);
 
         if (supplementaryChanged || otherLinksChanged) {
             try {
                 await axios.post('/api/publications/changes', {
                     ...backendPub,
-                    supplementary: formattedSupplementary,
+                    supplementary: links,
                     otherLinks: otherLinks,
                     dateAdded: new Date().toISOString(),
                     originalId: pub._id,
@@ -150,7 +147,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                             if (key.name === 'otherLinks') {
                                 return isNonEmptyOtherLinksArray(otherLinks);
                             }
-                            return isNonEmptyArray(links[key.name]);
+                            return isNonEmptyArray(links[categoryGroup]?.[key.name]);
                         });
 
                         // If not in edit mode and no valid links, skip
@@ -175,7 +172,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                     const isExisting =
                                                         key.name === 'otherLinks'
                                                             ? otherLinks.length > 0
-                                                            : Boolean(links[key.name]?.length);
+                                                            : Boolean(links[categoryGroup]?.[key.name]?.length);
 
                                                     return (
                                                         <button
@@ -184,7 +181,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                                 if (key.name === 'otherLinks') {
                                                                     addNewOtherLink();
                                                                 } else {
-                                                                    addNewLink(key.name);
+                                                                    addNewLink(categoryGroup, key.name);
                                                                 }
                                                             }}
                                                             className={`flex flex-row gap-1 justify-center items-center p-3 text-headingMd rounded-full font-medium bg-gray-50 border-gray-200 ${
@@ -322,7 +319,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                 );
                                             } else {
                                                 // Handle "supplementary" links
-                                                const categoryLinks = links[key.name];
+                                                const categoryLinks = links[categoryGroup][key.name];
                                                 if (!categoryLinks || categoryLinks.length === 0) return null;
 
                                                 return (
@@ -337,7 +334,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                                     src="/images/assets/plus-icon.svg"
                                                                     alt="Add Link"
                                                                     className="cursor-pointer"
-                                                                    onClick={() => addNewLink(key.name)}
+                                                                    onClick={() => addNewLink(categoryGroup, key.name)}
                                                                 />
                                                             )}
                                                         </div>
@@ -358,6 +355,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                                             value={link}
                                                                             onChange={e =>
                                                                                 handleLinkChange(
+                                                                                    categoryGroup,
                                                                                     key.name,
                                                                                     index,
                                                                                     e.target.value
@@ -368,7 +366,13 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                                         <img
                                                                             src="/images/assets/trashcan-icon.svg"
                                                                             alt="Delete"
-                                                                            onClick={() => deleteLink(key.name, index)}
+                                                                            onClick={() =>
+                                                                                deleteLink(
+                                                                                    categoryGroup,
+                                                                                    key.name,
+                                                                                    index
+                                                                                )
+                                                                            }
                                                                             className="cursor-pointer"
                                                                         />
                                                                     </div>
@@ -418,16 +422,26 @@ const isNonEmptyArray = (arr: string[] | undefined) =>
     Array.isArray(arr) && arr.length > 0 && arr.some(link => link.trim() !== '');
 
 // Utility function for otherLinks array
-const isNonEmptyOtherLinksArray = (
-    arr: Pub['otherLinks'] // This is always an array in our component state now
-) => Array.isArray(arr) && arr.length > 0 && arr.some(item => !!item.link);
+const isNonEmptyOtherLinksArray = (arr: Pub['otherLinks']) =>
+    Array.isArray(arr) && arr.length > 0 && arr.some(item => !!item.link);
 
 // Initialize links from supplementary data
-const initializeLinks = (supplementary: { [key: string]: string | undefined } = {}) => {
-    const links: { [key: string]: string[] } = {};
-    Object.entries(supplementary).forEach(([key, value]) => {
-        links[key] = value ? value.split(',').map(link => link.trim()) : [];
+const initializeLinks = (supplementary: Pub['supplementary']): LinksState => {
+    // Cast to a looser type so TS will allow dynamic indexing
+    const sup = supplementary as Record<string, Record<string, string[] | undefined> | undefined>;
+
+    const links: LinksState = {};
+
+    // Loop over your LINK_CATEGORIES
+    Object.entries(LINK_CATEGORIES).forEach(([category, subCategories]) => {
+        links[category] = {};
+
+        subCategories.forEach(({ name }) => {
+            // Use `sup[category]` instead of direct `supplementary[category]`
+            links[category][name] = sup[category]?.[name] ?? [];
+        });
     });
+
     return links;
 };
 
