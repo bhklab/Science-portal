@@ -17,9 +17,6 @@ export class StatsService {
     @InjectModel('Publication') private publicationModel: Model<PublicationDocument>,
   ) {}
 
-  // -------------------------------------
-  // Example: findLabStats
-  // -------------------------------------
 async findLabStats(lab: string) {
 		console.log(lab);
 		const query = {
@@ -42,9 +39,6 @@ async findLabStats(lab: string) {
 		}
 	}
 
-  // -------------------------------------
-  // Example: findAllSupplementary
-  // -------------------------------------
   async findAllSupplementary() {
     const colors = [
       { barColour: 'rgba(127, 97, 219, 1)', borderColour: 'rgba(127, 97, 219, 1)' },
@@ -111,9 +105,7 @@ async findLabStats(lab: string) {
     }
   }
 
-  // -------------------------------------
-  // Example: findAuthorAnnualSupplementary
-  // -------------------------------------
+
   async findAuthorAnnualSupplementary(email: string) {
     const colors = [
       { barColour: 'rgba(127, 97, 219, 1)', borderColour: 'rgba(127, 97, 219, 1)' },
@@ -184,9 +176,7 @@ async findLabStats(lab: string) {
     }
   }
 
-  // -------------------------------------
-  // Example: findPublicationsByAuthor
-  // -------------------------------------
+
   async findPublicationsByAuthor(enid: string | number) {
     try {
       const enidNumber = Number(enid);
