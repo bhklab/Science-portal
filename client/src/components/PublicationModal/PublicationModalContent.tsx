@@ -237,7 +237,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                                 editMode ? (
                                                                     <div
                                                                         key={`otherLinks-${index}`}
-                                                                        className="flex flex-col gap-2 p-3 border-2 border-gray-300 rounded-md"
+                                                                        className="flex flex-col gap-2 p-3 border-1 border-gray-200 rounded-md"
                                                                     >
                                                                         <label className="text-sm text-gray-600">
                                                                             Name
