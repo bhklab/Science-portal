@@ -11,8 +11,58 @@ export interface NewPub {
     publisher: string;
     date: any;
     supplementary: {
-        [key: string]: string;
+        code?: {
+            github?: string[];
+            gitlab?: string[];
+        };
+        data?: {
+            geo?: string[];
+            dbGap?: string[];
+            kaggle?: string[];
+            dryad?: string[];
+            empiar?: string[];
+            gigaDb?: string[];
+            zenodo?: string[];
+            ega?: string[];
+            xlsx?: string[];
+            csv?: string[];
+            proteinDataBank?: string[];
+            dataverse: string[];
+            openScienceFramework: string[];
+            finngenGitbook: string[];
+            gtexPortal: string[];
+            ebiAcUk: string[];
+            mendeley: string[];
+            R?: string[];
+        };
+        containers?: {
+            codeOcean?: string[];
+            colab?: string[];
+        };
+        results?: {
+            gsea?: string[];
+            figshare?: string[];
+        };
+        trials?: {
+            clinicalTrial?: string[];
+        };
+        packages?: {
+            bioconductor?: string[];
+            pypi?: string[];
+            CRAN?: string[];
+        };
+        miscellaneous?: {
+            IEEE?: string[];
+            pdf?: string[];
+            docx?: string[];
+            zip?: string[];
+        };
     };
+    otherLinks: {
+        name: string;
+        description: string;
+        link: string;
+    }[];
     submitter: string;
 }
 
@@ -30,35 +80,54 @@ export function createDefaultNewPub(): NewPub {
         publisher: '',
         date: new Date(),
         supplementary: {
-            github: '',
-            codeOcean: '',
-            geo: '',
-            dbGap: '',
-            figshare: '',
-            kaggle: '',
-            dryad: '',
-            empiar: '',
-            gigaDb: '',
-            dataverse: '',
-            IEEE: '',
-            mendeley: '',
-            openScienceframework: '',
-            zenodo: '',
-            gitlab: '',
-            finngenGitbook: '',
-            pdf: '',
-            docx: '',
-            clinicalTrial: '',
-            ega: '',
-            zip: '',
-            xlsx: '',
-            csv: '',
-            gtexPortal: '',
-            proteinDataBank: '',
-            ebiAcUk: '',
-            gsea: '',
-            other: ''
+            code: {
+                github: [],
+                gitlab: []
+            },
+            data: {
+                geo: [],
+                dbGap: [],
+                kaggle: [],
+                dryad: [],
+                empiar: [],
+                gigaDb: [],
+                zenodo: [],
+                ega: [],
+                xlsx: [],
+                csv: [],
+                proteinDataBank: [],
+                dataverse: [],
+                openScienceFramework: [],
+                finngenGitbook: [],
+                gtexPortal: [],
+                ebiAcUk: [],
+                mendeley: [],
+                R: []
+            },
+            containers: {
+                codeOcean: [],
+                colab: []
+            },
+            results: {
+                gsea: [],
+                figshare: []
+            },
+            trials: {
+                clinicalTrial: []
+            },
+            packages: {
+                bioconductor: [],
+                pypi: [],
+                CRAN: []
+            },
+            miscellaneous: {
+                IEEE: [],
+                pdf: [],
+                docx: [],
+                zip: []
+            }
         },
+        otherLinks: [],
         submitter: ''
     };
 }

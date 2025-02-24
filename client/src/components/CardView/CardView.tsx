@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { PublicationImage } from '../PublicationImage/PublicationImage';
 import Pub from '../../interfaces/Pub';
 import PublicationModal from '../PublicationModal/PublicationModal';
@@ -6,20 +6,15 @@ import { Tooltip } from 'primereact/tooltip';
 import { LINK_CATEGORIES } from '../../interfaces/Links';
 import Supplementary from '../../interfaces/Supplementary';
 
-interface publications {
+interface Publications {
     pubs: Pub[];
 }
 
 interface Contains {
-    code: boolean;
-    container: boolean;
-    data: boolean;
-    results: boolean;
-    trials: boolean;
-    miscellaneous: boolean;
+    [key: string]: boolean;
 }
 
-export const CardView: React.FC<publications> = ({ pubs }) => {
+export const CardView: React.FC<Publications> = ({ pubs }) => {
     const [selectedPub, setSelectedPub] = useState<Pub | null>(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -33,12 +28,11 @@ export const CardView: React.FC<publications> = ({ pubs }) => {
         setSelectedPub(null);
     };
 
-    // Show first and last 3 authors separated by ...
     const formatAuthors = (authorsString: string) => {
         const authorsArray = authorsString.split(';');
         const authorsCount = authorsArray.length;
         if (authorsCount <= 6) {
-            return authorsString; // If 6 or fewer authors, return them all
+            return authorsString;
         }
         const firstThreeAuthors = authorsArray.slice(0, 3).join('; ');
         const lastThreeAuthors = authorsArray.slice(-3).join('; ');
@@ -47,37 +41,26 @@ export const CardView: React.FC<publications> = ({ pubs }) => {
 
     const formatIcons = (pub: Pub) => {
         const supplementary: Supplementary = pub.supplementary;
+        let contains: Contains = {};
 
-        // Initialize the 'contains' object to track the presence of links in each category
-        let contains: Contains = {
-            code: false,
-            container: false,
-            data: false,
-            results: false,
-            trials: false,
-            miscellaneous: false
-        };
-
-        // Map category names to their corresponding icon file paths
         const categoryIcons: Record<string, string> = {
             code: '/images/assets/code-icon.svg',
             containers: '/images/assets/containers-icon.svg',
             data: '/images/assets/data-icon.svg',
             results: '/images/assets/results-icon.svg',
             trials: '/images/assets/clinicaltrials-icon.svg',
+            packages: '/images/assets/packages-icon.svg',
             miscellaneous: '/images/assets/miscellaneous-icon.svg'
         };
 
         Object.entries(LINK_CATEGORIES).forEach(([category, types]) => {
-            for (const type of types) {
-                if (supplementary[type.name as keyof Supplementary]?.trim()) {
-                    contains[category as keyof Contains] = true;
-                    break; // Stop checking further types for this category
-                }
+            if (supplementary[category as keyof Supplementary]) {
+                contains[category] = Object.values(supplementary[category as keyof Supplementary]!).some(
+                    links => Array.isArray(links) && links.length > 0
+                );
             }
         });
 
-        // Render icons for categories that have supplementary links
         return (
             <div className="flex flex-row gap-2">
                 {Object.entries(contains).map(([category, isPresent]) =>
@@ -87,7 +70,7 @@ export const CardView: React.FC<publications> = ({ pubs }) => {
                             src={categoryIcons[category]}
                             alt={`${category} icon`}
                             className="w-5 logo"
-                            data-pr-tooltip={`Includes ${category} ${category === 'miscellaneous' ? 'data' : ''}`}
+                            data-pr-tooltip={`Includes ${category}`}
                         />
                     ) : null
                 )}

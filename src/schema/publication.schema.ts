@@ -1,49 +1,68 @@
 import { Schema } from 'mongoose';
 
 export const PublicationSchema = new Schema({
-  PMID: Number,
-  doi: String,
-  date: String,
-  name: String,
-  journal: String,
-  type: String,
-  authors: String,
-  filteredAuthors: String,
-  affiliations: String,
-  citations: Number,
-  dateAdded: String,
-  publisher: String,
-  status: String,
-  image: String,
-  supplementary: {
-    github: { type: String, default: "" },
-    codeOcean: { type: String, default: "" },
-    geo: { type: String, default: "" },
-    dbGap: { type: String, default: "" },
-    figshare: { type: String, default: "" },
-    kaggle: { type: String, default: "" },
-    dryad: { type: String, default: "" },
-    empiar: { type: String, default: "" },
-    gigaDb: { type: String, default: "" },
-    dataverse: { type: String, default: "" },
-    IEEE: { type: String, default: "" },
-    mendeley: { type: String, default: "" },
-    openScienceframework: { type: String, default: "" },
-    zenodo: { type: String, default: "" },
-    gitlab: { type: String, default: "" },
-    finngenGitbook: { type: String, default: "" },
-    pdf: { type: String, default: "" },
-    docx: { type: String, default: "" },
-    clinicalTrial: { type: String, default: "" },
-    ega: { type: String, default: "" },
-    zip: { type: String, default: "" },
-    xlsx: { type: String, default: "" },
-    csv: { type: String, default: "" },
-    gtexPortal: { type: String, default: "" },
-    proteinDataBank: { type: String, default: "" },
-    ebiAcUk: { type: String, default: "" },
-    gsea: { type: String, default: "" },
-  },
+	PMID: Number,
+	doi: String,
+	date: String,
+	name: String,
+	journal: String,
+	type: String,
+	authors: String,
+	filteredAuthors: String,
+	affiliations: String,
+	citations: Number,
+	dateAdded: String,
+	publisher: String,
+	status: String,
+	image: String,
+	supplementary: {
+		code: {
+			github: { type: [String] },
+			gitlab: { type: [String] }
+		},
+		data: {
+			geo: { type: [String] },
+			dbGap: { type: [String] },
+			kaggle: { type: [String] },
+			dryad: { type: [String] },
+			empiar: { type: [String] },
+			gigaDb: { type: [String] },
+			zenodo: { type: [String] },
+			ega: { type: [String] },
+			xlsx: { type: [String] },
+			csv: { type: [String] },
+			proteinDataBank: { type: [String] },
+			dataverse: { type: [String] },
+			openScienceFramework: { type: [String] },
+			finngenGitbook: { type: [String] },
+			gtexPortal: { type: [String] },
+			ebiAcUk: { type: [String] },
+			mendeley: { type: [String] },
+			R: { type: [String] }
+		},
+		containers: {
+			codeOcean: { type: [String] },
+			colab: { type: [String] }
+		},
+		results: {
+			gsea: { type: [String] },
+			figshare: { type: [String] }
+		},
+		trials: {
+			clinicalTrial: { type: [String] }
+		},
+		packages: {
+			bioconductor: { type: [String] },
+			pypi: { type: [String] },
+			CRAN: { type: [String] }
+		},
+		miscellaneous: {
+			IEEE: { type: [String] },
+			pdf: { type: [String] },
+			docx: { type: [String] },
+			zip: { type: [String] }
+		}
+	}
 }, { collection: 'publications' });
 
 PublicationSchema.index(
