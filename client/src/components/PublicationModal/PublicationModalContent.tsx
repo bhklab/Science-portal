@@ -196,9 +196,8 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                                     addNewLink(categoryGroup, key.name);
                                                                 }
                                                             }}
-                                                            className={`flex flex-row gap-1 justify-center items-center p-3 text-headingMd rounded-full font-medium bg-gray-50 border-gray-200 ${
-                                                                isExisting ? 'text-black-900' : 'text-gray-700'
-                                                            }`}
+                                                            className={`flex flex-row gap-1 justify-center items-center p-3 text-headingMd rounded-full font-medium bg-gray-50 border-gray-200 hover:bg-gray-100 
+																${isExisting ? 'text-black-900' : 'text-gray-700'}`}
                                                         >
                                                             {isExisting ? (
                                                                 <>
@@ -231,7 +230,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                 return (
                                                     <div
                                                         key={key.name}
-                                                        className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200 w-full hover:bg-gray-100 hover:text-gray"
+                                                        className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200 w-full hover:text-gray"
                                                     >
                                                         <div className="flex justify-between items-center">
                                                             <p className="capitalize">{key.display}</p>
@@ -249,13 +248,12 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                                 editMode ? (
                                                                     <div
                                                                         key={`otherLinks-${index}`}
-                                                                        className="flex flex-col gap-2 p-3 border-1 border-gray-200 rounded-md"
+                                                                        className="flex flex-col gap-2 p-3 border-1 border-gray-300 rounded-md"
                                                                     >
                                                                         <label className="text-sm text-gray-600">
                                                                             Name
                                                                         </label>
                                                                         <input
-                                                                            type="text"
                                                                             value={item.name}
                                                                             onChange={e =>
                                                                                 handleOtherLinkChange(
@@ -264,14 +262,13 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                                                     e.target.value
                                                                                 )
                                                                             }
-                                                                            className="border-2 border-gray-200 p-2 rounded w-full mb-2"
+                                                                            className="border-1 border-open_border p-2 rounded w-full mb-2"
                                                                         />
 
                                                                         <label className="text-sm text-gray-600">
                                                                             Description
                                                                         </label>
                                                                         <input
-                                                                            type="text"
                                                                             value={item.description}
                                                                             onChange={e =>
                                                                                 handleOtherLinkChange(
@@ -280,7 +277,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                                                     e.target.value
                                                                                 )
                                                                             }
-                                                                            className="border-2 border-gray-200 p-2 rounded w-full mb-2"
+                                                                            className="border-1 border-open_border p-2 rounded w-full mb-2"
                                                                         />
 
                                                                         <label className="text-sm text-gray-600">
@@ -300,14 +297,13 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                                             optionValue="name"
                                                                             placeholder="Select recommended category"
                                                                             editable
-                                                                            className="rounded border-2 border-gray-200 w-full md:w-40 text-black-900"
+                                                                            className="rounded border-1 border-open_border w-full md:w-40 text-black-900"
                                                                         />
 
                                                                         <label className="text-sm text-gray-600">
                                                                             Link
                                                                         </label>
                                                                         <input
-                                                                            type="text"
                                                                             value={item.link}
                                                                             onChange={e =>
                                                                                 handleOtherLinkChange(
@@ -316,7 +312,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                                                     e.target.value
                                                                                 )
                                                                             }
-                                                                            className="border-2 border-gray-200 p-2 rounded w-full mb-2"
+                                                                            className="border-1 border-open_border p-2 rounded w-full mb-2"
                                                                         />
 
                                                                         <div className="flex justify-end">
@@ -337,7 +333,6 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                                             Name
                                                                         </label>
                                                                         <input
-                                                                            type="text"
                                                                             value={item.name}
                                                                             disabled
                                                                             onChange={e =>
@@ -347,14 +342,13 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                                                     e.target.value
                                                                                 )
                                                                             }
-                                                                            className="border-2 border-gray-200 p-2 rounded w-full mb-2"
+                                                                            className="border-1 border-open_border p-2 rounded w-full mb-2"
                                                                         />
 
                                                                         <label className="text-sm text-gray-600">
                                                                             Description
                                                                         </label>
                                                                         <input
-                                                                            type="text"
                                                                             value={item.description}
                                                                             disabled
                                                                             onChange={e =>
@@ -364,7 +358,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                                                     e.target.value
                                                                                 )
                                                                             }
-                                                                            className="border-2 border-gray-200 p-2 rounded w-full mb-2"
+                                                                            className="border-1 border-open_border p-2 rounded w-full mb-2"
                                                                         />
 
                                                                         <label className="text-sm text-gray-600">
@@ -385,14 +379,13 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                                             optionValue="name"
                                                                             placeholder="Select recommended category"
                                                                             editable
-                                                                            className="rounded border-2 border-gray-200 w-full text-black-900"
+                                                                            className="rounded border-1 border-open_border w-full text-black-900"
                                                                         />
 
                                                                         <label className="text-sm text-gray-600">
                                                                             Link
                                                                         </label>
                                                                         <input
-                                                                            type="text"
                                                                             value={item.link}
                                                                             disabled
                                                                             onChange={e =>
@@ -402,7 +395,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                                                     e.target.value
                                                                                 )
                                                                             }
-                                                                            className="border-2 border-gray-200 p-2 rounded w-full mb-2"
+                                                                            className="border-1 border-open_border p-2 rounded w-full mb-2"
                                                                         />
                                                                     </div>
                                                                 )
@@ -418,7 +411,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                 return (
                                                     <div
                                                         key={key.name}
-                                                        className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200 w-full hover:bg-gray-100 hover:text-gray"
+                                                        className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200 w-full hover:text-gray"
                                                     >
                                                         <div className="flex justify-between items-center">
                                                             <p className="capitalize">{key.display}</p>
@@ -444,7 +437,6 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                                             className="h-6 w-6"
                                                                         />
                                                                         <input
-                                                                            type="text"
                                                                             value={link}
                                                                             onChange={e =>
                                                                                 handleLinkChange(
@@ -454,7 +446,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                                                     e.target.value
                                                                                 )
                                                                             }
-                                                                            className="border-2 border-gray-300 p-2 rounded-md w-full"
+                                                                            className="border-1 border-open_border p-2 rounded-md w-full"
                                                                         />
                                                                         <img
                                                                             src="/images/assets/trashcan-icon.svg"
@@ -567,7 +559,7 @@ const HeaderSection: React.FC<{
 
 // Component for the DOI
 const DigitalObjectIdentifier: React.FC<{ doi: string }> = ({ doi }) => (
-    <div className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200 w-full hover:bg-gray-100 hover:text-gray">
+    <div className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200 w-full hover:text-gray">
         <div className="flex flex-row">
             <p className="w-full">Digital Object Identifier</p>
         </div>

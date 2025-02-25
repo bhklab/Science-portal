@@ -119,7 +119,7 @@ const SubmitPublication: React.FC = () => {
     };
 
     return (
-        <div className="px-60 py-[85px]">
+        <div className="px-60 py-[85px] bg-white">
             {/* Header / Submit Button */}
             <div className="flex flex-row justify-between items-center pb-5">
                 <h1 className="w-full text-heading2Xl font-semibold">Submit a Publication</h1>
@@ -309,9 +309,8 @@ const SubmitPublication: React.FC = () => {
                                                         <button
                                                             key={key.name}
                                                             onClick={() => addNewLink(key.name)}
-                                                            className={`flex flex-row gap-1 justify-center items-center p-3 text-headingMd rounded-full font-medium bg-gray-50 border-gray-200 ${
-                                                                isExisting ? 'text-black-900' : 'text-gray-700'
-                                                            }`}
+                                                            className={`flex flex-row gap-1 justify-center items-center p-3 text-headingMd rounded-full font-medium bg-gray-50 border-gray-200 hover:bg-gray-100 
+																${isExisting ? 'text-black-900' : 'text-gray-700'}`}
                                                         >
                                                             {isExisting ? (
                                                                 <>
@@ -360,7 +359,7 @@ const SubmitPublication: React.FC = () => {
                                                             {otherLinks.map((item, index) => (
                                                                 <div
                                                                     key={`otherLinks-${index}`}
-                                                                    className="flex flex-col gap-2 p-3 border-1 border-gray-200 rounded-md"
+                                                                    className="flex flex-col gap-2 p-3 border-1 border-open_border rounded-md"
                                                                 >
                                                                     <label className="text-sm text-gray-600">
                                                                         Name
@@ -374,7 +373,7 @@ const SubmitPublication: React.FC = () => {
                                                                                 e.target.value
                                                                             )
                                                                         }
-                                                                        className="border-2 border-gray-300 p-2 rounded-md w-full"
+                                                                        className="border-1 border-open_border p-2 rounded-md w-full"
                                                                     />
 
                                                                     <label className="text-sm text-gray-600">
@@ -389,7 +388,7 @@ const SubmitPublication: React.FC = () => {
                                                                                 e.target.value
                                                                             )
                                                                         }
-                                                                        className="border-2 border-gray-300 p-2 rounded-md w-full"
+                                                                        className="border-1 border-open_border p-2 rounded-md w-full"
                                                                     />
 
                                                                     <label className="text-sm text-gray-600">
@@ -409,7 +408,7 @@ const SubmitPublication: React.FC = () => {
                                                                         optionValue="name"
                                                                         placeholder="Select/Type recommended category"
                                                                         editable
-                                                                        className="rounded border-2 border-gray-300 border-gray-200 w-full"
+                                                                        className="rounded border-1 border-open_border w-full"
                                                                     />
 
                                                                     <label className="text-sm text-gray-600">
@@ -424,7 +423,7 @@ const SubmitPublication: React.FC = () => {
                                                                                 e.target.value
                                                                             )
                                                                         }
-                                                                        className="border-2 border-gray-300 p-2 rounded-md w-full"
+                                                                        className="border-1 border-open_border p-2 rounded-md w-full"
                                                                     />
 
                                                                     <div className="flex justify-end">
@@ -472,7 +471,6 @@ const SubmitPublication: React.FC = () => {
                                                                         className="h-6 w-6"
                                                                     />
                                                                     <input
-                                                                        type="text"
                                                                         value={link}
                                                                         onChange={e =>
                                                                             handleLinkChange(
@@ -481,7 +479,7 @@ const SubmitPublication: React.FC = () => {
                                                                                 e.target.value
                                                                             )
                                                                         }
-                                                                        className="border-2 border-gray-300 p-2 rounded-md w-full"
+                                                                        className="border-1 border-open_border p-2 rounded-md w-full"
                                                                     />
                                                                     <img
                                                                         src="/images/assets/trashcan-icon.svg"

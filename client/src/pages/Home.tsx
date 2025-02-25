@@ -85,7 +85,7 @@ const Home: React.FC = () => {
                         sort: sort?.name,
                         lab: selectedAuthor?.name,
                         resources: selectedResources?.map(resource => resource.name.toLowerCase()),
-                        name: search
+                        search: search
                     },
                     {
                         maxBodyLength: Infinity
@@ -119,7 +119,7 @@ const Home: React.FC = () => {
         getPublications();
         getStats();
         setTimeout(() => setLoaded(true), 1000);
-    }, [search, selectedAuthor, selectedResources, sort]);
+    }, [selectedAuthor, selectedResources, sort]);
 
     // Fetch additional publications from current query when more are requested
     useEffect(() => {
@@ -130,7 +130,7 @@ const Home: React.FC = () => {
                     sort: sort?.name,
                     lab: selectedAuthor?.name,
                     resources: selectedResources?.map(resource => resource.name.toLowerCase()),
-                    name: search
+                    search: search
                 });
                 setPublications([...res.data]);
             } catch (error) {
@@ -157,6 +157,54 @@ const Home: React.FC = () => {
         getAuthors();
     }, []);
 
+    const submitSearch = async () => {
+        setLoaded(false);
+        const getPublications = async () => {
+            setTotalPubs(20); // Reset total pubs on filter change
+            try {
+                const res = await axios.post(
+                    `/api/publications/select`,
+                    {
+                        total: totalPubs,
+                        sort: sort?.name,
+                        lab: selectedAuthor?.name,
+                        resources: selectedResources?.map(resource => resource.name.toLowerCase()),
+                        search: search
+                    },
+                    {
+                        maxBodyLength: Infinity
+                    }
+                );
+                setPublications([...res.data]);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        // Retrieve lab stats if selected
+        const getStats = async () => {
+            if (selectedAuthor) {
+                try {
+                    const res = await axios.post('/api/stats/lab', {
+                        lab: selectedAuthor?.name
+                    });
+                    setLabStats(res.data);
+                } catch (error) {
+                    console.log(error);
+                }
+            } else {
+                setLabStats({
+                    publications: 0,
+                    citations: 0
+                });
+            }
+        };
+
+        getPublications();
+        getStats();
+        setTimeout(() => setLoaded(true), 1000);
+    };
+
     return (
         <>
             <Tooltip target=".resource-type" className="max-w-64" />
@@ -180,13 +228,21 @@ const Home: React.FC = () => {
                     </button>
                 )}
                 <div className={`flex items-center w-full relative ${visible ? 'mmd:invisible' : ''}`}>
-                    <button className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                    <button
+                        className="absolute left-3 top-1/2 transform -translate-y-1/2"
+                        onClick={() => submitSearch()}
+                    >
                         <img src="/images/assets/search-icon.svg" alt="search-icon" className="h-6 w-6" />
                     </button>
-                    <InputText
+                    <input
                         placeholder="Search publications"
                         className="pl-12 pr-3 py-2 rounded border-1 border-gray-300 w-full"
                         onChange={e => setSearch(e.target.value)}
+                        onKeyDown={e => {
+                            if (e.key === 'Enter') {
+                                submitSearch();
+                            }
+                        }}
                     />
                 </div>
                 <Dropdown
@@ -295,13 +351,7 @@ const Home: React.FC = () => {
                     {loaded && publications ? (
                         cardView ? (
                             <>
-                                <CardView
-                                    pubs={publications.filter(publication => {
-                                        if (search.toLowerCase() === '') return publication;
-                                        else if (publication.name.toLowerCase().includes(search.toLowerCase()))
-                                            return publication;
-                                    })}
-                                />
+                                <CardView pubs={publications} />
 
                                 {totalPubs <= publications?.length + 20 && (
                                     <button

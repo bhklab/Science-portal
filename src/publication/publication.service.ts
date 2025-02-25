@@ -16,21 +16,31 @@ export class PublicationService {
 	
 
 	//Get select publications based on criteria
-    async findSelectPublications(total: number, sort: string, lab: string, resources: string [], name: string): Promise<PublicationDocument[]> {
+    async findSelectPublications(total: number, sort: string, lab: string, resources: string [], search: string): Promise<PublicationDocument[]> {
         try {
 			let query = {};
-			if (lab != '' && name != '') {
+			if (lab != '' && search != '') {
 				query = {
+					$text: {$search: search},
+					// $or: [
+					// 	{journal: { $regex: new RegExp(search, 'i') }},
+					// 	{name: { $regex: new RegExp (search, 'i') }}
+					// ],
 					authors: { $regex: new RegExp(lab, 'i') },
-					name: { $regex: new RegExp (name, 'i') }
+
+
 				};
 			} else if (lab != '') {
 				query = {
 					authors: { $regex: new RegExp(lab, 'i') }
 				};
-			} else if (name != '') {
+			} else if (search != '') {
 				query = {
-					name: { $regex: new RegExp (name, 'i') }
+					$text: {$search: search},
+					// $or: [
+					// 	{journal: { $regex: new RegExp(search, 'i') }},
+					// 	{name: { $regex: new RegExp (search, 'i') }}
+					// ],
 				};
 			}
 
@@ -67,26 +77,47 @@ export class PublicationService {
 					};
 				}
 			}
+
+			
+			const score = { $meta: "textScore" }
 			
 			let sortOption = {};
 			switch (sort) {
 				case 'A-Z':
-					sortOption = { name: 1 };
+					sortOption = {
+						name: 1,
+						score: {$meta: score}
+					};
 					break;
 				case 'Z-A':
-					sortOption = { name: -1 };
+					sortOption = {
+						name: -1,
+						score: {$meta: score}
+					};
 					break;
 				case 'Most Recent':
-					sortOption = { date: -1 };
+					sortOption = { 
+						date: -1,
+						score: {$meta: score}
+					};
 					break;
 				case 'Least Recent':
-					sortOption = { date: 1 };
+					sortOption = { 
+						date: 1,
+						score: {$meta: score}
+					};
 					break;
 				case 'Most Citations':
-					sortOption = { citations: -1 };
+					sortOption = { 
+						citations: -1,
+						score: {$meta: score}
+					};
 					break;
 				case 'Least Citations':
-					sortOption = { citations: 1 };
+					sortOption = { 
+						citations: 1,
+						score: {$meta: score}
+					};
 					break;
 			}
 		

@@ -272,6 +272,11 @@ ul li a {
 }
 
 .p-dropdown.p-component.p-inputwrapper.p-inputwrapper-focus{
-	border: 1px solid rgb(29, 29, 255);
+	border: 1px solid rgb(136, 153, 252);
 	box-shadow: none;
+}
+
+.p-multiselect.p-component.p-inputwrapper.p-inputwrapper-focus{
+	box-shadow: none;
+	border: 1px solid rgb(136, 153, 252);
 }
