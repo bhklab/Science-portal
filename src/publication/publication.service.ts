@@ -17,7 +17,6 @@ export class PublicationService {
 
 	//Get select publications based on criteria
     async findSelectPublications(total: number, sort: string, lab: string, resources: string [], name: string): Promise<PublicationDocument[]> {
-		console.log(resources);
         try {
 			let query = {};
 			if (lab != '' && name != '') {

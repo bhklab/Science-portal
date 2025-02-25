@@ -16,7 +16,6 @@ export class PublicationController {
 		@Body('name') name: string
 	){
         try {
-			console.log(resources)
             const publications = await this.publicationService.findSelectPublications(total, sort, lab, resources, name);
             return publications;
         } catch (error) {

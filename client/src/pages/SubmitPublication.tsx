@@ -2,10 +2,24 @@ import React, { useContext, useState, useRef } from 'react';
 import axios from 'axios';
 import { Toast } from 'primereact/toast';
 import { InputText } from 'primereact/inputtext';
+import { Dropdown } from 'primereact/dropdown';
 import { Calendar } from 'primereact/calendar';
 import { NewPub, createDefaultNewPub } from '../interfaces/NewPub';
 import { LINK_CATEGORIES } from '../interfaces/Links';
 import { AuthContext } from '../hooks/AuthContext';
+
+interface Option {
+    name: String;
+}
+
+const options: Option[] = [
+    { name: 'Code' },
+    { name: 'Data' },
+    { name: 'Containers' },
+    { name: 'Results' },
+    { name: 'Trials' },
+    { name: 'Miscellaneous' }
+];
 
 const SubmitPublication: React.FC = () => {
     const authContext = useContext(AuthContext);
@@ -13,7 +27,7 @@ const SubmitPublication: React.FC = () => {
     // State for the main publication info
     const [newPub, setNewPub] = useState<NewPub>(createDefaultNewPub());
 
-    // State for the "flat" subcategory->arrayOfStrings link structure
+    // State for supplementary resources
     const [links, setLinks] = useState<{ [key: string]: string[] }>(initializeLinks({}));
 
     // State for the "otherLinks" array (objects with name/description/link)
@@ -24,10 +38,6 @@ const SubmitPublication: React.FC = () => {
     const [clickedDoi, setClickedDoi] = useState<boolean>(false);
 
     const toast = useRef<Toast>(null);
-
-    /* -------------------------------------------------------------------------- */
-    /*                             Link Handlers                                  */
-    /* -------------------------------------------------------------------------- */
 
     // For all subcategories that store an array of strings
     const addNewLink = (category: string) => {
@@ -55,11 +65,15 @@ const SubmitPublication: React.FC = () => {
 
     // Add a new otherLink object
     const addNewOtherLink = () => {
-        setOtherLinks(prev => [...prev, { name: '', description: '', link: '' }]);
+        setOtherLinks(prev => [...prev, { name: '', description: '', recommendedCategory: '', link: '' }]);
     };
 
     // Update one field otherLink entry
-    const handleOtherLinkFieldChange = (index: number, field: 'name' | 'description' | 'link', value: string) => {
+    const handleOtherLinkFieldChange = (
+        index: number,
+        field: 'name' | 'description' | 'recommendedCategory' | 'link',
+        value: string
+    ) => {
         setOtherLinks(prev => {
             const updated = [...prev];
             updated[index] = { ...updated[index], [field]: value };
@@ -346,12 +360,12 @@ const SubmitPublication: React.FC = () => {
                                                             {otherLinks.map((item, index) => (
                                                                 <div
                                                                     key={`otherLinks-${index}`}
-                                                                    className="flex flex-col gap-2 p-3 border-1 border-gray-300 rounded-md"
+                                                                    className="flex flex-col gap-2 p-3 border-1 border-gray-200 rounded-md"
                                                                 >
                                                                     <label className="text-sm text-gray-600">
                                                                         Name
                                                                     </label>
-                                                                    <InputText
+                                                                    <input
                                                                         value={item.name}
                                                                         onChange={e =>
                                                                             handleOtherLinkFieldChange(
@@ -360,13 +374,13 @@ const SubmitPublication: React.FC = () => {
                                                                                 e.target.value
                                                                             )
                                                                         }
-                                                                        className="border p-2 rounded w-full mb-2"
+                                                                        className="border-2 border-gray-300 p-2 rounded-md w-full"
                                                                     />
 
                                                                     <label className="text-sm text-gray-600">
                                                                         Description
                                                                     </label>
-                                                                    <InputText
+                                                                    <input
                                                                         value={item.description}
                                                                         onChange={e =>
                                                                             handleOtherLinkFieldChange(
@@ -375,13 +389,33 @@ const SubmitPublication: React.FC = () => {
                                                                                 e.target.value
                                                                             )
                                                                         }
-                                                                        className="border p-2 rounded w-full mb-2"
+                                                                        className="border-2 border-gray-300 p-2 rounded-md w-full"
+                                                                    />
+
+                                                                    <label className="text-sm text-gray-600">
+                                                                        Recommended Category
+                                                                    </label>
+                                                                    <Dropdown
+                                                                        value={item.recommendedCategory}
+                                                                        options={options}
+                                                                        onChange={e =>
+                                                                            handleOtherLinkFieldChange(
+                                                                                index,
+                                                                                'recommendedCategory',
+                                                                                e.value
+                                                                            )
+                                                                        }
+                                                                        optionLabel="name"
+                                                                        optionValue="name"
+                                                                        placeholder="Select/Type recommended category"
+                                                                        editable
+                                                                        className="rounded border-2 border-gray-300 border-gray-200 w-full"
                                                                     />
 
                                                                     <label className="text-sm text-gray-600">
                                                                         Link
                                                                     </label>
-                                                                    <InputText
+                                                                    <input
                                                                         value={item.link}
                                                                         onChange={e =>
                                                                             handleOtherLinkFieldChange(
@@ -390,7 +424,7 @@ const SubmitPublication: React.FC = () => {
                                                                                 e.target.value
                                                                             )
                                                                         }
-                                                                        className="border p-2 rounded w-full mb-2"
+                                                                        className="border-2 border-gray-300 p-2 rounded-md w-full"
                                                                     />
 
                                                                     <div className="flex justify-end">
@@ -476,10 +510,6 @@ const SubmitPublication: React.FC = () => {
     );
 };
 
-/* -------------------------------------------------------------------------- */
-/*                               Helper Functions                             */
-/* -------------------------------------------------------------------------- */
-
 /**
  * Convert the flat dictionary of arrays (key => string[]) into the nested
  * structure required by `newPub.supplementary`.
@@ -502,6 +532,12 @@ function convertLinksToSupplementary(links: { [key: string]: string[] }) {
             xlsx: links['xlsx'] ?? [],
             csv: links['csv'] ?? [],
             proteinDataBank: links['proteinDataBank'] ?? [],
+            dataverse: links['dataverse'] ?? [],
+            openScienceFramework: links['openScienceFramework'] ?? [],
+            finngenGitbook: links['finngenGitbook'] ?? [],
+            gtexPortal: links['gtexPortal'] ?? [],
+            ebiAcUk: links['ebiAcUk'] ?? [],
+            mendeley: links['mendeley'] ?? [],
             R: links['R'] ?? []
         },
         containers: {

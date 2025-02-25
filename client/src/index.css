@@ -57,15 +57,4 @@ div {
     }
 }
 
-.p-checkbox-box {
-    border: 1px solid #727272;
-}
-
-.invalid-box {
-    border-color: red;
-}
-
-.p-inputtext {
-    border-radius: 8px;
-}
 

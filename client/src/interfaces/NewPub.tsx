@@ -61,6 +61,7 @@ export interface NewPub {
     otherLinks: {
         name: string;
         description: string;
+        recommendedCategory: string;
         link: string;
     }[];
     submitter: string;

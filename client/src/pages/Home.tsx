@@ -43,14 +43,7 @@ const Home: React.FC = () => {
     // State of various dropdowns
     const [sort, setSort] = useState<Option | null>(null);
     const [selectedAuthor, setSelectedAuthor] = useState<Lab | null>(null);
-    const [selectedResources, setSelectedResources] = useState<Option[] | null>([
-        { name: 'Code' },
-        { name: 'Data' },
-        { name: 'Containers' },
-        { name: 'Results' },
-        { name: 'Trials' },
-        { name: 'Miscellaneous' }
-    ]);
+    const [selectedResources, setSelectedResources] = useState<Option[] | null>([]);
 
     // State for cardview/listview
     const [cardView, setCardView] = useState<true | false>(true);

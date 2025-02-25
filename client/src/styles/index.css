@@ -258,3 +258,20 @@ ul li a {
 .p-checkbox-box.p-highlight {
     border: 0;
 }
+
+.p-checkbox-box {
+    border: 1px solid #727272;
+}
+
+.invalid-box {
+    border-color: red;
+}
+
+.p-inputtext {
+    border-radius: 8px;
+}
+
+.p-dropdown.p-component.p-inputwrapper.p-inputwrapper-focus{
+	border: 1px solid rgb(29, 29, 255);
+	box-shadow: none;
+}

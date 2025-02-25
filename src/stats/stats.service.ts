@@ -18,12 +18,10 @@ export class StatsService {
   ) {}
 
 async findLabStats(lab: string) {
-		console.log(lab);
 		const query = {
 			authors: { $regex: new RegExp(`\\b${lab}\\b`, 'i') },
 		}
 
-		console.log(query);
 		try {
 		const publications = await this.statsModel
 			.find(query)
