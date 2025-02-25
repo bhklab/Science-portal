@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { PublicationDocument } from '../interfaces/publication.interface';
 import { PublicationChangesDocument } from '../interfaces/publication-changes.interface';
 
+
 @Injectable()
 export class PublicationService {
 	constructor(
@@ -15,7 +16,8 @@ export class PublicationService {
 	
 
 	//Get select publications based on criteria
-    async findSelectPublications(total: number, sort: string, lab: string, name: string): Promise<PublicationDocument[]> {
+    async findSelectPublications(total: number, sort: string, lab: string, resources: string [], name: string): Promise<PublicationDocument[]> {
+		console.log(resources);
         try {
 			let query = {};
 			if (lab != '' && name != '') {
@@ -31,6 +33,40 @@ export class PublicationService {
 				query = {
 					name: { $regex: new RegExp (name, 'i') }
 				};
+			}
+
+			if (resources && resources.length > 0) {
+				const resourceMap: Record<string, string[]> = {
+					code: ['github', 'gitlab'],
+					data: ['geo',	'dbGap', 'kaggle', 'dryad', 'empiar', 'gigaDb',	'zenodo', 'ega', 'xlsx', 'csv',
+						'proteinDataBank', 'dataverse', 'openScienceFramework', 'finngenGitbook', 'gtexPortal',	'ebiAcUk',
+						'mendeley',	'R'
+					],
+					containers: ['codeOcean', 'colab'],
+					results: ['gsea', 'figshare'],
+					trials: ['clinicalTrial'],
+					packages: ['bioconductor', 'pypi', 'CRAN'],
+					miscellaneous: ['IEEE', 'pdf', 'docx', 'zip']
+				};
+		  
+				const orConditions: any[] = [];
+		  
+				// For each selected resource category, add conditions for each subcategory
+				for (const category of resources) {
+					const catKey = category.toLowerCase();
+					if (resourceMap[catKey]) {
+						resourceMap[catKey].forEach((subCat) => {
+							const path = `supplementary.${catKey}.${subCat}.0`;
+							orConditions.push({ [path]: { $exists: true } });
+						});
+					}
+				}
+		  
+				if (orConditions.length > 0) {
+					query = {
+						$and: [query, { $or: orConditions }]
+					};
+				}
 			}
 			
 			let sortOption = {};
@@ -55,7 +91,6 @@ export class PublicationService {
 					break;
 			}
 		
-			// console.log(sortOption);
 			const publications = await this.publicationModel
 				.find(query)
 				.collation({ locale: 'en', strength: 2 })

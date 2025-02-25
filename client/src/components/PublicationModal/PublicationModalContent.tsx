@@ -1,5 +1,6 @@
 import React, { useState, useRef, useContext } from 'react';
 import { Toast } from 'primereact/toast';
+import { Dropdown } from 'primereact/dropdown';
 import axios from 'axios';
 import Pub from '../../interfaces/Pub';
 import { PublicationImage } from '../PublicationImage/PublicationImage';
@@ -11,6 +12,19 @@ interface PublicationModalContentProps {
     editMode: boolean;
     setEditMode: React.Dispatch<React.SetStateAction<boolean>>;
 }
+
+interface Option {
+    name: String;
+}
+
+const options: Option[] = [
+    { name: 'Code' },
+    { name: 'Data' },
+    { name: 'Containers' },
+    { name: 'Results' },
+    { name: 'Trials' },
+    { name: 'Miscellaneous' }
+];
 
 interface LinksState {
     [category: string]: {
@@ -52,9 +66,8 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
         });
     };
 
-    // ---- Manage changes in the "otherLinks" array ----
     const addNewOtherLink = () => {
-        setOtherLinks(prev => [...(prev ?? []), { name: '', description: '', link: '' }]);
+        setOtherLinks(prev => [...(prev ?? []), { name: '', recommendedCategory: '', description: '', link: '' }]);
     };
 
     const handleOtherLinkChange = (index: number, field: keyof Pub['otherLinks'][number], value: string) => {
@@ -73,7 +86,6 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
 
     // Handle submission
     const handleSubmit = async () => {
-        // Create a new object to submit (avoid sending _id)
         const backendPub: Pub = { ...pub };
         delete backendPub._id;
 
@@ -252,7 +264,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                                                     e.target.value
                                                                                 )
                                                                             }
-                                                                            className="border p-2 rounded w-full mb-2"
+                                                                            className="border-2 border-gray-200 p-2 rounded w-full mb-2"
                                                                         />
 
                                                                         <label className="text-sm text-gray-600">
@@ -268,7 +280,27 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                                                     e.target.value
                                                                                 )
                                                                             }
-                                                                            className="border p-2 rounded w-full mb-2"
+                                                                            className="border-2 border-gray-200 p-2 rounded w-full mb-2"
+                                                                        />
+
+                                                                        <label className="text-sm text-gray-600">
+                                                                            Recommended Category
+                                                                        </label>
+                                                                        <Dropdown
+                                                                            value={item.recommendedCategory}
+                                                                            options={options}
+                                                                            onChange={e =>
+                                                                                handleOtherLinkChange(
+                                                                                    index,
+                                                                                    'recommendedCategory',
+                                                                                    e.value
+                                                                                )
+                                                                            }
+                                                                            optionLabel="name"
+                                                                            optionValue="name"
+                                                                            placeholder="Select recommended category"
+                                                                            editable
+                                                                            className="rounded border-2 border-gray-200 w-full md:w-40 text-black-900"
                                                                         />
 
                                                                         <label className="text-sm text-gray-600">
@@ -284,7 +316,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                                                     e.target.value
                                                                                 )
                                                                             }
-                                                                            className="border p-2 rounded w-full mb-2"
+                                                                            className="border-2 border-gray-200 p-2 rounded w-full mb-2"
                                                                         />
 
                                                                         <div className="flex justify-end">
@@ -297,21 +329,82 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                                                                         </div>
                                                                     </div>
                                                                 ) : (
-                                                                    <a
+                                                                    <div
                                                                         key={`otherLinks-${index}`}
-                                                                        href={item.link}
-                                                                        target="_blank"
-                                                                        rel="noreferrer"
-                                                                        className="flex flex-col gap-1 p-2 border-2 border-gray-200 rounded-md hover:border-gray-400"
+                                                                        className="flex flex-col gap-2 p-3 border-1 border-gray-200 rounded-md"
                                                                     >
-                                                                        <p className="font-semibold">{item.name}</p>
-                                                                        <p className="text-sm text-gray-600">
-                                                                            {item.description}
-                                                                        </p>
-                                                                        <p className="break-all text-blue-600 underline">
-                                                                            {item.link}
-                                                                        </p>
-                                                                    </a>
+                                                                        <label className="text-sm text-gray-600">
+                                                                            Name
+                                                                        </label>
+                                                                        <input
+                                                                            type="text"
+                                                                            value={item.name}
+                                                                            disabled
+                                                                            onChange={e =>
+                                                                                handleOtherLinkChange(
+                                                                                    index,
+                                                                                    'name',
+                                                                                    e.target.value
+                                                                                )
+                                                                            }
+                                                                            className="border-2 border-gray-200 p-2 rounded w-full mb-2"
+                                                                        />
+
+                                                                        <label className="text-sm text-gray-600">
+                                                                            Description
+                                                                        </label>
+                                                                        <input
+                                                                            type="text"
+                                                                            value={item.description}
+                                                                            disabled
+                                                                            onChange={e =>
+                                                                                handleOtherLinkChange(
+                                                                                    index,
+                                                                                    'description',
+                                                                                    e.target.value
+                                                                                )
+                                                                            }
+                                                                            className="border-2 border-gray-200 p-2 rounded w-full mb-2"
+                                                                        />
+
+                                                                        <label className="text-sm text-gray-600">
+                                                                            Recommended Category
+                                                                        </label>
+                                                                        <Dropdown
+                                                                            value={item.recommendedCategory}
+                                                                            options={options}
+                                                                            disabled
+                                                                            onChange={e =>
+                                                                                handleOtherLinkChange(
+                                                                                    index,
+                                                                                    'recommendedCategory',
+                                                                                    e.value
+                                                                                )
+                                                                            }
+                                                                            optionLabel="name"
+                                                                            optionValue="name"
+                                                                            placeholder="Select recommended category"
+                                                                            editable
+                                                                            className="rounded border-2 border-gray-200 w-full text-black-900"
+                                                                        />
+
+                                                                        <label className="text-sm text-gray-600">
+                                                                            Link
+                                                                        </label>
+                                                                        <input
+                                                                            type="text"
+                                                                            value={item.link}
+                                                                            disabled
+                                                                            onChange={e =>
+                                                                                handleOtherLinkChange(
+                                                                                    index,
+                                                                                    'link',
+                                                                                    e.target.value
+                                                                                )
+                                                                            }
+                                                                            className="border-2 border-gray-200 p-2 rounded w-full mb-2"
+                                                                        />
+                                                                    </div>
                                                                 )
                                                             )}
                                                         </div>
@@ -412,10 +505,6 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
         </div>
     );
 };
-
-/* -------------------------------------------------------------------------- */
-/*                          Utility Functions & Components                    */
-/* -------------------------------------------------------------------------- */
 
 // Utility function to check if an array of strings has non-empty values
 const isNonEmptyArray = (arr: string[] | undefined) =>

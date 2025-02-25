@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
+import { MultiSelect } from 'primereact/multiselect';
+import { Tooltip } from 'primereact/tooltip';
 import { CardView } from '../components/CardView/CardView';
 import { ListView } from '../components/ListView/ListView';
 import { Sidebar } from 'primereact/sidebar';
@@ -28,10 +30,27 @@ const options: Option[] = [
     { name: 'Least Citations' }
 ];
 
+const resourceTypes: Option[] = [
+    { name: 'Code' },
+    { name: 'Data' },
+    { name: 'Containers' },
+    { name: 'Results' },
+    { name: 'Trials' },
+    { name: 'Miscellaneous' }
+];
+
 const Home: React.FC = () => {
     // State of various dropdowns
     const [sort, setSort] = useState<Option | null>(null);
     const [selectedAuthor, setSelectedAuthor] = useState<Lab | null>(null);
+    const [selectedResources, setSelectedResources] = useState<Option[] | null>([
+        { name: 'Code' },
+        { name: 'Data' },
+        { name: 'Containers' },
+        { name: 'Results' },
+        { name: 'Trials' },
+        { name: 'Miscellaneous' }
+    ]);
 
     // State for cardview/listview
     const [cardView, setCardView] = useState<true | false>(true);
@@ -72,6 +91,7 @@ const Home: React.FC = () => {
                         total: totalPubs,
                         sort: sort?.name,
                         lab: selectedAuthor?.name,
+                        resources: selectedResources?.map(resource => resource.name.toLowerCase()),
                         name: search
                     },
                     {
@@ -106,24 +126,19 @@ const Home: React.FC = () => {
         getPublications();
         getStats();
         setTimeout(() => setLoaded(true), 1000);
-    }, [search, selectedAuthor, sort]);
+    }, [search, selectedAuthor, selectedResources, sort]);
 
     // Fetch additional publications from current query when more are requested
     useEffect(() => {
         const getPublications = async () => {
             try {
-                const res = await axios.post(
-                    `/api/publications/select`,
-                    {
-                        total: totalPubs,
-                        sort: sort?.name,
-                        lab: selectedAuthor?.name,
-                        name: search
-                    },
-                    {
-                        maxBodyLength: Infinity
-                    }
-                );
+                const res = await axios.post(`/api/publications/select`, {
+                    total: totalPubs,
+                    sort: sort?.name,
+                    lab: selectedAuthor?.name,
+                    resources: selectedResources?.map(resource => resource.name.toLowerCase()),
+                    name: search
+                });
                 setPublications([...res.data]);
             } catch (error) {
                 console.log(error);
@@ -151,6 +166,7 @@ const Home: React.FC = () => {
 
     return (
         <>
+            <Tooltip target=".resource-type" className="max-w-64" />
             <div
                 id="search-bar"
                 className={`transform ${visible ? 'pl-[382px] md:pl-[342px]' : ''} duration-300 ease-in-out fixed top-16 w-full shadow-sm px-16 md:px-1 py-3 flex flex-row gap-4 bg-white z-10`}
@@ -234,6 +250,26 @@ const Home: React.FC = () => {
                                 <h3 className="text-bodyMd text-black-900">Citations</h3>
                             </div>
                         </div>
+                        <div className="flex flex-col gap-2">
+                            <h3 className="text-headingMd text-black-900 font-semibold">Supplementary Resources</h3>
+                            <MultiSelect
+                                value={selectedResources}
+                                onChange={e => {
+                                    e.originalEvent?.stopPropagation();
+                                    setSelectedResources(e.value);
+                                }}
+                                options={resourceTypes}
+                                optionLabel="name"
+                                placeholder="Select a resource type"
+                                selectionLimit={2}
+                                id="resource-type"
+                                className="rounded border-1 border-gray-300 w-64 text-black-900"
+                                panelHeaderTemplate={() => null}
+                                tooltip="Filtering publications containing one or more of the selected supplementary resources"
+                                data-pr-tooltip="Filtering publications containing one or more of the selected supplementary resource types"
+                                data-pr-at="left top-25"
+                            />
+                        </div>
                     </div>
                 </Sidebar>
                 <div
@@ -244,16 +280,6 @@ const Home: React.FC = () => {
                             <span className="">Showing {publications?.length} publications</span>
                             {cardView ? (
                                 <div className="flex flex-row gap-2 justify-center items-center">
-                                    {/* <Tooltip target=".new-pub" />
-                                    <img
-                                        src="/images/assets/plus-icon.svg"
-                                        className="cursor-pointer new-pub hover:bg-gray-200 p-2 rounded-md"
-                                        data-pr-tooltip="Request a new entry"
-                                        data-pr-position="left"
-                                        style={{ fontSize: '2.0rem' }}
-                                        onClick={() => setNewPublicationVisible(true)}
-                                        alt="create new publication"
-                                    /> */}
                                     <button onClick={() => setCardView(true)} className="hover:bg-gray-200">
                                         <img src="/images/assets/card-view-active-icon.svg" alt="card-view-active" />
                                     </button>
@@ -263,16 +289,6 @@ const Home: React.FC = () => {
                                 </div>
                             ) : (
                                 <div className="flex flex-row gap-2 justify-center items-center">
-                                    {/* <Tooltip target=".new-pub" />
-                                    <img
-                                        src="/images/assets/plus-icon.svg"
-                                        className="cursor-pointer new-pub hover:bg-gray-200 p-3 p"
-                                        data-pr-tooltip="Request a new entry"
-                                        data-pr-position="left"
-                                        style={{ fontSize: '2.0rem' }}
-                                        onClick={() => setNewPublicationVisible(true)}
-                                        alt="create new publication"
-                                    /> */}
                                     <button onClick={() => setCardView(true)} className="hover:bg-gray-200">
                                         <img src="/images/assets/card-view-icon.svg" alt="card-view" />
                                     </button>

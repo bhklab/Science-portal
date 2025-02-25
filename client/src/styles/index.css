@@ -206,8 +206,8 @@ ul li a {
     border-radius: 15px !important;
 }
 
-.p-dialog-content{
-	padding: 0px !important;
+.p-dialog-content {
+    padding: 0px !important;
 }
 
 .p-dialog-header {
@@ -228,9 +228,33 @@ ul li a {
     font-weight: 300;
 }
 
+.p-dropdown-label.p-inputtext {
+    border: 0;
+}
+
 /* Adjusting PrimeReact tooltip component to use smaller font */
 .p-tooltip {
     font-size: 12px;
 }
 
+/*Adjust PrimeReact Multiselect
 
+/* Adjusting PrimeReact dropdown label and items to have new font colours and weights */
+.p-multiselect-label.p-multiselect-items-label {
+    font-weight: 300 !important;
+    color: #727272;
+}
+
+.p-multiselect-item.p-highlight span {
+    font-weight: 300 !important;
+    color: #727272 !important;
+}
+
+.p-multiselect-item span {
+    font-weight: 300 !important;
+    color: #727272 !important;
+}
+
+.p-checkbox-box.p-highlight {
+    border: 0;
+}

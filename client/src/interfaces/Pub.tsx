@@ -66,6 +66,7 @@ export default interface Pub {
     };
     otherLinks: {
         name: string;
+        recommendedCategory: string;
         description: string;
         link: string;
     }[];

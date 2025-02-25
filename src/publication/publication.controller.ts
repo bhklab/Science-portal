@@ -12,10 +12,12 @@ export class PublicationController {
 		@Body('total') total: number, 
 		@Body('sort') sort: string,
 		@Body('lab') lab: string,
+		@Body('resources') resources: string[],
 		@Body('name') name: string
 	){
         try {
-            const publications = await this.publicationService.findSelectPublications(total, sort, lab, name);
+			console.log(resources)
+            const publications = await this.publicationService.findSelectPublications(total, sort, lab, resources, name);
             return publications;
         } catch (error) {
             throw new HttpException(`Error retrieving publications: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);

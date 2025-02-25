@@ -66,6 +66,7 @@ export interface PublicationChangesDocument extends Document {
 	otherLinks: {
         name: string;
         description: string;
+		recommendedCategory: string,
         link: string;
     }[];
 	originalId: string;

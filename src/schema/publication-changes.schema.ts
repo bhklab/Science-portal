@@ -69,6 +69,7 @@ export const PublicationChangesSchema = new Schema({
     {
       name: String,
       description: String,
+	  recommendedCategory: String,
       link: String
     }
   ],
