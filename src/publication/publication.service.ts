@@ -86,37 +86,37 @@ export class PublicationService {
 				case 'A-Z':
 					sortOption = {
 						name: 1,
-						score: {$meta: score}
+						// score: {$meta: score}
 					};
 					break;
 				case 'Z-A':
 					sortOption = {
 						name: -1,
-						score: {$meta: score}
+						// score: {$meta: score}
 					};
 					break;
 				case 'Most Recent':
 					sortOption = { 
 						date: -1,
-						score: {$meta: score}
+						// score: {$meta: score}
 					};
 					break;
 				case 'Least Recent':
 					sortOption = { 
 						date: 1,
-						score: {$meta: score}
+						// score: {$meta: score}
 					};
 					break;
 				case 'Most Citations':
 					sortOption = { 
 						citations: -1,
-						score: {$meta: score}
+						// score: {$meta: score}
 					};
 					break;
 				case 'Least Citations':
 					sortOption = { 
 						citations: 1,
-						score: {$meta: score}
+						// score: {$meta: score}
 					};
 					break;
 			}
