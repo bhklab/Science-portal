@@ -235,7 +235,7 @@ const Home: React.FC = () => {
                         <img src="/images/assets/search-icon.svg" alt="search-icon" className="h-6 w-6" />
                     </button>
                     <input
-                        placeholder="Search publications"
+                        placeholder={`Search for publications (Ex. Chip seq, or \"author1\" + \"author2\")`}
                         className="pl-12 pr-3 py-2 rounded border-1 border-gray-300 w-full"
                         onChange={e => setSearch(e.target.value)}
                         onKeyDown={e => {
