@@ -72,7 +72,8 @@ const AnnualChart = forwardRef<AnnualChartRef, AnnualChartProps>(({ chartData, a
                                 padding: 8,
                                 useBorderRadius: true,
                                 borderRadius: 2
-                            }
+                            },
+                            onClick: null
                         },
                         datalabels: {
                             anchor: 'end',

@@ -56,14 +56,15 @@ const PersonalScatterPlot = forwardRef<PersonalScatterPlotRef, PersonalChartProp
                                     padding: 8,
                                     useBorderRadius: true,
                                     borderRadius: 2
-                                }
+                                },
+                                onClick: null
                             }
                         },
                         scales: {
                             x: {
                                 title: {
                                     display: true,
-                                    text: 'Rank in Institution',
+                                    text: 'Institution Rank',
                                     color: '#000',
                                     font: {
                                         size: 14,

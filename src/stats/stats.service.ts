@@ -71,17 +71,21 @@ async findLabStats(lab: string) {
           });
         }
 
+		let categoryTypes = new Set()
+
         // For each possible (category, subCategory, type)
         supplementary.forEach(({ category, subCategory, type }) => {
           const linkArray = pub.supplementary?.[category]?.[subCategory] || [];
-          if (linkArray.length > 0) {
-            yearData[year][type] += linkArray.length;
+          if (linkArray.length > 0 && !categoryTypes.has(category)) {
+            yearData[year][type] += 1;
+			categoryTypes.add(category)
           }
         });
       });
 
       // Build chart labels (year) and datasets
       const labels = Object.keys(yearData).sort(); // e.g. [ '2018', '2019', ...]
+
       // Unique type names
       const uniqueTypes = [...new Set(supplementary.map(({ type }) => type))];
 
@@ -145,11 +149,14 @@ async findLabStats(lab: string) {
           });
         }
 
+		let categoryTypes = new Set()
+
         // Tally each subcategory link count
         supplementary.forEach(({ category, subCategory, type }) => {
           const linkArray = pub.supplementary?.[category]?.[subCategory] || [];
-          if (linkArray.length > 0) {
-            yearData[year][type] += linkArray.length;
+          if (linkArray.length > 0 && !categoryTypes.has(category)) {
+            yearData[year][type] += 1;
+			categoryTypes.add(category)
           }
         });
       });
@@ -232,6 +239,7 @@ async findLabStats(lab: string) {
         publications.forEach((pub) => {
           authorStats.totalCitations += pub.citations || 0;
 
+			
           // Process nested arrays for supplementary
           supplementary.forEach(({ category, subCategory, type }) => {
             const linkArray = pub.supplementary?.[category]?.[subCategory] || [];

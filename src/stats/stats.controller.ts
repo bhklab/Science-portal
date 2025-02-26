@@ -39,7 +39,7 @@ export class StatsController {
 
 	// Using an authors employee Id find stats for the profile page, this includes ranking
 	@Get('author/:enid')
-    async getAuthorStats(@Param('enid') enid: number) {
+    async getAuthorStats(@Param('enid') enid: string) {
         try {
             const authorStats = await this.StatsService.findPublicationsByAuthor(enid);
             return authorStats;

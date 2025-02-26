@@ -73,7 +73,8 @@ const PersonalBarChart = forwardRef<PersonalBarChartRef, PersonalChartProps>(
                                     padding: 8,
                                     useBorderRadius: true,
                                     borderRadius: 2
-                                }
+                                },
+                                onClick: null
                             },
                             datalabels: {
                                 anchor: 'end',

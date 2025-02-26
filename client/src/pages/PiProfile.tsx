@@ -30,36 +30,42 @@ const Profile: React.FC = () => {
         {
             name: 'Code',
             description: 'code snippets',
+            sentence: 'code',
             statIndex: 'Code',
             image: 'code-icon.svg'
         },
         {
             name: 'Data',
             description: 'data points',
+            sentence: 'data',
             statIndex: 'Data',
             image: 'data-icon.svg'
         },
         {
             name: 'Containers',
             description: 'containers',
+            sentence: 'container',
             statIndex: 'Containers',
             image: 'containers-icon.svg'
         },
         {
             name: 'Trials',
             description: 'clinical trials',
+            sentence: 'clinical trial',
             statIndex: 'Trials',
             image: 'clinicaltrials-icon.svg'
         },
         {
             name: 'Results',
             description: 'results',
+            sentence: 'result',
             statIndex: 'Results',
             image: 'results-icon.svg'
         }
         // {
         // 	name: 'Packages',
         // 	description: 'software packages',
+        //	sentence: 'package',
         // 	statIndex: 'Packages',
         // 	image: 'packages-icon.svg'
         // },
@@ -83,7 +89,7 @@ const Profile: React.FC = () => {
 
     // feedback modal state variables
     const [isVisible, setIsVisible] = useState<boolean>(false);
-    const [toggleDetailed, setToggleDetailed] = useState(false);
+    const [toggleDetailed, setToggleDetailed] = useState(true);
     const toast = useRef<Toast>(null);
 
     const toggleLegendItem = (item: string, chartType: string) => {
@@ -332,9 +338,11 @@ const Profile: React.FC = () => {
                     <div className="flex flex-col gap-5">
                         <div className="flex flex-row justify-between items-center w-full">
                             <div className="flex flex-col">
-                                <h2 className="text-headingLg font-semibold text-black-900">Publication Statistics</h2>
+                                <h2 className="text-headingLg font-semibold text-black-900">
+                                    My Publication Statistics
+                                </h2>
                                 <p className="text-bodySm text-gray-500 ">
-                                    Calculating the number of publications with each resource type
+                                    Total publications of yours that contain at least one resource
                                 </p>
                             </div>
                             <div className="flex items-center gap-2">
@@ -358,141 +366,95 @@ const Profile: React.FC = () => {
                         <div className="flex flex-row items-center gap-5 flex-wrap w-[860px] wrap:w-[600px] wrapSmall:w-[450px] sm:w-[420px] xs:w-[350px] ">
                             {/* Sections */}
                             {sections.map(item => (
-                                <Link
-                                    to="scatter-plot"
-                                    smooth={true}
-                                    duration={700}
-                                    offset={-75}
-                                    className="hover:cursor-pointer"
-                                    onClick={() => setScatterActiveLegendItems(new Set([`${item.statIndex}`]))}
-                                    key={item.name}
+                                <div
+                                    className={`flex flex-col gap-5 p-5 w-[420px] xs:w-[350px] wrap:w-full border-1 border-gray-200 rounded-lg overflow-hidden`}
                                 >
-                                    <div
-                                        className={`flex flex-col gap-5 p-5 w-[420px] xs:w-[350px] wrap:w-full border-1 border-gray-200 rounded-lg overflow-hidden`}
-                                    >
-                                        <div className="flex flex-row justify-between items-start gap-4">
-                                            <div className="flex flex-col">
-                                                <div className="flex flex-row gap-1 items-center mb-1">
-                                                    <img src={`/images/assets/${item.image}`} alt={item.name} />
-                                                    <p className="text-headingXs font-semibold">{item.name}</p>
-                                                </div>
-                                                <h3 className="text-cyan-1100 text-headingXl mb-4 font-semibold">
-                                                    {categoryStats[item.statIndex].authorContributions} publications
-                                                    with {item.description}
-                                                </h3>
-                                                <p className="text-bodySm">
-                                                    You are in the{' '}
-                                                    <span className="font-bold">
-                                                        {categoryStats[item.statIndex].percentage < 50
-                                                            ? 'top'
-                                                            : 'bottom'}{' '}
-                                                        {categoryStats[item.statIndex].percentage}%
-                                                    </span>{' '}
-                                                    of {item.name.toLowerCase()} sharing in your publications.
-                                                </p>
+                                    <div className="flex flex-row justify-between items-start gap-4">
+                                        <div className="flex flex-col">
+                                            <div className="flex flex-row gap-1 items-center mb-1">
+                                                <img src={`/images/assets/${item.image}`} alt={item.name} />
+                                                <p className="text-headingXs font-semibold">{item.name}</p>
                                             </div>
-                                            <div className="relative h-[100px] w-[100px] flex-shrink-0 overflow-visible">
-                                                <img
-                                                    src={`/images/placeholders/${getPyramidImage(
-                                                        categoryStats[item.statIndex].percentage
-                                                    )}`}
-                                                    alt="pyramids"
-                                                    className="absolute bottom-0 left-0"
-                                                    style={{ height: '150%', width: '200%' }}
+                                            <h3 className="text-cyan-1100 text-headingXl mb-4 font-semibold">
+                                                {categoryStats[item.statIndex].authorContributions} publications with{' '}
+                                                {item.description}
+                                            </h3>
+                                            {/* <p className="text-bodySm">
+                                                You are in the{' '}
+                                                <span className="font-bold">
+                                                    {categoryStats[item.statIndex].percentage < 50 ? 'top' : 'bottom'}{' '}
+                                                    {categoryStats[item.statIndex].percentage}%
+                                                </span>{' '}
+                                                of {item.name.toLowerCase()} sharing in your publications.
+                                            </p> */}
+                                            <p className="text-bodySm">
+                                                You are in the{' '}
+                                                <span className="font-bold">
+                                                    {categoryStats[item.statIndex].percentage < 50 ? 'top' : 'bottom'}{' '}
+                                                    {categoryStats[item.statIndex].percentage}%
+                                                </span>{' '}
+                                                of {item.sentence} sharing within publications at Princess Margaret.
+                                            </p>
+                                        </div>
+                                        <div className="relative h-[100px] w-[100px] flex-shrink-0 overflow-visible">
+                                            <img
+                                                src={`/images/placeholders/${getPyramidImage(
+                                                    categoryStats[item.statIndex].percentage
+                                                )}`}
+                                                alt="pyramids"
+                                                className="absolute bottom-0 left-0"
+                                                style={{ height: '150%', width: '200%' }}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {toggleDetailed && (
+                                        <div className="flex flex-col gap-2 animate-show">
+                                            <p className="text-bodySm">
+                                                <span className="font-bold">
+                                                    {categoryStats[item.statIndex].openSciencePercentage}% of your
+                                                    publications
+                                                </span>{' '}
+                                                share {item.name.toLowerCase()} with your community!
+                                            </p>
+                                            <div className="flex flex-row">
+                                                <div
+                                                    className="bg-gradient-blue-cyan h-1.5 rounded-l-md"
+                                                    style={{
+                                                        width: `${categoryStats[item.statIndex].openSciencePercentage}%`
+                                                    }}
+                                                />
+                                                <div
+                                                    className="bg-gray-1000 h-1.5 rounded-r-md"
+                                                    style={{
+                                                        width: `${
+                                                            100 - categoryStats[item.statIndex].openSciencePercentage
+                                                        }%`
+                                                    }}
                                                 />
                                             </div>
-                                        </div>
-
-                                        {toggleDetailed && (
-                                            <div className="flex flex-col gap-2 animate-show">
-                                                <p className="text-bodySm">
-                                                    <span className="font-bold">
-                                                        {categoryStats[item.statIndex].openSciencePercentage}% of your
-                                                        publications
-                                                    </span>{' '}
-                                                    share {item.name.toLowerCase()} with your community!
+                                            <div className="flex flex-row justify-between">
+                                                <p className="text-cyan-1000 text-bodySm font-bold">
+                                                    {categoryStats[item.statIndex].authorContributions}
                                                 </p>
-                                                <div className="flex flex-row">
-                                                    <div
-                                                        className="bg-gradient-blue-cyan h-1.5 rounded-l-md"
-                                                        style={{
-                                                            width: `${categoryStats[item.statIndex].openSciencePercentage}%`
-                                                        }}
-                                                    />
-                                                    <div
-                                                        className="bg-gray-1000 h-1.5 rounded-r-md"
-                                                        style={{
-                                                            width: `${
-                                                                100 -
-                                                                categoryStats[item.statIndex].openSciencePercentage
-                                                            }%`
-                                                        }}
-                                                    />
-                                                </div>
-                                                <div className="flex flex-row justify-between">
-                                                    <p className="text-cyan-1000 text-bodySm font-bold">
-                                                        {categoryStats[item.statIndex].authorContributions}
-                                                    </p>
-                                                    <p className="text-gray-700 text-bodySm font-bold">
-                                                        {totalPublications}
-                                                    </p>
-                                                </div>
+                                                <p className="text-gray-700 text-bodySm font-bold">
+                                                    {totalPublications}
+                                                </p>
                                             </div>
-                                        )}
-                                    </div>
-                                </Link>
+                                        </div>
+                                    )}
+                                </div>
                             ))}
-
-                            {/* Scatter Plot */}
-                            <div
-                                className="flex flex-col gap-3 px-10 sm:px-2 bg-white border-1 border-gray-200 rounded-md w-full"
-                                id="scatter-plot"
-                            >
-                                <div className="flex flex-row justify-between items-center">
-                                    <div className="flex flex-col py-10">
-                                        <h1 className="text-heading2Xl sm:text-headingLg font-semibold ">
-                                            My Resource Sharing Rank
-                                        </h1>
-                                        <p className="text-bodySm sm:text-bodyXs text-gray-500 ">
-                                            Number of publications with respective resource type
-                                        </p>
-                                    </div>
-                                    <div className="flex flex-row sm:flex-col gap-4">
-                                        <FilterDropdown
-                                            legendItems={legendItems}
-                                            activeItems={scatterActiveLegendItems}
-                                            toggleLegendItem={toggleLegendItem}
-                                            chartType="scatter"
-                                        />
-                                        <ExportDropdown
-                                            onDownload={format =>
-                                                downloadChartImage(format as 'jpeg' | 'png' | 'webp' | 'svg', 'scatter')
-                                            }
-                                            chartType="scatter"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="chart-container relative w-full" style={{ height: '450px' }}>
-                                    <PersonalScatterPlot
-                                        ref={scatterPlotRef}
-                                        chartData={scatterPlotData}
-                                        activeLegendItems={scatterActiveLegendItems}
-                                        enid={enid}
-                                    />
-                                </div>
-                            </div>
 
                             {/* Bar Chart */}
                             <div className="flex flex-col gap-3 px-10 sm:px-2 bg-white border-1 border-gray-200 rounded-md w-full">
                                 <div className="flex flex-row justify-between items-center">
                                     <div className="flex flex-col py-10">
                                         <h1 className="text-heading2Xl sm:text-headingLg font-semibold ">
-                                            My Publication Statistics
+                                            My Annual Resource Sharing
                                         </h1>
-                                        <p className="text-bodySm sm:text-bodyXs text-gray-500 ">
-                                            <span className="font-bold text-gray-500">Total</span> publication resources
-                                            shared by year
+                                        <p className="text-bodySm sm:text-bodyXs text-gray-500 align-center">
+                                            Total publications of yours that share publication resources
                                         </p>
                                     </div>
                                     <div className="flex flex-row sm:flex-col gap-4">
@@ -519,6 +481,46 @@ const Profile: React.FC = () => {
                                         ref={barChartRef}
                                         chartData={barChartData}
                                         activeLegendItems={barActiveLegendItems}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Scatter Plot */}
+                            <div
+                                className="flex flex-col gap-3 px-10 sm:px-2 bg-white border-1 border-gray-200 rounded-md w-full"
+                                id="scatter-plot"
+                            >
+                                <div className="flex flex-row justify-between items-center">
+                                    <div className="flex flex-col py-10">
+                                        <h1 className="text-heading2Xl sm:text-headingLg font-semibold ">
+                                            My Resource Sharing Rank
+                                        </h1>
+                                        <p className="text-bodySm sm:text-bodyXs text-gray-500 ">
+                                            Your resource sharing vs the institutions resource sharing
+                                        </p>
+                                    </div>
+                                    <div className="flex flex-row sm:flex-col gap-4">
+                                        <FilterDropdown
+                                            legendItems={legendItems}
+                                            activeItems={scatterActiveLegendItems}
+                                            toggleLegendItem={toggleLegendItem}
+                                            chartType="scatter"
+                                        />
+                                        <ExportDropdown
+                                            onDownload={format =>
+                                                downloadChartImage(format as 'jpeg' | 'png' | 'webp' | 'svg', 'scatter')
+                                            }
+                                            chartType="scatter"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="chart-container relative w-full" style={{ height: '425px' }}>
+                                    <PersonalScatterPlot
+                                        ref={scatterPlotRef}
+                                        chartData={scatterPlotData}
+                                        activeLegendItems={scatterActiveLegendItems}
+                                        enid={enid}
                                     />
                                 </div>
                             </div>
