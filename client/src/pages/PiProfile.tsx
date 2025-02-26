@@ -454,7 +454,7 @@ const Profile: React.FC = () => {
                                             My Annual Resource Sharing
                                         </h1>
                                         <p className="text-bodySm sm:text-bodyXs text-gray-500 align-center">
-                                            Total publications of yours that share publication resources
+                                            Total publications of yours that share resources
                                         </p>
                                     </div>
                                     <div className="flex flex-row sm:flex-col gap-4">

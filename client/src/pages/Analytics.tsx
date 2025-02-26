@@ -52,7 +52,7 @@ const Analytics: React.FC = () => {
                             Princess Margaret Cancer Centre Resource Statistics
                         </h1>
                         <p className="text-bodySm sm:text-bodyXs text-gray-500">
-                            Number of publications sharing resources of each type annually
+                            Total publications that share resources
                         </p>
                     </div>
 
