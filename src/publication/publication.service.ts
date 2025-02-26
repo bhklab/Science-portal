@@ -17,13 +17,16 @@ export class PublicationService {
 
 	//Get select publications based on criteria
     async findSelectPublications(total: number, sort: string, lab: string, resources: string [], search: string): Promise<PublicationDocument[]> {
-        try {
+		console.log(search)
+		try {
 			let query = {};
+			let sortOption = {};
 			if (lab != '' && search != '') {
 				query = {
 					$text: {$search: search},
 					authors: { $regex: new RegExp(lab, 'i') },
 				};
+				sortOption['score'] = { $meta: 'textScore' };
 			} else if (lab != '') {
 				query = {
 					authors: { $regex: new RegExp(lab, 'i') }
@@ -32,6 +35,7 @@ export class PublicationService {
 				query = {
 					$text: {$search: search},
 				};
+				sortOption['score'] = { $meta: 'textScore' };
 			}
 
 			if (resources && resources.length > 0) {
@@ -66,50 +70,34 @@ export class PublicationService {
 						$and: [query, { $or: orConditions }]
 					};
 				}
-			}
+			}			
 			
-			
-			let sortOption = {};
 			switch (sort) {
 				case 'A-Z':
-					sortOption = {
-						name: 1,
-					};
+					sortOption['name'] = 1;
 					break;
 				case 'Z-A':
-					sortOption = {
-						name: -1,
-					};
+					sortOption['name'] = -1;
 					break;
 				case 'Most Recent':
-					sortOption = { 
-						date: -1,
-					};
+					sortOption['date'] = -1;
 					break;
 				case 'Least Recent':
-					sortOption = { 
-						date: 1,
-					};
+					sortOption['date'] = 1;
 					break;
 				case 'Most Citations':
-					sortOption = { 
-						citations: -1,
-					};
+					sortOption['citations'] = -1;
+
 					break;
 				case 'Least Citations':
-					sortOption = { 
-						citations: 1,
-					};
+					sortOption['citations'] = 1;
 					break;
 			}
-			sortOption['score'] = ({ $meta: 'textScore' })
 		
 			const publications = await this.publicationModel
 				.find(
 					query,
-					{
-						score: { $meta: 'textScore' } 
-					}
+					search != '' ? { score: { $meta: 'textScore' } } : {}
 				)
 				.collation({ locale: 'en', strength: 2 })
 				.sort(sortOption)
