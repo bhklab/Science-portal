@@ -22,13 +22,7 @@ export class PublicationService {
 			if (lab != '' && search != '') {
 				query = {
 					$text: {$search: search},
-					// $or: [
-					// 	{journal: { $regex: new RegExp(search, 'i') }},
-					// 	{name: { $regex: new RegExp (search, 'i') }}
-					// ],
 					authors: { $regex: new RegExp(lab, 'i') },
-
-
 				};
 			} else if (lab != '') {
 				query = {
@@ -37,10 +31,6 @@ export class PublicationService {
 			} else if (search != '') {
 				query = {
 					$text: {$search: search},
-					// $or: [
-					// 	{journal: { $regex: new RegExp(search, 'i') }},
-					// 	{name: { $regex: new RegExp (search, 'i') }}
-					// ],
 				};
 			}
 
@@ -77,52 +67,50 @@ export class PublicationService {
 					};
 				}
 			}
-
 			
-			const score = { $meta: "textScore" }
 			
 			let sortOption = {};
 			switch (sort) {
 				case 'A-Z':
 					sortOption = {
 						name: 1,
-						// score: {$meta: score}
 					};
 					break;
 				case 'Z-A':
 					sortOption = {
 						name: -1,
-						// score: {$meta: score}
 					};
 					break;
 				case 'Most Recent':
 					sortOption = { 
 						date: -1,
-						// score: {$meta: score}
 					};
 					break;
 				case 'Least Recent':
 					sortOption = { 
 						date: 1,
-						// score: {$meta: score}
 					};
 					break;
 				case 'Most Citations':
 					sortOption = { 
 						citations: -1,
-						// score: {$meta: score}
 					};
 					break;
 				case 'Least Citations':
 					sortOption = { 
 						citations: 1,
-						// score: {$meta: score}
 					};
 					break;
 			}
+			sortOption['score'] = ({ $meta: 'textScore' })
 		
 			const publications = await this.publicationModel
-				.find(query)
+				.find(
+					query,
+					{
+						score: { $meta: 'textScore' } 
+					}
+				)
 				.collation({ locale: 'en', strength: 2 })
 				.sort(sortOption)
 				.limit(total);
