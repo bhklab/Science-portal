@@ -17,16 +17,13 @@ export class PublicationService {
 
 	//Get select publications based on criteria
     async findSelectPublications(total: number, sort: string, lab: string, resources: string [], search: string): Promise<PublicationDocument[]> {
-		console.log(search)
 		try {
 			let query = {};
-			let sortOption = {};
 			if (lab != '' && search != '') {
 				query = {
 					$text: {$search: search},
 					authors: { $regex: new RegExp(lab, 'i') },
 				};
-				sortOption['score'] = { $meta: 'textScore' };
 			} else if (lab != '') {
 				query = {
 					authors: { $regex: new RegExp(lab, 'i') }
@@ -35,7 +32,6 @@ export class PublicationService {
 				query = {
 					$text: {$search: search},
 				};
-				sortOption['score'] = { $meta: 'textScore' };
 			}
 
 			if (resources && resources.length > 0) {
@@ -72,6 +68,7 @@ export class PublicationService {
 				}
 			}			
 			
+			let sortOption = {};
 			switch (sort) {
 				case 'A-Z':
 					sortOption['name'] = 1;
@@ -92,6 +89,10 @@ export class PublicationService {
 				case 'Least Citations':
 					sortOption['citations'] = 1;
 					break;
+			}
+
+			if (search != ''){
+				sortOption['score'] = { $meta: 'textScore' };
 			}
 		
 			const publications = await this.publicationModel
