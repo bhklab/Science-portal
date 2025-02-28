@@ -1,3 +1,4 @@
+// PersonalScatterPlot.tsx
 import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { Chart, ChartDataset, ChartConfiguration, registerables } from 'chart.js';
 
@@ -25,22 +26,23 @@ const PersonalScatterPlot = forwardRef<PersonalScatterPlotRef, PersonalChartProp
                 const config: ChartConfiguration<'scatter'> = {
                     type: 'scatter',
                     data: {
+                        ...chartData,
                         datasets: chartData.datasets.map(dataset => ({
                             ...dataset,
+                            // Toggle visibility based on activeLegendItems
                             hidden: dataset.label ? !activeLegendItems.has(dataset.label) : false
                         }))
                     },
                     options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
                         plugins: {
                             tooltip: {
                                 callbacks: {
                                     label: context => {
                                         const { dataset, dataIndex } = context;
                                         const point = dataset.data[dataIndex] as any;
-                                        const highlight = point.backgroundColor === 'rgba(255, 99, 132, 0.8)';
-                                        return highlight
-                                            ? `👤 ${point.label} (Queried Author)`
-                                            : `${point.label || `Point ${dataIndex}`}`;
+                                        return point.label || `Point ${dataIndex}`;
                                     }
                                 }
                             },
@@ -119,7 +121,6 @@ const PersonalScatterPlot = forwardRef<PersonalScatterPlotRef, PersonalChartProp
                         link.href = chartCanvas.toDataURL('image/jpeg');
                         link.download = 'scatter-plot.jpeg';
                     }
-
                     link.click();
                 }
             }

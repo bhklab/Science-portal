@@ -54,7 +54,6 @@ async findLabStats(lab: string) {
         (pub) => new Date(pub.date) >= new Date('2018-01-01'),
       );
 
-      // yearData = { 2018: { 'Github': count, 'Gitlab': count, ... }, 2019: {...}, ... }
       const yearData: Record<
         number,
         Record<string, number>
@@ -186,7 +185,16 @@ async findLabStats(lab: string) {
     try {
       const enidNumber = Number(enid);
 
-      // Fetch all authors
+      const colors = [
+        { fillColor: 'rgba(127, 97, 219, 1)', borderColor: 'rgba(127, 97, 219, 1)' },
+        { fillColor: 'rgba(89, 113, 203, 1)', borderColor: 'rgba(89, 113, 203, 1)' },
+        { fillColor: 'rgba(89, 170, 106, 1)', borderColor: 'rgba(89, 170, 106, 1)' },
+        { fillColor: 'rgba(242, 172, 60, 1)', borderColor: 'rgba(242, 172, 60, 1)' },
+        { fillColor: 'rgba(203, 93, 56, 1)', borderColor: 'rgba(203, 93, 56, 1)' },
+        { fillColor: 'rgba(68, 152, 145, 1)', borderColor: 'rgba(68, 152, 145, 1)' },
+      ];
+
+      // Fetch all authors and find targetAuthor
       const allAuthors = await this.authorModel.find({}).lean();
       const targetAuthor = allAuthors.find((author) => author.ENID === enidNumber);
       if (!targetAuthor) throw new Error('Author not found');
@@ -203,17 +211,13 @@ async findLabStats(lab: string) {
         return acc;
       }, {} as Record<number, any[]>);
 
-      // This tracks overall usage counts across *all authors* (for ranking, etc.)
+      // Prepare counters
       const totalCategoryContributions: Record<string, number> = {};
-
-      // Initialize totalCategoryContributions to zero for each type
       supplementary.forEach(({ type }) => {
-        if (!totalCategoryContributions[type]) {
-          totalCategoryContributions[type] = 0;
-        }
+        totalCategoryContributions[type] = 0;
       });
 
-      // We'll store each author's stats here
+      // Build authorStatsMap
       const authorStatsMap: {
         [key: number]: {
           name: string;
@@ -222,97 +226,82 @@ async findLabStats(lab: string) {
         };
       } = {};
 
-      // Process publications for each author
       allAuthors.forEach((author) => {
-        const publications = publicationsByAuthor[author.ENID] || [];
-        const authorStats = {
+        const pubs = publicationsByAuthor[author.ENID] || [];
+        const statsObj = {
           name: `${author.firstName} ${author.lastName}`,
           categoryContributions: {} as Record<string, number>,
           totalCitations: 0,
         };
 
-        // Initialize counters for each 'type'
+        // Initialize counters for each type
         supplementary.forEach(({ type }) => {
-          authorStats.categoryContributions[type] = 0;
+          statsObj.categoryContributions[type] = 0;
         });
 
-        publications.forEach((pub) => {
-          authorStats.totalCitations += pub.citations || 0;
+        pubs.forEach((pub) => {
+			statsObj.totalCitations += pub.citations || 0;
+		  
+			const countedCategories = new Map();
+		  
+			supplementary.forEach(({ category, type }) => {
+			  if (!countedCategories.has(type)) countedCategories.set(type, false);
+		  
+			  // Check if at least one subcategory has data and count only once per category
+			  Object.values(pub.supplementary?.[category] || {}).forEach((linkArray) => {
+				if (Array.isArray(linkArray) && linkArray.length > 0 && !countedCategories.get(type)) {
+				  statsObj.categoryContributions[type] += 1;
+				  totalCategoryContributions[type] += 1;
+				  countedCategories.set(type, true);
+				}
+			  });
+			});
+		  });
+		  
 
-			
-          // Process nested arrays for supplementary
-          supplementary.forEach(({ category, subCategory, type }) => {
-            const linkArray = pub.supplementary?.[category]?.[subCategory] || [];
-            // If there's at least one link
-            if (linkArray.length > 0) {
-              // We add +1 to the *author* for that 'type' (or linkArray.length if you want to count them all)
-              authorStats.categoryContributions[type] += 1;
-              // Track total usage across all authors
-              totalCategoryContributions[type] += 1;
-            }
-          });
-        });
-
-        authorStatsMap[author.ENID] = authorStats;
+        authorStatsMap[author.ENID] = statsObj;
       });
 
-      // Calculate rankings for each type
+      // categoryRankings for each type
       const categoryRankings: { [key: string]: any[] } = {};
-
       supplementary.forEach(({ type }) => {
-        // Build a sorted list of authors for that type
-        const sortedAuthors = Object.entries(authorStatsMap)
-          .map(([enid, stats]) => ({
-            enid: Number(enid),
+        const sorted = Object.entries(authorStatsMap)
+          .map(([authorEnid, stats]) => ({
+            enid: Number(authorEnid),
             name: stats.name,
-            totalCitations: stats.totalCitations,
             contributions: stats.categoryContributions[type],
           }))
           .sort((a, b) => b.contributions - a.contributions);
 
-        // Add a rank (1-based)
-        categoryRankings[type] = sortedAuthors.map((author, index) => ({
-          ...author,
-          rank: index + 1,
+        // rank
+        categoryRankings[type] = sorted.map((entry, idx) => ({
+          ...entry,
+          rank: idx + 1,
         }));
       });
 
-      // Format for scatter plot / external use
-      const platformRankings = supplementary.reduce((acc, { type }) => {
-        acc[type] = categoryRankings[type].map((entry) => ({
-          enid: entry.enid,
-          name: entry.enid === enidNumber ? entry.name : 'Anonymous',
-          contributions: entry.contributions,
-          rank: entry.rank,
-        }));
-        return acc;
-      }, {} as Record<string, any[]>);
-
-      // Gather the target author's stats
+      // Gather stats for target author
       const targetAuthorStats = authorStatsMap[enidNumber];
-      if (!targetAuthorStats) throw new Error('Author has no contributions');
+      if (!targetAuthorStats) {
+        throw new Error('Author has no contributions');
+      }
 
-      // Build final categoryStats
+      const pubsOfTarget = publicationsByAuthor[enidNumber] || [];
+      const totalPubsForAuthor = pubsOfTarget.length || 1;
+
       const categoryStats = supplementary.reduce((acc, { type }) => {
-        // find the rank for the target author
         const arr = categoryRankings[type];
-        const authorIndex = arr.findIndex((item) => item.enid === enidNumber);
-        const authorRank = authorIndex === -1 ? arr.length : authorIndex + 1;
+        const foundIdx = arr.findIndex((item) => item.enid === enidNumber);
+        const authorRank = foundIdx === -1 ? arr.length : foundIdx + 1;
         const totalAuthors = arr.length;
         const rankPercentage = Math.ceil((authorRank / totalAuthors) * 100);
 
-        const totalAuthorPubs = publicationsByAuthor[enidNumber]?.length || 1;
-        const authorContribCount = targetAuthorStats.categoryContributions[type];
-
-        // This is how often the author used that type across all their pubs
-        // e.g. if they had 3 pubs, but used the resource in 2 of them -> 66%
-        const openSciencePercentage = Math.ceil(
-          (authorContribCount / totalAuthorPubs) * 100,
-        );
+        const authorContributions = targetAuthorStats.categoryContributions[type];
+        const openSciencePercentage = Math.ceil((authorContributions / totalPubsForAuthor) * 100);
 
         acc[type] = {
           total: totalCategoryContributions[type],
-          authorContributions: authorContribCount,
+          authorContributions,
           rank: authorRank,
           percentage: rankPercentage,
           openSciencePercentage,
@@ -320,13 +309,59 @@ async findLabStats(lab: string) {
         return acc;
       }, {} as Record<string, any>);
 
+      // Build scatterData
+      const uniqueTypes = Array.from(new Set(supplementary.map((s) => s.type)));
+
+	  const scatterData = {
+		datasets: uniqueTypes.map((type, index) => {
+		  const { fillColor, borderColor } = colors[index % colors.length];
+	  
+		  // Build the data array for x/y plus separate arrays for color/radius
+		  const points = categoryRankings[type].map(entry => ({
+			x: entry.rank,
+			y: entry.contributions,
+			label: entry.enid === enidNumber
+			  ? `${entry.name}, (You, ${entry.rank} overall)`
+			  : `Anonymous scientist (${entry.rank} overall)`
+		  }));
+	  
+		  const pointBackgroundColors = categoryRankings[type].map(entry =>
+			entry.enid === enidNumber
+			  ? 'rgba(255, 99, 132, 1)'
+			  : fillColor
+		  );
+	  
+		  const pointBorderColors = categoryRankings[type].map(entry =>
+			entry.enid === enidNumber
+			  ? 'rgba(255, 99, 132, 1)'
+			  : borderColor
+		  );
+	  
+		  const pointRadii = categoryRankings[type].map(entry =>
+			entry.enid === enidNumber ? 10 : 5
+		  );
+	  
+		  return {
+			label: type,
+			data: points,
+			backgroundColor: fillColor,
+			borderColor,
+			pointBackgroundColor: pointBackgroundColors,
+			pointBorderColor: pointBorderColors,
+			pointRadius: pointRadii
+		  };
+		})
+	  };
+
+      // Return final data
       return {
         author: targetAuthorStats.name,
         authorEmail: targetAuthor.email,
         totalCitations: targetAuthorStats.totalCitations,
-        totalPublications: publicationsByAuthor[enidNumber]?.length || 0,
+        totalPublications: totalPubsForAuthor,
         categoryStats,
-        platformRankings,
+        platformRankings: categoryRankings,
+        scatterData,
       };
     } catch (error) {
       throw new Error(
