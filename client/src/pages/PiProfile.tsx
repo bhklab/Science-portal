@@ -188,6 +188,17 @@ const PiProfile: React.FC = () => {
         }
     };
 
+    // Helper for name
+    const getFirstName = (email: string) => {
+        let firstName = email.substring(0, email.indexOf('.'));
+        return firstName.charAt(0).toUpperCase() + firstName.slice(1);
+    };
+
+    const getLastName = (email: string) => {
+        let lastName = email.substring(email.indexOf('.') + 1, email.indexOf('@'));
+        return lastName.charAt(0).toUpperCase() + lastName.slice(1);
+    };
+
     // Show spinner until piData is loaded
     if (!piData) {
         return (
@@ -205,26 +216,65 @@ const PiProfile: React.FC = () => {
     // If user is not found as an author
     if (piData === 'DNE') {
         return (
-            <div className="flex flex-col items-center py-36 min-h-screen bg-white">
-                <h2 className="text-headingLg font-semibold">No Data</h2>
-                <p className="text-bodyMd">User is not recognized as an author in our system.</p>
+            <div className="flex flex-col items-center py-36 smd:px-4 px-10 min-h-screen bg-white">
+                <div className="flex flex-row smd:flex-col gap-5 justify-center mx-auto">
+                    <div className="flex flex-col min-w-[285px] gap-10 sticky smd:static top-36 h-fit smd:mb-10">
+                        <div className="flex flex-col gap-5 smd:justify-center smd:items-center ">
+                            <div className="flex flex-col gap-2">
+                                <div className="h-[140px] w-[140px] rounded-[120px] overflow-clip">
+                                    <img src="/images/assets/default-user-icon.svg" alt="PI" />
+                                </div>
+                            </div>
+                            <div className="flex flex-col gap-2 text-black-900">
+                                <h2 className="text-heading2Xl font-semibold">
+                                    {getFirstName(authContext?.user.email)} {getLastName(authContext?.user.email)}
+                                </h2>
+                                <p className="text-headingMd">{scientist?.primaryAppointment}</p>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <div className="flex flex-row gap-2 items-center">
+                                    <img src="/images/assets/briefcase-icon.svg" alt="briefcase-icon" />
+                                    <p className="text-bodyMd">Princess Margaret Cancer Centre</p>
+                                </div>
+                                <div className="flex flex-row gap-2 items-center">
+                                    <img src="/images/assets/mail-icon.svg" alt="mail-icon" />
+                                    <p className="text-bodyMd">{authContext?.user.email}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <hr className="bg-gray-200 h-[1px]" />
+
+                        <div className="flex flex-col gap-5 smd:items-center">
+                            <button
+                                className="w-full border-1 border-open_border shadow-button rounded-[4px] p-2 text-headingSm text-black-900 font-semibold max-w-72"
+                                onClick={() => navigate('/submit-publication')}
+                            >
+                                Submit a publication
+                            </button>
+                            <div className="flex flex-row justify-center items-center">
+                                <button className="text-blue-1100 text-sm" onClick={() => setIsVisible(true)}>
+                                    Send Feedback
+                                </button>
+                                <FeedbackModal
+                                    isVisible={isVisible}
+                                    setIsVisible={setIsVisible}
+                                    submitFeedback={submitFeedback}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex items-center justify-center w-[860px] md:w-[420px]">
+                        <span className="text-bodyMd font-semibold text-gray-700">
+                            User is not a PI at Princess Margaret Cancer Centre, no data to be loaded!
+                        </span>
+                    </div>
+                </div>
             </div>
         );
     }
 
     // De-structure stats
     const { totalPublications, totalCitations, categoryStats } = piData;
-
-    // Helper for name
-    const getFirstName = (email: string) => {
-        let firstName = email.substring(0, email.indexOf('.'));
-        return firstName.charAt(0).toUpperCase() + firstName.slice(1);
-    };
-
-    const getLastName = (email: string) => {
-        let lastName = email.substring(email.indexOf('.') + 1, email.indexOf('@'));
-        return lastName.charAt(0).toUpperCase() + lastName.slice(1);
-    };
 
     return (
         <div className="flex flex-col items-center py-36 smd:px-4 px-10 min-h-screen bg-white">
