@@ -352,7 +352,6 @@ const Home: React.FC = () => {
                         cardView ? (
                             <>
                                 <CardView pubs={publications} />
-
                                 {totalPubs <= publications?.length + 20 && (
                                     <button
                                         className="m-auto w-32 h-10 text-BodyMd font-bold mb-10 text-black-900"
@@ -364,13 +363,7 @@ const Home: React.FC = () => {
                             </>
                         ) : (
                             <>
-                                <ListView
-                                    pubs={publications.filter(publication => {
-                                        if (search.toLowerCase() === '') return publication;
-                                        else if (publication.name.toLowerCase().includes(search.toLowerCase()))
-                                            return publication;
-                                    })}
-                                />
+                                <ListView pubs={publications} />
                                 {totalPubs <= publications?.length + 20 && (
                                     <button
                                         className="m-auto w-32 h-10 text-BodyMd font-bold mb-10 text-black-900"

@@ -11,17 +11,14 @@ interface publications {
 }
 
 interface Contains {
-    code: boolean;
-    container: boolean;
-    data: boolean;
-    results: boolean;
-    trials: boolean;
-    miscellaneous: boolean;
+    [key: string]: boolean;
 }
 
 export const ListView: React.FC<publications> = ({ pubs }) => {
     const [selectedPub, setSelectedPub] = useState<Pub | null>(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
+
+    console.log(pubs);
 
     const openModal = (pub: Pub) => {
         setSelectedPub(pub);
@@ -47,37 +44,26 @@ export const ListView: React.FC<publications> = ({ pubs }) => {
 
     const formatIcons = (pub: Pub) => {
         const supplementary: Supplementary = pub.supplementary;
+        let contains: Contains = {};
 
-        // Initialize the 'contains' object to track the presence of links in each category
-        let contains: Contains = {
-            code: false,
-            container: false,
-            data: false,
-            results: false,
-            trials: false,
-            miscellaneous: false
-        };
-
-        // Map category names to their corresponding icon file paths
         const categoryIcons: Record<string, string> = {
             code: '/images/assets/code-icon.svg',
             containers: '/images/assets/containers-icon.svg',
             data: '/images/assets/data-icon.svg',
             results: '/images/assets/results-icon.svg',
             trials: '/images/assets/clinicaltrials-icon.svg',
+            packages: '/images/assets/packages-icon.svg',
             miscellaneous: '/images/assets/miscellaneous-icon.svg'
         };
 
         Object.entries(LINK_CATEGORIES).forEach(([category, types]) => {
-            for (const type of types) {
-                if (supplementary[type.name as keyof Supplementary]?.trim()) {
-                    contains[category as keyof Contains] = true;
-                    break; // Stop checking further types for this category
-                }
+            if (supplementary[category as keyof Supplementary]) {
+                contains[category] = Object.values(supplementary[category as keyof Supplementary]!).some(
+                    links => Array.isArray(links) && links.length > 0
+                );
             }
         });
 
-        // Render icons for categories that have supplementary links
         return (
             <div className="flex flex-row gap-2">
                 {Object.entries(contains).map(([category, isPresent]) =>
@@ -86,8 +72,8 @@ export const ListView: React.FC<publications> = ({ pubs }) => {
                             key={category}
                             src={categoryIcons[category]}
                             alt={`${category} icon`}
-                            className="w-5 logo"
-                            data-pr-tooltip={`Includes ${category} ${category === 'miscellaneous' ? 'data' : ''}`}
+                            className="w-[18px] logo"
+                            data-pr-tooltip={`Includes ${category}`}
                         />
                     ) : null
                 )}

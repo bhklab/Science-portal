@@ -69,7 +69,7 @@ export const CardView: React.FC<Publications> = ({ pubs }) => {
                             key={category}
                             src={categoryIcons[category]}
                             alt={`${category} icon`}
-                            className="w-5 logo"
+                            className="w-[18px] logo"
                             data-pr-tooltip={`Includes ${category}`}
                         />
                     ) : null
@@ -103,7 +103,7 @@ export const CardView: React.FC<Publications> = ({ pubs }) => {
                         </div>
                         <div className="flex flex-row justify-between items-end w-[280px] absolute bottom-4">
                             <div className="flex flex-col gap-1 text-bodyMd text-gray-700 font-normal">
-                                <p className="max-w-[175px] line-clamp-2">{pub.journal}</p>
+                                <p className="max-w-[140px] line-clamp-2">{pub.journal}</p>
                                 <p>{pub.date}</p>
                                 <p>{pub.citations} citations</p>
                             </div>
