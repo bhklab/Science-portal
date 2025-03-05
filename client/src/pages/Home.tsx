@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { MultiSelect } from 'primereact/multiselect';
 import { Tooltip } from 'primereact/tooltip';
@@ -11,6 +10,7 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import Pub from '../interfaces/Pub';
 import Author from '../interfaces/Author';
 import Lab from '../interfaces/Lab';
+import { AuthContext } from '../hooks/AuthContext';
 
 interface Option {
     name: string;
@@ -71,6 +71,8 @@ const Home: React.FC = () => {
         publications: 0,
         citations: 0
     });
+
+    const authContext = useContext(AuthContext);
 
     // Fetch publications and stats on load and when filters change
     useEffect(() => {
@@ -169,7 +171,8 @@ const Home: React.FC = () => {
                         sort: sort?.name,
                         lab: selectedAuthor?.name,
                         resources: selectedResources?.map(resource => resource.name.toLowerCase()),
-                        search: search
+                        search: search,
+                        email: authContext?.user ? authContext?.user.email : null
                     },
                     {
                         maxBodyLength: Infinity

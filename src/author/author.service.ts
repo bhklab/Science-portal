@@ -14,8 +14,8 @@ export class AuthorService {
             if (!authors) {
                 throw new Error('Authors not found');
             }
-            return authors;
-        } catch (error) {
+				return authors.sort((a, b) => a.lastName.localeCompare(b.lastName));
+			} catch (error) {
             throw new Error(`Error finding all authors: ${(error as Error).message}`);
         }
     }

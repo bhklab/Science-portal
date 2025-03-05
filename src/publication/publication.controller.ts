@@ -1,11 +1,15 @@
 import { Controller, Get, Body, HttpException, HttpStatus, Param, Post } from '@nestjs/common';
 import { PublicationService } from './publication.service';
+import { LoggingService } from '../logging/logs.service';
 import { PublicationDocument } from 'src/interfaces/publication.interface';
 import { PublicationChangesDocument } from '../interfaces/publication-changes.interface';
 
 @Controller('publications')
 export class PublicationController {
-    constructor(private publicationService: PublicationService) {}
+    constructor(
+		private publicationService: PublicationService,
+		private loggingService: LoggingService
+	) {}
 
     @Post('select')
     async getSelectPublications(
@@ -13,8 +17,26 @@ export class PublicationController {
 		@Body('sort') sort: string,
 		@Body('lab') lab: string,
 		@Body('resources') resources: string[],
-		@Body('search') search: string
+		@Body('search') search: string,
+		@Body('email') email: string
 	){
+		if (sort || lab || search || (resources.length > 0)){
+			try {
+				await this.loggingService.logAction(
+					`Search/Filter`, 
+					email ? email : 'Not signed in',
+					{
+						search,
+						lab: lab ? lab : '',
+						sort: sort ? sort : '',
+						resources
+					}
+				);
+			} catch (error) {
+				console.log(error)
+			}
+		}
+
         try {
             const publications = await this.publicationService.findSelectPublications(total, sort, lab, resources, search);
             return publications;
