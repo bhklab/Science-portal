@@ -5,6 +5,8 @@ import { StatsService } from './stats.service';
 import { StatsSchema }  from '../schema/stats.schema';
 import { AuthorSchema }  from '../schema/author.schema';
 import { PublicationSchema }  from '../schema/publication.schema';
+import { LogSchema } from 'src/schema/logs.schema';
+import { LoggingService } from '../logging/logs.service';
 
 
 @Module({
@@ -12,10 +14,11 @@ import { PublicationSchema }  from '../schema/publication.schema';
 		MongooseModule.forFeature([
 			{ name: 'Stats', schema: StatsSchema },
 			{ name: 'Author', schema: AuthorSchema },
-			{ name: 'Publication', schema: PublicationSchema }
+			{ name: 'Publication', schema: PublicationSchema },
+			{ name: 'Logs', schema: LogSchema}
 		])
 	],
-  controllers: [StatsController], // receieve requests
-  providers: [StatsService], // logic for conducting work upon controllers request
+	controllers: [StatsController], 
+	providers: [StatsService, LoggingService],
 })
 export class StatsModule {}

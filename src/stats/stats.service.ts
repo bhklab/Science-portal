@@ -5,8 +5,6 @@ import { Model } from 'mongoose';
 import { StatsDocument } from '../interfaces/stats.interface';
 import { AuthorDocument } from '../interfaces/author.interface';
 import { PublicationDocument } from '../interfaces/publication.interface';
-
-// This new 'supplementary' array is an example. Adjust to your real definitions.
 import { supplementary } from '../interfaces/link-types';
 
 @Injectable()

@@ -1,15 +1,17 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import axios from 'axios';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { ExportDropdown } from '../components/DropdownButtons/ExportDropdown';
 import { FilterDropdown } from '../components/DropdownButtons/FilterDropdown';
 import AnnualChart, { AnnualChartRef } from '../components/Charts/StatisticsPage/AnnualChart';
+import { AuthContext } from 'hooks/AuthContext';
 
 const Analytics: React.FC = () => {
     const [chartData, setChartData] = useState<any | null>(null);
     const [legendItems, setLegendItems] = useState<string[]>([]);
     const [activeLegendItems, setActiveLegendItems] = useState(new Set<string>());
     const chartRef = useRef<AnnualChartRef>(null);
+    const authContext = useContext(AuthContext);
 
     const toggleLegendItem = (item: string) => {
         setActiveLegendItems(prev => {
@@ -29,7 +31,7 @@ const Analytics: React.FC = () => {
     useEffect(() => {
         const getChartData = async () => {
             try {
-                const res = await axios.get('/api/stats/supplementary');
+                const res = await axios.post('/api/stats/supplementary', { email: authContext?.user.email });
                 setChartData(res.data);
 
                 // Extract legend items (dataset labels) dynamically
