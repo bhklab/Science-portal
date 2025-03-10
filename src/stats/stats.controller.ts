@@ -62,4 +62,14 @@ export class StatsController {
             throw new HttpException(`Error retrieving PI stats: ${error}`, HttpStatus.NOT_FOUND);
         }
     }
+
+	// Using an authors employee Id find stats histogram on profile page
+	@Get('author/:enid/histogram')
+		async getAuthorHistogram(@Param('enid') enid: string) {
+		try {
+			return await this.statsService.findPublicationHistogramData(enid);
+		} catch (error) {
+			throw new HttpException( `Failed to get author histogram data: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 }

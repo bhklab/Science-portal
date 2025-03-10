@@ -180,193 +180,341 @@ async findLabStats(lab: string) {
 
 
   async findPublicationsByAuthor(enid: string | number) {
-    try {
-      const enidNumber = Number(enid);
+		try {
+		const enidNumber = Number(enid);
 
-      const colors = [
-        { fillColor: 'rgba(127, 97, 219, 1)', borderColor: 'rgba(127, 97, 219, 1)' },
-        { fillColor: 'rgba(89, 113, 203, 1)', borderColor: 'rgba(89, 113, 203, 1)' },
-        { fillColor: 'rgba(89, 170, 106, 1)', borderColor: 'rgba(89, 170, 106, 1)' },
-        { fillColor: 'rgba(242, 172, 60, 1)', borderColor: 'rgba(242, 172, 60, 1)' },
-        { fillColor: 'rgba(203, 93, 56, 1)', borderColor: 'rgba(203, 93, 56, 1)' },
-        { fillColor: 'rgba(68, 152, 145, 1)', borderColor: 'rgba(68, 152, 145, 1)' },
-      ];
+		const colors = [
+			{ fillColor: 'rgba(127, 97, 219, 1)', borderColor: 'rgba(127, 97, 219, 1)' },
+			{ fillColor: 'rgba(89, 113, 203, 1)', borderColor: 'rgba(89, 113, 203, 1)' },
+			{ fillColor: 'rgba(89, 170, 106, 1)', borderColor: 'rgba(89, 170, 106, 1)' },
+			{ fillColor: 'rgba(242, 172, 60, 1)', borderColor: 'rgba(242, 172, 60, 1)' },
+			{ fillColor: 'rgba(203, 93, 56, 1)', borderColor: 'rgba(203, 93, 56, 1)' },
+			{ fillColor: 'rgba(68, 152, 145, 1)', borderColor: 'rgba(68, 152, 145, 1)' },
+		];
 
-      // Fetch all authors and find targetAuthor
-      const allAuthors = await this.authorModel.find({}).lean();
-      const targetAuthor = allAuthors.find((author) => author.ENID === enidNumber);
-      if (!targetAuthor) throw new Error('Author not found');
+		// Fetch all authors and find targetAuthor
+		const allAuthors = await this.authorModel.find({}).lean();
+		const targetAuthor = allAuthors.find((author) => author.ENID === enidNumber);
+		if (!targetAuthor) throw new Error('Author not found');
 
-      // Fetch all publications
-      const allPublications = await this.publicationModel.find({}).lean();
+		// Fetch all publications
+		const allPublications = await this.publicationModel.find({}).lean();
 
-      // Group publications by author
-      const publicationsByAuthor = allAuthors.reduce((acc, author) => {
-        const authorNamePattern = new RegExp(`${author.lastName}, ${author.firstName}`, 'i');
-        acc[author.ENID] = allPublications.filter((pub) =>
-          pub.authors.match(authorNamePattern),
-        );
-        return acc;
-      }, {} as Record<number, any[]>);
+		// Group publications by author
+		const publicationsByAuthor = allAuthors.reduce((acc, author) => {
+			const authorNamePattern = new RegExp(`${author.lastName}, ${author.firstName}`, 'i');
+			acc[author.ENID] = allPublications.filter((pub) =>
+			pub.authors.match(authorNamePattern),
+			);
+			return acc;
+		}, {} as Record<number, any[]>);
 
-      // Prepare counters
-      const totalCategoryContributions: Record<string, number> = {};
-      supplementary.forEach(({ type }) => {
-        totalCategoryContributions[type] = 0;
-      });
+		// Prepare counters
+		const totalCategoryContributions: Record<string, number> = {};
+		supplementary.forEach(({ type }) => {
+			totalCategoryContributions[type] = 0;
+		});
 
-      // Build authorStatsMap
-      const authorStatsMap: {
-        [key: number]: {
-          name: string;
-          categoryContributions: Record<string, number>;
-          totalCitations: number;
-        };
-      } = {};
+		// Build authorStatsMap
+		const authorStatsMap: {
+			[key: number]: {
+			name: string;
+			categoryContributions: Record<string, number>;
+			totalCitations: number;
+			};
+		} = {};
 
-      allAuthors.forEach((author) => {
-        const pubs = publicationsByAuthor[author.ENID] || [];
-        const statsObj = {
-          name: `${author.firstName} ${author.lastName}`,
-          categoryContributions: {} as Record<string, number>,
-          totalCitations: 0,
-        };
+		allAuthors.forEach((author) => {
+			const pubs = publicationsByAuthor[author.ENID] || [];
+			const statsObj = {
+			name: `${author.firstName} ${author.lastName}`,
+			categoryContributions: {} as Record<string, number>,
+			totalCitations: 0,
+			};
 
-        // Initialize counters for each type
-        supplementary.forEach(({ type }) => {
-          statsObj.categoryContributions[type] = 0;
-        });
-
-        pubs.forEach((pub) => {
-			statsObj.totalCitations += pub.citations || 0;
-		  
-			const countedCategories = new Map();
-		  
-			supplementary.forEach(({ category, type }) => {
-			  if (!countedCategories.has(type)) countedCategories.set(type, false);
-		  
-			  // Check if at least one subcategory has data and count only once per category
-			  Object.values(pub.supplementary?.[category] || {}).forEach((linkArray) => {
-				if (Array.isArray(linkArray) && linkArray.length > 0 && !countedCategories.get(type)) {
-				  statsObj.categoryContributions[type] += 1;
-				  totalCategoryContributions[type] += 1;
-				  countedCategories.set(type, true);
-				}
-			  });
+			// Initialize counters for each type
+			supplementary.forEach(({ type }) => {
+			statsObj.categoryContributions[type] = 0;
 			});
-		  });
-		  
 
-        authorStatsMap[author.ENID] = statsObj;
-      });
+			pubs.forEach((pub) => {
+				statsObj.totalCitations += pub.citations || 0;
+			
+				const countedCategories = new Map();
+			
+				supplementary.forEach(({ category, type }) => {
+				if (!countedCategories.has(type)) countedCategories.set(type, false);
+			
+				// Check if at least one subcategory has data and count only once per category
+				Object.values(pub.supplementary?.[category] || {}).forEach((linkArray) => {
+					if (Array.isArray(linkArray) && linkArray.length > 0 && !countedCategories.get(type)) {
+					statsObj.categoryContributions[type] += 1;
+					totalCategoryContributions[type] += 1;
+					countedCategories.set(type, true);
+					}
+				});
+				});
+			});
+			
 
-      // categoryRankings for each type
-      const categoryRankings: { [key: string]: any[] } = {};
-      supplementary.forEach(({ type }) => {
-        const sorted = Object.entries(authorStatsMap)
-          .map(([authorEnid, stats]) => ({
-            enid: Number(authorEnid),
-            name: stats.name,
-            contributions: stats.categoryContributions[type],
-          }))
-          .sort((a, b) => b.contributions - a.contributions);
+			authorStatsMap[author.ENID] = statsObj;
+		});
 
-        // rank
-        categoryRankings[type] = sorted.map((entry, idx) => ({
-          ...entry,
-          rank: idx + 1,
-        }));
-      });
+		// categoryRankings for each type
+		const categoryRankings: { [key: string]: any[] } = {};
+		supplementary.forEach(({ type }) => {
+			const sorted = Object.entries(authorStatsMap)
+			.map(([authorEnid, stats]) => ({
+				enid: Number(authorEnid),
+				name: stats.name,
+				contributions: stats.categoryContributions[type],
+			}))
+			.sort((a, b) => b.contributions - a.contributions);
 
-      // Gather stats for target author
-      const targetAuthorStats = authorStatsMap[enidNumber];
-      if (!targetAuthorStats) {
-        throw new Error('Author has no contributions');
-      }
+			// rank
+			categoryRankings[type] = sorted.map((entry, idx) => ({
+			...entry,
+			rank: idx + 1,
+			}));
+		});
 
-      const pubsOfTarget = publicationsByAuthor[enidNumber] || [];
-      const totalPubsForAuthor = pubsOfTarget.length || 1;
+		// Gather stats for target author
+		const targetAuthorStats = authorStatsMap[enidNumber];
+		if (!targetAuthorStats) {
+			throw new Error('Author has no contributions');
+		}
 
-      const categoryStats = supplementary.reduce((acc, { type }) => {
-        const arr = categoryRankings[type];
-        const foundIdx = arr.findIndex((item) => item.enid === enidNumber);
-        const authorRank = foundIdx === -1 ? arr.length : foundIdx + 1;
-        const totalAuthors = arr.length;
-        const rankPercentage = Math.ceil((authorRank / totalAuthors) * 100);
+		const pubsOfTarget = publicationsByAuthor[enidNumber] || [];
+		const totalPubsForAuthor = pubsOfTarget.length || 1;
 
-        const authorContributions = targetAuthorStats.categoryContributions[type];
-        const openSciencePercentage = Math.ceil((authorContributions / totalPubsForAuthor) * 100);
+		const categoryStats = supplementary.reduce((acc, { type }) => {
+			const arr = categoryRankings[type];
+			const foundIdx = arr.findIndex((item) => item.enid === enidNumber);
+			const authorRank = foundIdx === -1 ? arr.length : foundIdx + 1;
+			const totalAuthors = arr.length;
+			const rankPercentage = Math.ceil((authorRank / totalAuthors) * 100);
 
-        acc[type] = {
-          total: totalCategoryContributions[type],
-          authorContributions,
-          rank: authorRank,
-          percentage: rankPercentage,
-          openSciencePercentage,
-        };
-        return acc;
-      }, {} as Record<string, any>);
+			const authorContributions = targetAuthorStats.categoryContributions[type];
+			const openSciencePercentage = Math.ceil((authorContributions / totalPubsForAuthor) * 100);
 
-      // Build scatterData
-      const uniqueTypes = Array.from(new Set(supplementary.map((s) => s.type)));
+			acc[type] = {
+			total: totalCategoryContributions[type],
+			authorContributions,
+			rank: authorRank,
+			percentage: rankPercentage,
+			openSciencePercentage,
+			};
+			return acc;
+		}, {} as Record<string, any>);
 
-	  const scatterData = {
-		datasets: uniqueTypes.map((type, index) => {
-		  const { fillColor, borderColor } = colors[index % colors.length];
-	  
-		  // Build the data array for x/y plus separate arrays for color/radius
-		  const points = categoryRankings[type].map(entry => ({
-			x: entry.rank,
-			y: entry.contributions,
-			label: entry.enid === enidNumber
-			  ? `${entry.name}, (You, ${entry.rank} overall)`
-			  : `Anonymous scientist (${entry.rank} overall)`
-		  }));
-	  
-		  const pointBackgroundColors = categoryRankings[type].map(entry =>
-			entry.enid === enidNumber
-			  ? 'rgba(255, 99, 132, 1)'
-			  : fillColor
-		  );
-	  
-		  const pointBorderColors = categoryRankings[type].map(entry =>
-			entry.enid === enidNumber
-			  ? 'rgba(255, 99, 132, 1)'
-			  : borderColor
-		  );
-	  
-		  const pointRadii = categoryRankings[type].map(entry =>
-			entry.enid === enidNumber ? 10 : 5
-		  );
-	  
-		  return {
-			label: type,
-			data: points,
-			backgroundColor: fillColor,
-			borderColor,
-			pointBackgroundColor: pointBackgroundColors,
-			pointBorderColor: pointBorderColors,
-			pointRadius: pointRadii
-		  };
-		})
-	  };
+		// Build scatterData
+		const uniqueTypes = Array.from(new Set(supplementary.map((s) => s.type)));
 
-      // Return final data
-      return {
-        author: targetAuthorStats.name,
-        authorEmail: targetAuthor.email,
-        totalCitations: targetAuthorStats.totalCitations,
-        totalPublications: totalPubsForAuthor,
-        categoryStats,
-        platformRankings: categoryRankings,
-        scatterData,
-      };
-    } catch (error) {
-      throw new Error(
-        `Error fetching publications for author: ${
-          error instanceof Error ? error.message : 'Unknown error'
-        }`,
-      );
-    }
+		const scatterData = {
+			datasets: uniqueTypes.map((type, index) => {
+			const { fillColor, borderColor } = colors[index % colors.length];
+		
+			// Build the data array for x/y plus separate arrays for color/radius
+			const points = categoryRankings[type].map(entry => ({
+				x: entry.rank,
+				y: entry.contributions,
+				label: entry.enid === enidNumber
+				? `${entry.name}, (You, ${entry.rank} overall)`
+				: `Anonymous scientist (${entry.rank} overall)`
+			}));
+		
+			const pointBackgroundColors = categoryRankings[type].map(entry =>
+				entry.enid === enidNumber
+				? 'rgba(255, 99, 132, 1)'
+				: fillColor
+			);
+		
+			const pointBorderColors = categoryRankings[type].map(entry =>
+				entry.enid === enidNumber
+				? 'rgba(255, 99, 132, 1)'
+				: borderColor
+			);
+		
+			const pointRadii = categoryRankings[type].map(entry =>
+				entry.enid === enidNumber ? 10 : 5
+			);
+		
+			return {
+				label: type,
+				data: points,
+				backgroundColor: fillColor,
+				borderColor,
+				pointBackgroundColor: pointBackgroundColors,
+				pointBorderColor: pointBorderColors,
+				pointRadius: pointRadii
+			};
+			})
+		};
+
+		// Return final data
+		return {
+			author: targetAuthorStats.name,
+			authorEmail: targetAuthor.email,
+			totalCitations: targetAuthorStats.totalCitations,
+			totalPublications: totalPubsForAuthor,
+			categoryStats,
+			platformRankings: categoryRankings,
+			scatterData,
+		};
+		} catch (error) {
+		throw new Error(
+			`Error fetching publications for author: ${
+			error instanceof Error ? error.message : 'Unknown error'
+			}`,
+		);
+		}
+	}
+	
+	async findPublicationHistogramData(enid: string | number) {
+		try {
+		const enidNumber = Number(enid);
+	
+		// Fetch all authors and find targetAuthor
+		const allAuthors = await this.authorModel.find({}).lean();
+		const targetAuthor = allAuthors.find((author) => author.ENID === enidNumber);
+		if (!targetAuthor) throw new Error('Author not found');
+	
+		// Fetch all publications
+		const allPublications = await this.publicationModel.find({}).lean();
+	
+		// Group publications by author
+		const publicationsByAuthor = allAuthors.reduce((acc, author) => {
+				const authorNamePattern = new RegExp(`${author.lastName}, ${author.firstName}`, 'i');
+				acc[author.ENID] = allPublications.filter((pub) =>
+				pub.authors.match(authorNamePattern),
+			);
+			return acc;
+		}, {} as Record<number, any[]>);
+	
+		// Build authorContributionsMap for each category
+		const authorContributionsMap: Record<string, Record<number, number>> = {};
+		const uniqueTypes = [...new Set(supplementary.map(({ type }) => type))];
+		
+		uniqueTypes.forEach(type => {
+			authorContributionsMap[type] = {};
+		});
+	
+		// Calculate contributions for each author by type
+		allAuthors.forEach(author => {
+			const pubs = publicationsByAuthor[author.ENID] || [];
+			
+			uniqueTypes.forEach(type => {
+			let contributionCount = 0;
+			
+			pubs.forEach((pub) => {
+				const countedCategories = new Set();
+				
+				supplementary.forEach(({ category, subCategory, type: itemType }) => {
+					if (itemType === type && !countedCategories.has(category)) {
+						const linkArray = pub.supplementary?.[category]?.[subCategory] || [];
+						if (Array.isArray(linkArray) && linkArray.length > 0) {
+							contributionCount += 1;
+							countedCategories.add(category);
+						}
+					}
+				});
+			});
+			
+			authorContributionsMap[type][author.ENID] = contributionCount;
+			});
+		});
+	
+		// Build histogram data for each type
+		const histogramData: Record<string, any> = {};
+		
+		uniqueTypes.forEach(type => {
+			const authorContributions = Object.values(authorContributionsMap[type]);
+			if (authorContributions.length === 0) return;
+			
+			// Find min and max contributions
+			const maxContribution = Math.max(...authorContributions);
+			const targetAuthorContribution = authorContributionsMap[type][enidNumber] || 0;
+			
+			// Create 10 bins or less if maxContribution is small
+			const binCount = Math.min(10, maxContribution + 1);
+			const binSize = Math.ceil(maxContribution / binCount);
+			
+			// Initialize bins
+			const bins = Array(binCount).fill(0).map((_, i) => {
+				const start = i * binSize;
+				const end = (i + 1) * binSize - 1;
+				return {
+					binRange: `${start}-${end}`,
+					start,
+					end,
+					count: 0,
+					isUserBin: false
+				};
+			});
+			
+			// Count authors in each bin
+			authorContributions.forEach(contribution => {
+			const binIndex = Math.min(Math.floor(contribution / binSize), binCount - 1);
+				bins[binIndex].count += 1;
+			});
+			
+			// Mark the bin where the target author falls
+			const userBinIndex = Math.min(Math.floor(targetAuthorContribution / binSize), binCount - 1);
+			if (userBinIndex >= 0) {
+				bins[userBinIndex].isUserBin = true;
+			}
+			
+			histogramData[type] = {
+				bins,
+				userContribution: targetAuthorContribution,
+				maxContribution
+			};
+		});
+	
+		// Use the same colors as in the scatter plot for consistency
+		const colors = [
+			{ barColour: 'rgba(127, 97, 219, 1)', borderColour: 'rgba(127, 97, 219, 1)' },
+			{ barColour: 'rgba(89, 113, 203, 1)', borderColour: 'rgba(89, 113, 203, 1)' },
+			{ barColour: 'rgba(89, 170, 106, 1)', borderColour: 'rgba(89, 170, 106, 1)' },
+			{ barColour: 'rgba(242, 172, 60, 1)', borderColour: 'rgba(242, 172, 60, 1)' },
+			{ barColour: 'rgba(203, 93, 56, 1)', borderColour: 'rgba(203, 93, 56, 1)' },
+			{ barColour: 'rgba(68, 152, 145, 1)', borderColour: 'rgba(68, 152, 145, 1)' },
+		];
+		
+		// Format data for Chart.js
+		const datasets = uniqueTypes.map((type, index) => {
+			const typeData = histogramData[type];
+			const colorIndex = index % colors.length;
+			
+			// Create background colors array where user's bin is highlighted pink
+			const backgroundColors = typeData.bins.map(bin => 
+				bin.isUserBin ? 'rgba(255, 99, 132, 1)' : colors[colorIndex].barColour
+			);
+			
+			// Create border colors array
+			const borderColors = typeData.bins.map(bin => 
+				bin.isUserBin ? 'rgba(255, 99, 132, 1)' : colors[colorIndex].borderColour
+			);
+			
+			return {
+				label: type,
+				data: typeData.bins.map(bin => bin.count),
+				binLabels: typeData.bins.map(bin => bin.binRange),
+				backgroundColor: backgroundColors,
+				borderColor: borderColors,
+				borderWidth: 1
+			};
+		});
+	
+		return {
+			datasets
+		};
+		} catch (error) {
+		throw new Error(
+			`Error creating histogram data: ${
+			error instanceof Error ? error.message : 'Unknown error'
+			}`,
+		);
+		}
   }
 }

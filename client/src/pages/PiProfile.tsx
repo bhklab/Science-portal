@@ -9,6 +9,7 @@ import Author from '../interfaces/Author';
 
 import PersonalBarChart, { PersonalBarChartRef } from '../components/Charts/Profile/PersonalBarChart';
 import PersonalScatterPlot, { PersonalScatterPlotRef } from '../components/Charts/Profile/PersonalScatterPlot';
+import PersonalHistogram, { PersonalHistogramRef } from '../components/Charts/Profile/PersonalHistogram';
 import { ExportDropdown } from '../components/DropdownButtons/ExportDropdown';
 import { FilterDropdown } from '../components/DropdownButtons/FilterDropdown';
 import FeedbackModal from '../components/FeedbackModal/FeedbackModal';
@@ -61,15 +62,18 @@ const PiProfile: React.FC = () => {
     // Chart data
     const [barChartData, setBarChartData] = useState<any | null>(null);
     const [scatterPlotData, setScatterPlotData] = useState<any | null>(null);
+    const [histogramData, setHistogramData] = useState<any | null>(null);
 
     // Legend management for both charts
     const [legendItems, setLegendItems] = useState<string[]>([]);
     const [barActiveLegendItems, setBarActiveLegendItems] = useState<Set<string>>(new Set());
     const [scatterActiveLegendItems, setScatterActiveLegendItems] = useState<Set<string>>(new Set());
+    const [histogramActiveLegendItems, setHistogramActiveLegendItems] = useState<Set<string>>(new Set());
 
     // Chart references
     const barChartRef = useRef<PersonalBarChartRef>(null);
     const scatterPlotRef = useRef<PersonalScatterPlotRef>(null);
+    const histogramRef = useRef<PersonalHistogramRef>(null);
 
     // Feedback modal state
     const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -97,6 +101,12 @@ const PiProfile: React.FC = () => {
                 newSet.has(item) ? newSet.delete(item) : newSet.add(item);
                 return newSet;
             });
+        } else if (chartType === 'histogram') {
+            setHistogramActiveLegendItems(prev => {
+                const newSet = new Set(prev);
+                newSet.has(item) ? newSet.delete(item) : newSet.add(item);
+                return newSet;
+            });
         }
     };
 
@@ -106,6 +116,8 @@ const PiProfile: React.FC = () => {
             scatterPlotRef.current.downloadChartImage(format);
         } else if (chartType === 'bar' && barChartRef.current) {
             barChartRef.current.downloadChartImage(format);
+        } else if (chartType === 'histogram' && histogramRef.current) {
+            histogramRef.current.downloadChartImage(format);
         }
     };
 
@@ -136,17 +148,27 @@ const PiProfile: React.FC = () => {
                 const scatterResponse = await axios.get(`/api/stats/author/${scientistData.data.ENID}`);
                 setPiData(scatterResponse.data);
                 setScatterPlotData(scatterResponse.data.scatterData);
-                if (scatterResponse.data.scatterData?.datasets) {
-                    const scatterLabels = scatterResponse.data.scatterData.datasets.map((ds: any) => ds.label);
 
-                    // Merge bar and scatter labels
-                    const combinedSet = new Set([...barLabels, ...scatterLabels]);
+                // New histogram data
+                const histogramResponse = await axios.get(`/api/stats/author/${scientistData.data.ENID}/histogram`);
+                setHistogramData(histogramResponse.data);
+
+                // Process all labels for the shared legend
+                if (scatterResponse.data.scatterData?.datasets) {
+                    const barLabels = barResponse.data.datasets.map((d: any) => d.label);
+                    const scatterLabels = scatterResponse.data.scatterData.datasets.map((ds: any) => ds.label);
+                    const histogramLabels = histogramResponse.data.datasets.map((ds: any) => ds.label);
+
+                    // Merge all labels
+                    const combinedSet = new Set([...barLabels, ...scatterLabels, ...histogramLabels]);
                     const combinedArr = Array.from(combinedSet);
 
                     setLegendItems(combinedArr);
-                    // By default, show all
-                    setScatterActiveLegendItems(new Set(['Code']));
+
+                    // By default, show all for bar chart and only Code for scatter and histogram
                     setBarActiveLegendItems(new Set(combinedArr));
+                    setScatterActiveLegendItems(new Set(['Code']));
+                    setHistogramActiveLegendItems(new Set(['Code']));
                 }
             } catch (err) {
                 console.error('Error fetching data for user profile:', err);
@@ -505,6 +527,42 @@ const PiProfile: React.FC = () => {
                                     chartData={scatterPlotData}
                                     activeLegendItems={scatterActiveLegendItems}
                                     enid={enid}
+                                />
+                            </div>
+                        </div>
+
+                        <div
+                            className="flex flex-col gap-3 px-10 sm:px-2 bg-white border-1 border-gray-200 rounded-md w-full"
+                            id="contribution-histogram"
+                        >
+                            <div className="flex flex-row justify-between items-center">
+                                <div className="flex flex-col py-10">
+                                    <h1 className="text-heading2Xl sm:text-headingLg font-semibold">
+                                        Resource Contribution Distribution
+                                    </h1>
+                                    <p className="text-bodySm sm:text-bodyXs text-gray-500">
+                                        How your resource sharing compares with other scientists
+                                    </p>
+                                </div>
+                                <div className="flex flex-row sm:flex-col gap-4">
+                                    <FilterDropdown
+                                        legendItems={legendItems}
+                                        activeItems={histogramActiveLegendItems}
+                                        toggleLegendItem={toggleLegendItem}
+                                        chartType="histogram"
+                                    />
+                                    <ExportDropdown
+                                        onDownload={format => downloadChartImage(format as 'png' | 'jpeg', 'histogram')}
+                                        chartType="histogram"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="chart-container relative w-full" style={{ height: '425px' }}>
+                                <PersonalHistogram
+                                    ref={histogramRef}
+                                    chartData={histogramData}
+                                    activeLegendItems={histogramActiveLegendItems}
                                 />
                             </div>
                         </div>
