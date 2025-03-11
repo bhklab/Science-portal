@@ -77,8 +77,8 @@ const PersonalBarChart = forwardRef<PersonalBarChartRef, PersonalChartProps>(
                                 onClick: null
                             },
                             datalabels: {
-                                anchor: 'end',
-                                align: 'top',
+                                // anchor: 'end',
+                                align: 'bottom',
                                 color: '#000000',
                                 formatter: (value, context) => {
                                     const datasetArray: any = [];

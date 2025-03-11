@@ -78,7 +78,7 @@ const PiProfile: React.FC = () => {
     // Feedback modal state
     const [isVisible, setIsVisible] = useState<boolean>(false);
     // Toggle for detailed stats sections
-    const [toggleDetailed, setToggleDetailed] = useState<boolean>(true);
+    const [toggleDetailed, setToggleDetailed] = useState<boolean>(false);
     const toast = useRef<Toast>(null);
 
     // Decoded JWT token of user (aka. signed in user's data)

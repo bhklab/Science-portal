@@ -76,8 +76,8 @@ const AnnualChart = forwardRef<AnnualChartRef, AnnualChartProps>(({ chartData, a
                             onClick: null
                         },
                         datalabels: {
-                            anchor: 'end',
-                            align: 'top',
+                            // anchor: 'end',
+                            align: 'bottom',
                             color: '#000000',
                             formatter: (value, context) => {
                                 const datasetArray: any = [];
@@ -143,7 +143,7 @@ const AnnualChart = forwardRef<AnnualChartRef, AnnualChartProps>(({ chartData, a
                                     weight: 'bold'
                                 }
                             }
-                            // max: maxDataValue + buffer
+                            // max: maxDataValue + buffer //Make the y-axis add a buffer and also makes it static
                         }
                     }
                 }

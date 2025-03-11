@@ -12,7 +12,7 @@ export class AuthService {
       const response = await axios.post(
         process.env.KEYCLOAK_PWD_SIGN_ON,
         {
-          client_id: 'science-portal-backend',
+          client_id: process.env.KEYCLOAK_CLIENT_ID,
           grant_type: 'password',
           client_secret: process.env.KEYCLOAK_CLIENT_SECRET,
           username,

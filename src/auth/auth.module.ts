@@ -7,12 +7,12 @@ import * as dotenv from 'dotenv'; dotenv.config();
 
 @Module({
 	imports: [
-		KeycloakConnectModule.register({
-			authServerUrl: process.env.KEYCLOAK_AUTH_SERVER_URL,
-			realm: 'pmcobe',
-			clientId: 'science-portal-backend',
-			secret: process.env.KEYCLOAK_CLIENT_SECRET,
-		}),
+		// KeycloakConnectModule.register({
+		// 	authServerUrl: process.env.KEYCLOAK_AUTH_SERVER_URL,
+		// 	realm: process.env.KEYCLOAK_REALM,
+		// 	clientId: process.env.KEYCLOAK_CLIENT_ID,
+		// 	secret: process.env.KEYCLOAK_CLIENT_SECRET,
+		// }),
 	],
 	controllers: [AuthController],
 	providers: [AuthService],
