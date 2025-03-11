@@ -40,6 +40,8 @@ const PersonalHistogram = forwardRef<PersonalHistogramRef, PersonalHistogramProp
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
+                        categoryPercentage: 1,
+                        barPercentage: 1,
                         plugins: {
                             tooltip: {
                                 callbacks: {
@@ -83,7 +85,7 @@ const PersonalHistogram = forwardRef<PersonalHistogramRef, PersonalHistogramProp
                             x: {
                                 title: {
                                     display: true,
-                                    text: 'Number of Publications with Resources',
+                                    text: 'Publications with Resources',
                                     color: '#000',
                                     font: {
                                         size: 14,
@@ -97,7 +99,7 @@ const PersonalHistogram = forwardRef<PersonalHistogramRef, PersonalHistogramProp
                             y: {
                                 title: {
                                     display: true,
-                                    text: 'Number of Scientists',
+                                    text: 'Total Scientists',
                                     color: '#000',
                                     font: {
                                         size: 14,
