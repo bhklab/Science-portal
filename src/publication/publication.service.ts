@@ -47,24 +47,25 @@ export class PublicationService {
 					miscellaneous: ['IEEE', 'pdf', 'docx', 'zip']
 				};
 		  
-				const orConditions: any[] = [];
+				const andConditions: any[] = [];
 		  
 				// For each selected resource category, add conditions for each subcategory
 				for (const category of resources) {
 					const catKey = category.toLowerCase();
 					if (resourceMap[catKey]) {
-						resourceMap[catKey].forEach((subCat) => {
-							const path = `supplementary.${catKey}.${subCat}.0`;
-							orConditions.push({ [path]: { $exists: true } });
-						});
+						const subConditions = resourceMap[catKey].map((subCat) => ({
+							[`supplementary.${catKey}.${subCat}.0`]: { $exists: true }
+						}));
+						andConditions.push({ $or: subConditions }); // Ensure at least one subcategory exists within the category
 					}
 				}
-		  
-				if (orConditions.length > 0) {
+			
+				if (andConditions.length > 0) {
 					query = {
-						$and: [query, { $or: orConditions }]
+						$and: [query, ...andConditions] // Ensure all categories exist but allow flexibility within each category
 					};
 				}
+			
 			}			
 			
 			let sortOption = {};
