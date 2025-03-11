@@ -142,8 +142,8 @@ const AnnualChart = forwardRef<AnnualChartRef, AnnualChartProps>(({ chartData, a
                                     size: 14,
                                     weight: 'bold'
                                 }
-                            },
-                            max: maxDataValue + buffer
+                            }
+                            // max: maxDataValue + buffer
                         }
                     }
                 }

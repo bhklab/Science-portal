@@ -143,8 +143,8 @@ const PersonalBarChart = forwardRef<PersonalBarChartRef, PersonalChartProps>(
                                         size: 14,
                                         weight: 'bold'
                                     }
-                                },
-                                max: maxDataValue + buffer
+                                }
+                                // max: maxDataValue + buffer //Make the y-axis add a buffer and also makes it static
                             }
                         }
                     }
