@@ -5,14 +5,16 @@ import { Tooltip } from 'primereact/tooltip';
 import Pub from '../../interfaces/Pub';
 import PublicationModalContent from './PublicationModalContent';
 import { AuthContext } from '../../hooks/AuthContext';
+import Author from 'interfaces/Author';
 
-interface ReusableModalProps {
+interface PublicationModalProps {
     isVisible: boolean;
     onHide: () => void;
     pub: Pub | null;
+    scientists: Author[];
 }
 
-const ReusableModal: React.FC<ReusableModalProps> = ({ isVisible, onHide, pub }) => {
+const PublicationModal: React.FC<PublicationModalProps> = ({ isVisible, onHide, pub, scientists }) => {
     const toast = useRef<Toast>(null);
     const [editMode, setEditMode] = useState<boolean>(false);
     const authContext = useContext(AuthContext);
@@ -112,10 +114,17 @@ const ReusableModal: React.FC<ReusableModalProps> = ({ isVisible, onHide, pub })
                 closable={false}
                 position="bottom"
             >
-                {pub && <PublicationModalContent pub={pub} editMode={editMode} setEditMode={setEditMode} />}
+                {pub && (
+                    <PublicationModalContent
+                        pub={pub}
+                        editMode={editMode}
+                        setEditMode={setEditMode}
+                        scientists={scientists}
+                    />
+                )}
             </Dialog>
         </div>
     );
 };
 
-export default ReusableModal;
+export default PublicationModal;

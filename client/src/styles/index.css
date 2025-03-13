@@ -189,19 +189,13 @@ ul li a {
 }
 
 /* Adjusting PrimeReact slide out animation for bottom modal to move to middle */
-.p-dialog-mask {
+.p-dialog-mask.p-dialog-bottom {
     align-items: normal !important;
 }
 .p-dialog .p-dialog-default {
     margin-top: 3em;
     border-radius: 20px !important;
 }
-.p-dialog-bottom {
-    top: 50% !important;
-    transform: translate(-50%, -50%) !important; /* To center the dialog/modal popup */
-    left: 50% !important;
-}
-
 .p-dialog-content.custom-dialog {
     border-radius: 15px !important;
 }
@@ -271,12 +265,12 @@ ul li a {
     border-radius: 8px;
 }
 
-.p-dropdown.p-component.p-inputwrapper.p-inputwrapper-focus{
-	border: 1px solid rgb(136, 153, 252);
-	box-shadow: none;
+.p-dropdown.p-component.p-inputwrapper.p-inputwrapper-focus {
+    border: 1px solid rgb(136, 153, 252);
+    box-shadow: none;
 }
 
-.p-multiselect.p-component.p-inputwrapper.p-inputwrapper-focus{
-	box-shadow: none;
-	border: 1px solid rgb(136, 153, 252);
+.p-multiselect.p-component.p-inputwrapper.p-inputwrapper-focus {
+    box-shadow: none;
+    border: 1px solid rgb(136, 153, 252);
 }
