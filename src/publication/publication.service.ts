@@ -56,13 +56,13 @@ export class PublicationService {
 						const subConditions = resourceMap[catKey].map((subCat) => ({
 							[`supplementary.${catKey}.${subCat}.0`]: { $exists: true }
 						}));
-						andConditions.push({ $or: subConditions }); // Ensure at least one subcategory exists within the category
+						andConditions.push({ $or: subConditions });
 					}
 				}
 			
 				if (andConditions.length > 0) {
 					query = {
-						$and: [query, ...andConditions] // Ensure all categories exist but allow flexibility within each category
+						$and: [query, ...andConditions] // Ensure all resource categories exist
 					};
 				}
 			
