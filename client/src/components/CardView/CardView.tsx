@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PublicationImage } from '../PublicationImage/PublicationImage';
 import Pub from '../../interfaces/Pub';
 import PublicationModal from '../PublicationModal/PublicationModal';
 import { Tooltip } from 'primereact/tooltip';
 import { LINK_CATEGORIES } from '../../interfaces/Links';
 import Supplementary from '../../interfaces/Supplementary';
+import Author from '../../interfaces/Author';
+import axios from 'axios';
 
 interface Publications {
     pubs: Pub[];
@@ -17,6 +19,7 @@ interface Contains {
 export const CardView: React.FC<Publications> = ({ pubs }) => {
     const [selectedPub, setSelectedPub] = useState<Pub | null>(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [scientists, setScientists] = useState<Author[]>([]);
 
     const openModal = (pub: Pub) => {
         setSelectedPub(pub);
@@ -78,6 +81,24 @@ export const CardView: React.FC<Publications> = ({ pubs }) => {
         );
     };
 
+    // Fetch authors on load
+    useEffect(() => {
+        const getScientists = async () => {
+            try {
+                const res = await axios.get(`/api/authors/all`);
+                setScientists(
+                    res.data.map((scientist: Author) => ({
+                        ...scientist,
+                        fullName: `${scientist.lastName}, ${scientist.firstName}`
+                    }))
+                );
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        getScientists();
+    }, []);
+
     return (
         <div className="flex flex-row flex-wrap items-center gap-4 justify-center pb-10">
             <Tooltip target=".logo" position="top" hideDelay={200} />
@@ -112,7 +133,12 @@ export const CardView: React.FC<Publications> = ({ pubs }) => {
                     </div>
                 </div>
             ))}
-            <PublicationModal isVisible={isModalVisible} onHide={closeModal} pub={selectedPub} />
+            <PublicationModal
+                isVisible={isModalVisible}
+                onHide={closeModal}
+                pub={selectedPub}
+                scientists={scientists}
+            />
         </div>
     );
 };

@@ -1,16 +1,19 @@
-import React, { useState, useRef, useContext } from 'react';
+import React, { useState, useRef, useContext, useEffect } from 'react';
 import { Toast } from 'primereact/toast';
 import { Dropdown } from 'primereact/dropdown';
+import { Dialog } from 'primereact/dialog';
 import axios from 'axios';
 import Pub from '../../interfaces/Pub';
 import { PublicationImage } from '../PublicationImage/PublicationImage';
 import { LINK_CATEGORIES } from '../../interfaces/Links';
 import { AuthContext } from '../../hooks/AuthContext';
+import Author from 'interfaces/Author';
 
 interface PublicationModalContentProps {
     pub: Pub;
     editMode: boolean;
     setEditMode: React.Dispatch<React.SetStateAction<boolean>>;
+    scientists: Author[];
 }
 
 interface Option {
@@ -32,7 +35,12 @@ interface LinksState {
     };
 }
 
-const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, editMode, setEditMode }) => {
+const PublicationModalContent: React.FC<PublicationModalContentProps> = ({
+    pub,
+    editMode,
+    setEditMode,
+    scientists
+}) => {
     const [links, setLinks] = useState<LinksState>(() => initializeLinks({ ...pub.supplementary }));
     const [otherLinks, setOtherLinks] = useState<Pub['otherLinks']>(pub.otherLinks ?? []);
 
@@ -121,6 +129,10 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
         }
     };
 
+    useEffect(() => {
+        console.log(scientists);
+    }, [scientists]);
+
     return (
         <div>
             {/* Edit mode banner */}
@@ -144,6 +156,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
                 <HeaderSection
                     name={pub.name}
                     authors={pub.authors}
+                    scientists={scientists}
                     journal={pub.journal}
                     date={pub.date}
                     citations={pub.citations}
@@ -498,6 +511,130 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({ pub, 
     );
 };
 
+// Header Section Component
+const HeaderSection: React.FC<{
+    name: string;
+    authors: string;
+    scientists: Author[];
+    journal: string;
+    date: string;
+    citations: number;
+    image: string;
+    doi: string;
+}> = ({ name, authors, scientists, journal, date, citations, image, doi }) => (
+    <div className="flex flex-col gap-5 pb-10 border-b-2 border-gray-200 mmd:justify-center mmd:items-center">
+        <div className="flex justify-between">
+            <div className="h-48 w-48 md:h-[120px] md:w-[120px] overflow-hidden border-2 border-gray-200 rounded-lg flex justify-center items-center bg-white">
+                <PublicationImage image={image} />
+            </div>
+        </div>
+        <div className="flex flex-col gap-2">
+            <h1 className="md:text-headingMd text-heading2Xl font-semibold text-cyan-900 mmd:text-center">{name}</h1>
+            <p className="md:text-bodySm mmd:text-center font-light">
+                <AuthorsList authors={authors} scientists={scientists} />
+            </p>
+            <div className="flex mmd:flex-col flex-row gap-2 mmd:gap-0 text-bodyMd md:text-bodySm text-gray-700 font-light mmd:text-center">
+                <p>{journal}</p>
+                <p className="mmd:hidden">•</p>
+                <p>{date}</p>
+                <p className="mmd:hidden">•</p>
+                <p>{citations} citations</p>
+            </div>
+        </div>
+        <DigitalObjectIdentifier doi={doi} />
+    </div>
+);
+
+const AuthorsList: React.FC<{ authors: string; scientists: Author[] }> = ({ authors, scientists }) => {
+    // Split authors by semicolon.
+    const authorNames = authors.includes(';') ? authors.split(';').map(name => name.trim()) : [authors.trim()];
+
+    // Use state to track if the dialog is visible and which scientist is selected.
+    const [isVisible, setIsVisible] = useState<boolean>(false);
+    const [selectedScientist, setSelectedScientist] = useState<Author | null>(null);
+
+    // When an author is clicked, set the selected scientist and open the dialog.
+    const handleOpenDialog = (scientist: Author) => {
+        setSelectedScientist(scientist);
+        setIsVisible(true);
+    };
+
+    return (
+        <span>
+            {authorNames.map((name, index) => {
+                // Normalize the candidate name.
+                const candidate = name.toLowerCase().trim().replace(/[.,]/g, '');
+                const candidateNoMiddle = candidate.replace(/\s+[a-z]\b/gi, '').trim();
+
+                // Find a matching scientist.
+                const foundScientist = scientists.find(scientist => {
+                    const full = scientist.fullName.toLowerCase().trim().replace(/[.,]/g, '');
+                    return (
+                        full.includes(candidate) ||
+                        candidate.includes(full) ||
+                        full.includes(candidateNoMiddle) ||
+                        candidateNoMiddle.includes(full)
+                    );
+                });
+
+                return foundScientist ? (
+                    <button
+                        key={index}
+                        className="font-bold cursor-pointer"
+                        onClick={() => handleOpenDialog(foundScientist)}
+                    >
+                        {name}
+                        {index !== authorNames.length - 1 && '; '}
+                    </button>
+                ) : (
+                    <span key={index}>
+                        {name}
+                        {index !== authorNames.length - 1 && '; '}
+                    </span>
+                );
+            })}
+
+            {selectedScientist && (
+                <Dialog
+                    visible={isVisible}
+                    onHide={() => setIsVisible(false)}
+                    style={{ width: '300px', height: '200px', borderRadius: '15px' }}
+                    dismissableMask
+                    draggable={false}
+                    closable={false}
+                    position="center"
+                >
+                    <div className="flex flex-col justify-center items-center gap-2 text-black-900">
+                        <img src="/images/assets/default-user-icon.svg" alt="profile placeholder" className="w-20" />
+                        <div className="flex flex-col items-center gap-0.5">
+                            <h2 className="text-headingXl font-bold">
+                                {selectedScientist.firstName} {selectedScientist.lastName}
+                            </h2>
+                            <span className="text-bodyMd text-gray-500">{selectedScientist.primaryAppointment}</span>
+                            <span className="text-bodyMd font-semibold">{selectedScientist.email}</span>
+                        </div>
+                    </div>
+                </Dialog>
+            )}
+        </span>
+    );
+};
+
+// Component for the DOI
+const DigitalObjectIdentifier: React.FC<{ doi: string }> = ({ doi }) => (
+    <div className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200 w-full hover:text-gray">
+        <div className="flex flex-row">
+            <p className="w-full">Digital Object Identifier</p>
+        </div>
+        <a href={`https://doi.org/${doi}`} target="_blank" rel="noreferrer">
+            <div className="flex flex-row gap-2 items-center hover:text-blue-500">
+                <img src="/images/assets/doi-icon.svg" alt="Doi" className="h-6 w-6" />
+                <p className="text-bodyMd mmd:text-bodySm break-all">https://doi.org/{doi}</p>
+            </div>
+        </a>
+    </div>
+);
+
 // Utility function to check if an array of strings has non-empty values
 const isNonEmptyArray = (arr: string[] | undefined) =>
     Array.isArray(arr) && arr.length > 0 && arr.some(link => link.trim() !== '');
@@ -525,52 +662,6 @@ const initializeLinks = (supplementary: Pub['supplementary']): LinksState => {
 
     return links;
 };
-
-// Header Section Component
-const HeaderSection: React.FC<{
-    name: string;
-    authors: string;
-    journal: string;
-    date: string;
-    citations: number;
-    image: string;
-    doi: string;
-}> = ({ name, authors, journal, date, citations, image, doi }) => (
-    <div className="flex flex-col gap-5 pb-10 border-b-2 border-gray-200 mmd:justify-center mmd:items-center">
-        <div className="flex justify-between">
-            <div className="h-48 w-48 md:h-[120px] md:w-[120px] overflow-hidden border-2 border-gray-200 rounded-lg flex justify-center items-center bg-white">
-                <PublicationImage image={image} />
-            </div>
-        </div>
-        <div className="flex flex-col gap-2">
-            <h1 className="md:text-headingMd text-heading2Xl font-semibold text-cyan-900 mmd:text-center">{name}</h1>
-            <p className="md:text-bodySm mmd:text-center font-light">{authors}</p>
-            <div className="flex mmd:flex-col flex-row gap-2 mmd:gap-0 text-bodyMd md:text-bodySm text-gray-700 font-light mmd:text-center">
-                <p>{journal}</p>
-                <p className="mmd:hidden">•</p>
-                <p>{date}</p>
-                <p className="mmd:hidden">•</p>
-                <p>{citations} citations</p>
-            </div>
-        </div>
-        <DigitalObjectIdentifier doi={doi} />
-    </div>
-);
-
-// Component for the DOI
-const DigitalObjectIdentifier: React.FC<{ doi: string }> = ({ doi }) => (
-    <div className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200 w-full hover:text-gray">
-        <div className="flex flex-row">
-            <p className="w-full">Digital Object Identifier</p>
-        </div>
-        <a href={`https://doi.org/${doi}`} target="_blank" rel="noreferrer">
-            <div className="flex flex-row gap-2 items-center hover:text-blue-500">
-                <img src="/images/assets/doi-icon.svg" alt="Doi" className="h-6 w-6" />
-                <p className="text-bodyMd mmd:text-bodySm break-all">https://doi.org/{doi}</p>
-            </div>
-        </a>
-    </div>
-);
 
 const capitalizeFirst = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
 

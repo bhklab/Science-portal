@@ -2,6 +2,7 @@ export default interface Author {
     firstName: string;
     lastName: string;
     email: string;
+    fullName: string;
     primaryAppointment: string;
     primaryResearchInstitute: string;
     secondaryAppointment: string | null;
