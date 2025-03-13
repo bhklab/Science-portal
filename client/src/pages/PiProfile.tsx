@@ -89,24 +89,16 @@ const PiProfile: React.FC = () => {
 
     // Toggling the legend items for bar or scatter chart
     const toggleLegendItem = (item: string, chartType: string) => {
-        if (chartType === 'scatter') {
-            setScatterActiveLegendItems(prev => {
-                const newSet = new Set(prev);
-                newSet.has(item) ? newSet.delete(item) : newSet.add(item);
-                return newSet;
-            });
-        } else if (chartType === 'bar') {
+        if (chartType === 'bar') {
             setBarActiveLegendItems(prev => {
                 const newSet = new Set(prev);
                 newSet.has(item) ? newSet.delete(item) : newSet.add(item);
                 return newSet;
             });
+        } else if (chartType === 'scatter') {
+            setScatterActiveLegendItems(new Set([item]));
         } else if (chartType === 'histogram') {
-            setHistogramActiveLegendItems(prev => {
-                const newSet = new Set(prev);
-                newSet.has(item) ? newSet.delete(item) : newSet.add(item);
-                return newSet;
-            });
+            setHistogramActiveLegendItems(new Set([item]));
         }
     };
 

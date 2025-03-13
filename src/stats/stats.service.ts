@@ -319,8 +319,8 @@ async findLabStats(lab: string) {
 				x: entry.rank,
 				y: entry.contributions,
 				label: entry.enid === enidNumber
-				? `${entry.name}, (You, ${entry.rank} overall)`
-				: `Anonymous scientist (${entry.rank} overall)`
+				? `${entry.name} (${entry.contributions} contributions, ranked ${entry.rank})`
+				: `Anonymous (${entry.contributions} contributions, ranked ${entry.rank})`
 			}));
 		
 			const pointBackgroundColors = categoryRankings[type].map(entry =>
