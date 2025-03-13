@@ -578,14 +578,14 @@ const AuthorsList: React.FC<{ authors: string; scientists: Author[] }> = ({ auth
                 });
 
                 return foundScientist ? (
-                    <button
+                    <span
                         key={index}
                         className="font-bold cursor-pointer"
                         onClick={() => handleOpenDialog(foundScientist)}
                     >
                         {name}
                         {index !== authorNames.length - 1 && '; '}
-                    </button>
+                    </span>
                 ) : (
                     <span key={index}>
                         {name}
