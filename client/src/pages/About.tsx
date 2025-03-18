@@ -16,7 +16,7 @@ const About: React.FC = () => {
                 </p>
                 <p className="text-bodyMd">
                     The Science Portal serves as a platform to centralize and simplify access to research outputs at
-                    Princess Margaret. The Science Portal trackles common
+                    Princess Margaret. The Science Portal tackles common
                     <span className="font-bold"> transparency </span> and
                     <span className="font-bold"> reproducibility </span>issues faced in research by sharing diverse open
                     science contributions and utilizing robust tools to track them.
