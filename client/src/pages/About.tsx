@@ -3,18 +3,18 @@ import React from 'react';
 const About: React.FC = () => {
     return (
         <div className="flex flex-col gap-10 max-w-[800px] mx-auto py-32">
-            <h1 className="text-heading3Xl font-bold">About Science Portal</h1>
+            <h1 className="text-heading4Xl font-bold">About Science Portal</h1>
 
             <div className="flex flex-col gap-2">
-                <h2 className="text-headingLg font-semibold">What is the Science Portal</h2>
-                <p className="text-bodyMd">
+                <h2 className="text-heading2Xl font-semibold">What is the Science Portal</h2>
+                <p className="text-bodyLg">
                     Despite "<span className="font-bold">open science</span>" being essential for scientific progress,
                     research outputs often remain difficult to find, limiting collaboration opportunities and impact.
                     Making research contributions <span className="font-bold">openly</span> accessible requires
                     significant time, resources, and expertise. Once made available, it can still be challenging to
                     track and reward these efforts effectively.
                 </p>
-                <p className="text-bodyMd">
+                <p className="text-bodyLg">
                     The Science Portal serves as a platform to centralize and simplify access to research outputs at
                     Princess Margaret. The Science Portal tackles common
                     <span className="font-bold"> transparency </span> and
@@ -25,7 +25,7 @@ const About: React.FC = () => {
             <div className="flex flex-col gap-1 w-full ">
                 <iframe
                     height="400"
-                    src="https://www.youtube.com/embed/nCANehkhnnE"
+                    src="https://www.youtube.com/embed/L6UxPbZcgmY"
                     title="Science Portal Demo"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
@@ -39,9 +39,9 @@ const About: React.FC = () => {
             </div>
 
             <div className="flex flex-col gap-4">
-                <h2 className="text-headingLg font-semibold">How The Science Portal Can Help You</h2>
+                <h2 className="text-heading2Xl font-semibold">How The Science Portal Can Help You</h2>
                 <div className="flex flex-col gap-2">
-                    <p className="text-bodyMd">
+                    <p className="text-bodyLg">
                         For scientists and clinicians the science Portal is a great way to track how frequently you
                         share supplementary data (research outputs) in your publication's. The platform also gives
                         insights into how adherent you are to open science principles and let's you anonymously compare
@@ -56,7 +56,7 @@ const About: React.FC = () => {
             <div className="flex flex-col gap-4">
                 <h2 className="text-headingLg font-semibold">How You Can Help The Science Portal</h2>
                 <div className="flex flex-col gap-2">
-                    <p className="text-bodyMd">
+                    <p className="text-bodyLg">
                         The Science Portal is a forever evolving open source platform that can benefit from the
                         community it strives to serve. If you are an academic from the institution please consider
                         reviewing publications that come from you or your team to verify resource accuracy and add new
