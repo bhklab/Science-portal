@@ -54,7 +54,7 @@ const About: React.FC = () => {
             </div>
 
             <div className="flex flex-col gap-4">
-                <h2 className="text-headingLg font-semibold">How You Can Help The Science Portal</h2>
+                <h2 className="text-heading2Xl font-semibold">How You Can Help The Science Portal</h2>
                 <div className="flex flex-col gap-2">
                     <p className="text-bodyLg">
                         The Science Portal is a forever evolving open source platform that can benefit from the
