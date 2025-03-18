@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import Publication from './pages/Publication';
 import Analytics from './pages/Analytics';
+import About from './pages/About';
 import PiProfile from './pages/PiProfile';
 import Login from './pages/Login';
 import PrivateRoute from './PrivateRoute';
@@ -14,6 +15,7 @@ const ProjectRoutes = () => {
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/analytics" element={<Analytics />} />
+                <Route path="/about" element={<About />} />
                 <Route path="/publication/:doi" element={<Publication />} />
                 <Route path="/login" element={<Login />} />
                 <Route

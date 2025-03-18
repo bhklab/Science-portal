@@ -63,5 +63,6 @@ export interface PublicationDocument extends Document {
 		zip?: string[];
 	};
   };
+  submitter?: string;
 }
 

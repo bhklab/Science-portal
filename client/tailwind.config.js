@@ -70,6 +70,7 @@ module.exports = {
                 headingMd: ['16px', '20px'],
                 headingSm: ['14px', '16px'],
                 headingXs: ['12px', '16px'],
+                bodyLg: ['16px', '24px'],
                 bodyMd: ['14px', '20px'],
                 bodySm: ['12px', '16px'],
                 bodyXs: ['11px', '14px']

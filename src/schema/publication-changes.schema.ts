@@ -1,7 +1,7 @@
 import { Schema } from 'mongoose';
 
 export const PublicationChangesSchema = new Schema({
-  PMID: { type: Number }, // or { type: String }, depending on your preference
+  PMID: { type: Number },
   doi: { type: String, required: true },
   date: { type: String },
   name: { type: String },
@@ -74,5 +74,6 @@ export const PublicationChangesSchema = new Schema({
     }
   ],
   originalId: { type: String },
-  submitterEmail: { type: String }
+  submitterEmail: { type: String },
+  merged: Boolean
 });

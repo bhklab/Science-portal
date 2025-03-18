@@ -44,6 +44,17 @@ export const Navbar: React.FC = () => {
                     >
                         Statistics
                     </Link>
+
+                    <Link
+                        to="/about"
+                        className={`flex flex-col p-2.5 justify-center align-center text-center ${
+                            location.pathname === '/about'
+                                ? 'font-bold border-b-2 border-black-900'
+                                : 'text-gray-700 font-light'
+                        }`}
+                    >
+                        About
+                    </Link>
                 </div>
             </div>
 

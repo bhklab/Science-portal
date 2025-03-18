@@ -70,5 +70,6 @@ export const PublicationsNewSchema = new Schema({
 		description: String,
 		link: String
 		}
-  ],
+  	],
+	submitter: String
 }, { collection: 'newpublications' });
