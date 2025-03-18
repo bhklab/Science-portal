@@ -172,7 +172,7 @@ const Home: React.FC = () => {
                         lab: selectedAuthor?.name,
                         resources: selectedResources?.map(resource => resource.name.toLowerCase()),
                         search: search,
-                        email: authContext?.user ? authContext?.user.email : null
+                        email: authContext?.user?.email
                     },
                     {
                         maxBodyLength: Infinity
@@ -272,13 +272,13 @@ const Home: React.FC = () => {
                     <div className="p-5 flex flex-col gap-8">
                         <h2 className="text-headingLg text-black-900 font-semibold">Filters</h2>
                         <div className="flex flex-col gap-2">
-                            <h3 className="text-headingMd text-black-900 font-semibold">Lab</h3>
+                            <h3 className="text-headingMd text-black-900 font-semibold">Member</h3>
                             {authors && (
                                 <Dropdown
                                     value={selectedAuthor}
                                     options={authors}
                                     optionLabel="name"
-                                    placeholder="Select a lab"
+                                    placeholder="Select a member"
                                     className="rounded border-1 border-gray-300 w-64 text-black-900"
                                     onChange={e => {
                                         e.originalEvent?.stopPropagation();

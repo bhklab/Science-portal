@@ -31,7 +31,7 @@ const Analytics: React.FC = () => {
     useEffect(() => {
         const getChartData = async () => {
             try {
-                const res = await axios.post('/api/stats/supplementary', { email: authContext?.user.email });
+                const res = await axios.post('/api/stats/supplementary', { email: authContext?.user?.email });
                 setChartData(res.data);
 
                 // Extract legend items (dataset labels) dynamically

@@ -22,6 +22,21 @@ const About: React.FC = () => {
                     science contributions and utilizing robust tools to track them.
                 </p>
             </div>
+            <div className="flex flex-col gap-1 w-full ">
+                <iframe
+                    height="400"
+                    src="https://www.youtube.com/embed/nCANehkhnnE"
+                    title="Science Portal Demo"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="border-1"
+                />
+                <p className="text-bodySm">
+                    0:00 - Intro | 1:11 - Search Functionality | 2:09 - Publication Overview | 2:57 - Public Statistics
+                    | 3:37 - Profile Page and Personal Statistics | 7:06 - Submit a publication | 7:56 - Edit a
+                    publication
+                </p>
+            </div>
 
             <div className="flex flex-col gap-4">
                 <h2 className="text-headingLg font-semibold">How The Science Portal Can Help You</h2>
@@ -43,7 +58,7 @@ const About: React.FC = () => {
                 <div className="flex flex-col gap-2">
                     <p className="text-bodyMd">
                         The Science Portal is a forever evolving open source platform that can benefit from the
-                        community it strives to serve. If you are a academic from the institution please consider
+                        community it strives to serve. If you are an academic from the institution please consider
                         reviewing publications that come from you or your team to verify resource accuracy and add new
                         resources that may have been missed. Also, notify us of any other useful statistics, analytics,
                         or features you'd like to see come to the platform. To request new functionality to the platform

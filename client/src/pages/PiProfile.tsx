@@ -118,7 +118,7 @@ const PiProfile: React.FC = () => {
         const fetchPiData = async () => {
             try {
                 const scientistData = await axios.post(`/api/authors/one`, {
-                    email: authContext?.user.email
+                    email: authContext?.user?.email
                 });
 
                 if (!scientistData.data || scientistData.data === 'Author not found') {
@@ -131,7 +131,7 @@ const PiProfile: React.FC = () => {
 
                 // Bar chart data
                 const barResponse = await axios.put('/api/stats/supplementary/author', {
-                    email: authContext?.user.email
+                    email: authContext?.user?.email
                 });
                 setBarChartData(barResponse.data);
                 const barLabels = barResponse.data.datasets.map((d: any) => d.label);
