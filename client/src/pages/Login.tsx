@@ -75,9 +75,18 @@ const Login: React.FC = () => {
                         </div>
                     </div>
                 </div>
-                <button className="w-full bg-blue-600 rounded-md text-white py-2 font-semibold" onClick={login}>
-                    Log in
-                </button>
+                <div className="flex flex-col gap-2">
+                    <button className="w-full bg-blue-600 rounded-md text-white py-2 font-semibold" onClick={login}>
+                        Log in
+                    </button>
+                    <p className="text-bodyXs text-gray-600 text-center">
+                        Science Portal logins/authentications are managed by a keycloak instance deployed by UHN
+                    </p>
+                    <div className="flex flex-row justify-center items-center gap-2">
+                        <img src="/images/assets/uhn-icon.svg" className="w-20" alt="UHN" />
+                        <img src="/images/assets/keycloak-icon.svg" className="w-36" alt="keycloak" />
+                    </div>
+                </div>
                 {errorMessage && <p className="text-red-600">{errorMessage}</p>}
             </div>
         </div>
