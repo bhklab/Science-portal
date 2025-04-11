@@ -2,11 +2,9 @@ import React from 'react';
 
 const About: React.FC = () => {
     return (
-        <div className="flex flex-col gap-10 max-w-[800px] mx-auto py-32">
-            <h1 className="text-heading4Xl font-bold">About Science Portal</h1>
-
+        <div className="flex flex-col gap-10 max-w-[800px] mx-auto py-32 text-black-900">
             <div className="flex flex-col gap-2">
-                <h2 className="text-heading2Xl font-semibold">What is the Science Portal</h2>
+                <h2 className="text-heading3Xl font-semibold">What is the Science Portal</h2>
                 <p className="text-bodyLg">
                     Despite "<span className="font-bold">open science</span>" being essential for scientific progress,
                     research outputs often remain difficult to find, limiting collaboration opportunities and impact.
@@ -39,7 +37,61 @@ const About: React.FC = () => {
             </div>
 
             <div className="flex flex-col gap-4">
-                <h2 className="text-heading2Xl font-semibold">How The Science Portal Can Help You</h2>
+                <h2 className="text-heading3Xl font-semibold">Data Sources</h2>
+                <div className="flex flex-col gap-2">
+                    <h3 className="text-headingLg font-semibold text-gray-700">Publications</h3>
+                    <p className="text-bodyLg">
+                        All of the publications curated in the platform are kindly provided to us by the UHN research
+                        analytics team. We receive updates on a rolling monthly basis from the previous month and work
+                        to add the new publications to the platform as soon as possible. As we continue to work on
+                        refining our application functionalities and backend data processing we have chosen to only
+                        import publications from <span className="font-bold">2018 onwards</span> to the platform. It is
+                        also important to note that we only extract the publications from UHN research analytics that
+                        are deemed having having a direct affiliation with Princess Margaret.
+                    </p>
+                </div>
+                <div className="flex flex-col gap-2">
+                    <h3 className="text-headingLg font-semibold text-gray-700">Members</h3>
+                    <p className="text-bodyLg">
+                        All of the "members" tracked in the platform (377 faculty) are also provided to us by the UHN
+                        research analytics team. Just like publications in the platform we only extract UHN faculty that
+                        have a direct affiliation with Princess Margaret.
+                    </p>
+                </div>
+                <div className="flex flex-col gap-2">
+                    <h3 className="text-headingLg font-semibold text-gray-700">Citations</h3>
+                    <p className="text-bodyLg">
+                        Publication citations in the platform are retrieved from{' '}
+                        <a
+                            href="https://www.crossref.org/"
+                            target="_blank"
+                            className="text-blue-700 font-normal transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110"
+                        >
+                            Crossref
+                        </a>{' '}
+                        and cannot be fully relied on for an accurate citation count, but rather a good estimate.
+                        Crossref tends to be slightly more liberal with what is considered a citation but it's still
+                        useful for getting a good idea of where a publication stands in that regard. All citations
+                        updates happen once a month, within the first week.
+                    </p>
+                </div>
+                <div className="flex flex-col gap-2">
+                    <h3 className="text-headingLg font-semibold text-gray-700">Publication Resources</h3>
+                    <p className="text-bodyLg">
+                        Publication resources are simply any type of resource referenced in a publication that
+                        contributed to the executed research. We have developed an algorithm that is able to parse
+                        publications via their DOI and extract key resources we want to track in the platform. The
+                        algorithm we have created is still in its infancies and will continue to get better with every
+                        iteration we release. Currently we track various types of code repositories, data repositories,
+                        clinical trials, containerized environments, packages, and results. We do plan to expand our
+                        publication resource tracking scope to include more resources such as animal models, protocols,
+                        cell lines, and much more.
+                    </p>
+                </div>
+            </div>
+
+            <div className="flex flex-col gap-4">
+                <h2 className="text-heading3Xl font-semibold">How The Science Portal Can Help You</h2>
                 <div className="flex flex-col gap-2">
                     <p className="text-bodyLg">
                         For scientists and clinicians the science Portal is a great way to track how frequently you
@@ -54,7 +106,7 @@ const About: React.FC = () => {
             </div>
 
             <div className="flex flex-col gap-4">
-                <h2 className="text-heading2Xl font-semibold">How You Can Help The Science Portal</h2>
+                <h2 className="text-heading3Xl font-semibold">How You Can Help The Science Portal</h2>
                 <div className="flex flex-col gap-2">
                     <p className="text-bodyLg">
                         The Science Portal is a forever evolving open source platform that can benefit from the
