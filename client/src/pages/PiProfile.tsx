@@ -254,7 +254,7 @@ const PiProfile: React.FC = () => {
         return (
             <div className="flex flex-col items-center py-36 smd:px-4 px-10 min-h-screen bg-white">
                 <div className="flex flex-row smd:flex-col gap-5 justify-center mx-auto">
-                    <div className="flex flex-col min-w-[285px] gap-10 sticky smd:static top-36 h-fit smd:mb-10">
+                    <div className="flex flex-col max-w-[285px] gap-10 sticky smd:static top-36 h-fit smd:mb-10">
                         <div className="flex flex-col gap-5 smd:justify-center smd:items-center ">
                             <div className="flex flex-col gap-2">
                                 <div className="h-[140px] w-[140px] rounded-[120px] overflow-clip">
@@ -298,12 +298,22 @@ const PiProfile: React.FC = () => {
                                 />
                             </div>
                         </div>
+                        <div className="flex flex-row justify-center items-center gap-2">
+                            <input
+                                type="checkbox"
+                                checked={mailOptIn}
+                                onChange={() => mailingOpt()}
+                                className="mr-2 rounded-sm"
+                            />
+                            <p className="text-bodySm">
+                                Sign up for our monthly email newsletter and publication highlights
+                            </p>
+                        </div>
                     </div>
                     <div className="flex items-center justify-center w-[860px] md:w-[420px]">
                         <span className="text-bodyMd font-semibold text-gray-700 text-center">
-                            User is not currently a tracked scientist at Princess Margaret Cancer Centre. If you would
-                            like to request yourself as a trackable user, please make a request through the "send
-                            feedback" portal.
+                            User is currently not a tracked scientist at Princess Margaret. If you would like to request
+                            yourself as a trackable user, please make a request through the Send Feedback portal.
                         </span>
                     </div>
                 </div>
