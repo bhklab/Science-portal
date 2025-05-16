@@ -87,7 +87,8 @@ const Home: React.FC = () => {
                         sort: sort?.name,
                         lab: selectedAuthor?.name,
                         resources: selectedResources?.map(resource => resource.name.toLowerCase()),
-                        search: search
+                        search: search,
+                        email: authContext?.user?.email
                     },
                     {
                         maxBodyLength: Infinity

@@ -3,6 +3,7 @@ import { ProgressSpinner } from 'primereact/progressspinner';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Toast } from 'primereact/toast';
+import { Checkbox } from 'primereact/checkbox';
 
 import { AuthContext } from '../hooks/AuthContext';
 import Author from '../interfaces/Author';
@@ -58,6 +59,7 @@ const PiProfile: React.FC = () => {
     const [scientist, setScientist] = useState<Author | null>(null);
     const [piData, setPiData] = useState<any | null>(null);
     const [enid, setEnid] = useState<number>(-1);
+    const [mailOptIn, setMailOptIn] = useState<boolean>(false);
 
     // Chart data
     const [barChartData, setBarChartData] = useState<any | null>(null);
@@ -117,6 +119,12 @@ const PiProfile: React.FC = () => {
     useEffect(() => {
         const fetchPiData = async () => {
             try {
+                const mailingStatus = await axios.post(`/api/mailing/status`, {
+                    email: authContext?.user?.email
+                });
+
+                setMailOptIn(mailingStatus.data);
+
                 const scientistData = await axios.post(`/api/authors/one`, {
                     email: authContext?.user?.email
                 });
@@ -202,12 +210,26 @@ const PiProfile: React.FC = () => {
         }
     };
 
-    // Helper for name
+    const mailingOpt = async () => {
+        try {
+            const mail = await axios.post('/api/mailing/opting', {
+                email: authContext?.user?.email,
+                mailOptIn: mailOptIn
+            });
+            console.log(mail.data);
+            setMailOptIn(mail.data);
+        } catch (error) {
+            console.error('Error updating mailing preference:', error);
+        }
+    };
+
+    // Helper for first name
     const getFirstName = (email: string) => {
         let firstName = email.substring(0, email.indexOf('.'));
         return firstName.charAt(0).toUpperCase() + firstName.slice(1);
     };
 
+    // Helper for last name
     const getLastName = (email: string) => {
         let lastName = email.substring(email.indexOf('.') + 1, email.indexOf('@'));
         return lastName.charAt(0).toUpperCase() + lastName.slice(1);
@@ -278,8 +300,10 @@ const PiProfile: React.FC = () => {
                         </div>
                     </div>
                     <div className="flex items-center justify-center w-[860px] md:w-[420px]">
-                        <span className="text-bodyMd font-semibold text-gray-700">
-                            User is not a PI at Princess Margaret Cancer Centre, no data to be loaded!
+                        <span className="text-bodyMd font-semibold text-gray-700 text-center">
+                            User is not currently a tracked scientist at Princess Margaret Cancer Centre. If you would
+                            like to request yourself as a trackable user, please make a request through the "send
+                            feedback" portal.
                         </span>
                     </div>
                 </div>
@@ -293,7 +317,7 @@ const PiProfile: React.FC = () => {
     return (
         <div className="flex flex-col items-center py-36 smd:px-4 px-10 min-h-screen bg-white">
             <div className="flex flex-row smd:flex-col gap-5 justify-center mx-auto">
-                <div className="flex flex-col min-w-[285px] gap-10 sticky smd:static top-36 h-fit smd:mb-10">
+                <div className="flex flex-col max-w-[285px] gap-10 sticky smd:static top-36 h-fit smd:mb-10">
                     <div className="flex flex-col gap-5 smd:justify-center smd:items-center ">
                         <div className="flex flex-col gap-2">
                             <div className="h-[140px] w-[140px] rounded-[120px] overflow-clip">
@@ -346,6 +370,17 @@ const PiProfile: React.FC = () => {
                                 setIsVisible={setIsVisible}
                                 submitFeedback={submitFeedback}
                             />
+                        </div>
+                        <div className="flex flex-row justify-center items-center gap-2">
+                            <input
+                                type="checkbox"
+                                checked={mailOptIn}
+                                onChange={() => mailingOpt()}
+                                className="mr-2 rounded-sm"
+                            />
+                            <p className="text-bodySm">
+                                Sign up for our monthly email newsletter and publication highlights
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -523,7 +558,7 @@ const PiProfile: React.FC = () => {
                             </div>
                         </div>
 
-                        <div
+                        {/* <div
                             className="flex flex-col gap-3 px-10 sm:px-2 bg-white border-1 border-gray-200 rounded-md w-full"
                             id="contribution-histogram"
                         >
@@ -557,7 +592,7 @@ const PiProfile: React.FC = () => {
                                     activeLegendItems={histogramActiveLegendItems}
                                 />
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>

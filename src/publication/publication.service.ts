@@ -34,37 +34,27 @@ export class PublicationService {
 			}
 
 			if (resources && resources.length > 0) {
-				const resourceMap: Record<string, string[]> = {
-					code: ['github', 'gitlab'],
-					data: ['geo',	'dbGap', 'kaggle', 'dryad', 'empiar', 'gigaDb',	'zenodo', 'ega', 'xlsx', 'csv',
-						'proteinDataBank', 'dataverse', 'openScienceFramework', 'finngenGitbook', 'gtexPortal',	'ebiAcUk',
-						'mendeley',	'R'
-					],
-					containers: ['codeOcean', 'colab'],
-					results: ['gsea', 'figshare'],
-					trials: ['clinicalTrial'],
-					packages: ['bioconductor', 'pypi', 'CRAN'],
-					miscellaneous: ['IEEE', 'pdf', 'docx', 'zip']
-				};
-		  
 				const andConditions: any[] = [];
-		  
-				// For each selected resource category, add conditions for each subcategory
+
 				for (const category of resources) {
 					const catKey = category.toLowerCase();
-					if (resourceMap[catKey]) {
-						const subConditions = resourceMap[catKey].map((subCat) => ({
-							[`supplementary.${catKey}.${subCat}.0`]: { $exists: true }
-						}));
-						andConditions.push({ $or: subConditions });
-					}
+
+					const dynamicCondition = {
+						[`supplementary.${catKey}`]: {
+							$exists: true,
+							$ne: {} // ensure the section is not empty
+						}
+					};
+
+					andConditions.push(dynamicCondition);
 				}
-			
+
 				if (andConditions.length > 0) {
 					query = {
-						$and: [query, ...andConditions] // Ensure all resource categories exist
+						$and: [query, ...andConditions]
 					};
 				}
+
 			
 			}			
 			

@@ -19,8 +19,9 @@ export const LINK_CATEGORIES = {
         { name: 'openScienceFramework', display: 'Open Science Framework' },
         { name: 'finngenGitbook', display: 'FinnGen' },
         { name: 'gtexPortal', display: 'Genotype-Tissue Expression' },
+        { name: 'ebiAcUk', display: 'EMBL-EBI' },
         { name: 'mendeley', display: 'Mendeley' },
-        { name: 'R', display: 'R' }
+        { name: 'R', display: 'RDS File' }
     ],
     containers: [
         { name: 'codeOcean', display: 'Code Ocean Capsules' },
@@ -30,7 +31,18 @@ export const LINK_CATEGORIES = {
         { name: 'gsea', display: 'Gene Set Enrichment Analysis' },
         { name: 'figshare', display: 'Figshare' }
     ],
-    trials: [{ name: 'clinicalTrial', display: 'Clinical Trials' }],
+    trials: [
+        { name: 'clinicalTrial', display: 'ClinicalTrials.gov' },
+        { name: 'euCTR', display: 'EU Clinical Trials Register' },
+        { name: 'vivli', display: 'Vivli' },
+        { name: 'yoda', display: 'The YODA Project' }
+    ],
+    protocols: [
+        { name: 'protocolsIO', display: 'Protocols.io' },
+        { name: 'bioProtocol', display: 'Bio-protocol' },
+        { name: 'benchling', display: 'Benchling' },
+        { name: 'labArchives', display: 'LabArchives' }
+    ],
     packages: [
         { name: 'bioconductor', display: 'Bioconductor' },
         { name: 'pypi', display: 'Pypi' },

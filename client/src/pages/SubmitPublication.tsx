@@ -123,15 +123,30 @@ const SubmitPublication: React.FC = () => {
             {/* Header / Submit Button */}
             <div className="flex flex-row justify-between items-center pb-5">
                 <h1 className="w-full text-heading2Xl font-semibold">Submit a Publication</h1>
-                <button
-                    disabled={newPub.name && newPub.doi ? false : true}
-                    className={`flex flex-row justify-center items-center px-5 py-2 ${
-                        newPub.name && newPub.doi ? 'bg-blue-1000' : 'bg-gray-400'
-                    } text-white shadow-button rounded-md`}
-                    onClick={submitPublication}
-                >
-                    Submit
-                </button>
+                <div className="flex flex-row justify-center items-center gap-2">
+                    <div className="flex flex-row justify-center items-center gap-2">
+                        <input
+                            type="checkbox"
+                            // checked={}
+                            // onChange={() => }
+                            disabled={true}
+                            className="rounded-sm text-gray-400"
+                        />
+                        <p className="text-bodySm text-gray-400">
+                            Notify director of new publication{' '}
+                            <span className="text-red-400">(feature coming soon!)</span>
+                        </p>
+                    </div>
+                    <button
+                        disabled={newPub.name && newPub.doi ? false : true}
+                        className={`flex flex-row justify-center items-center px-5 py-2 ${
+                            newPub.name && newPub.doi ? 'bg-blue-1000' : 'bg-gray-400'
+                        } text-white shadow-button rounded-md`}
+                        onClick={submitPublication}
+                    >
+                        Submit
+                    </button>
+                </div>
             </div>
 
             {/* Publication Form */}

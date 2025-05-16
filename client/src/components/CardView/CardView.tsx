@@ -52,6 +52,7 @@ export const CardView: React.FC<Publications> = ({ pubs }) => {
             data: '/images/assets/data-icon.svg',
             results: '/images/assets/results-icon.svg',
             trials: '/images/assets/clinicaltrials-icon.svg',
+            protocols: '/images/assets/protocols-icon.svg',
             packages: '/images/assets/packages-icon.svg',
             miscellaneous: '/images/assets/miscellaneous-icon.svg'
         };

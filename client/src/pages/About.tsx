@@ -41,13 +41,21 @@ const About: React.FC = () => {
                 <div className="flex flex-col gap-2">
                     <h3 className="text-headingLg font-semibold text-gray-700">Publications</h3>
                     <p className="text-bodyLg">
-                        All of the publications curated in the platform are kindly provided to us by the UHN research
-                        analytics team. We receive updates on a rolling monthly basis from the previous month and work
-                        to add the new publications to the platform as soon as possible. As we continue to work on
-                        refining our application functionalities and backend data processing we have chosen to only
-                        import publications from <span className="font-bold">2018 onwards</span> to the platform. It is
-                        also important to note that we only extract the publications from UHN research analytics that
-                        are deemed having having a direct affiliation with Princess Margaret.
+                        All of the publications curated in the platform are kindly provided to us by the
+                        <a
+                            href="https://universityhealthnetwork.sharepoint.com/teams/ResGrantsAwards/SitePages/About.aspx#research-analytics"
+                            target="_blank"
+                            className="text-blue-700 font-normal transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110"
+                        >
+                            {' '}
+                            UHN research analytics
+                        </a>{' '}
+                        team. We receive updates on a rolling monthly basis from the previous month and work to add the
+                        new publications to the platform as soon as possible. As we continue to work on refining our
+                        application functionalities and backend data processing we have chosen to only import
+                        publications from <span className="font-bold">2018 onwards</span> to the platform. It is also
+                        important to note that we only extract the publications from UHN research analytics that are
+                        deemed having having a direct affiliation with Princess Margaret.
                     </p>
                 </div>
                 <div className="flex flex-col gap-2">
@@ -83,9 +91,9 @@ const About: React.FC = () => {
                         publications via their DOI and extract key resources we want to track in the platform. The
                         algorithm we have created is still in its infancies and will continue to get better with every
                         iteration we release. Currently we track various types of code repositories, data repositories,
-                        clinical trials, containerized environments, packages, and results. We do plan to expand our
-                        publication resource tracking scope to include more resources such as animal models, protocols,
-                        cell lines, and much more.
+                        clinical trials, containerized environments, packages, protocols, and results. We do plan to
+                        expand our publication resource tracking scope to include more resources such as animal models,
+                        protocols, cell lines, and much more.
                     </p>
                 </div>
             </div>

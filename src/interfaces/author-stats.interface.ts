@@ -9,6 +9,8 @@ export interface AuthorStats {
         containers: number;
         results: number;
         trials: number;
+		protocols: number;
+		packages: number;
         miscellaneous: number;
     };
 }

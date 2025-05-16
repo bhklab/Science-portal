@@ -9,6 +9,7 @@ import { StatsModule } from './stats/stats.module';
 import { EmailModule } from './emails/email.module';
 import { AuthModule } from './auth/auth.module';
 import { FeedbackModule } from './feedback/feedback.module';
+import { MailingModule } from './mailing/mailing.module';
 
 @Module({
   	imports: [
@@ -18,7 +19,8 @@ import { FeedbackModule } from './feedback/feedback.module';
 		StatsModule,
 		EmailModule,
 		AuthModule,
-		FeedbackModule
+		FeedbackModule,
+		MailingModule
   	],
   	controllers: [AppController],
   	providers: [AppService],

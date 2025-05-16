@@ -11,52 +11,13 @@ export interface NewPub {
     publisher: string;
     date: any;
     supplementary: {
-        code?: {
-            github?: string[];
-            gitlab?: string[];
-        };
-        data?: {
-            geo?: string[];
-            dbGap?: string[];
-            kaggle?: string[];
-            dryad?: string[];
-            empiar?: string[];
-            gigaDb?: string[];
-            zenodo?: string[];
-            ega?: string[];
-            xlsx?: string[];
-            csv?: string[];
-            proteinDataBank?: string[];
-            dataverse: string[];
-            openScienceFramework: string[];
-            finngenGitbook: string[];
-            gtexPortal: string[];
-            ebiAcUk: string[];
-            mendeley: string[];
-            R?: string[];
-        };
-        containers?: {
-            codeOcean?: string[];
-            colab?: string[];
-        };
-        results?: {
-            gsea?: string[];
-            figshare?: string[];
-        };
-        trials?: {
-            clinicalTrial?: string[];
-        };
-        packages?: {
-            bioconductor?: string[];
-            pypi?: string[];
-            CRAN?: string[];
-        };
-        miscellaneous?: {
-            IEEE?: string[];
-            pdf?: string[];
-            docx?: string[];
-            zip?: string[];
-        };
+        code?: Record<string, string[]>;
+        data?: Record<string, string[]>;
+        containers?: Record<string, string[]>;
+        results?: Record<string, string[]>;
+        trials?: Record<string, string[]>;
+        packages?: Record<string, string[]>;
+        miscellaneous?: Record<string, string[]>;
     };
     otherLinks: {
         name: string;
@@ -81,52 +42,13 @@ export function createDefaultNewPub(): NewPub {
         publisher: '',
         date: new Date(),
         supplementary: {
-            code: {
-                github: [],
-                gitlab: []
-            },
-            data: {
-                geo: [],
-                dbGap: [],
-                kaggle: [],
-                dryad: [],
-                empiar: [],
-                gigaDb: [],
-                zenodo: [],
-                ega: [],
-                xlsx: [],
-                csv: [],
-                proteinDataBank: [],
-                dataverse: [],
-                openScienceFramework: [],
-                finngenGitbook: [],
-                gtexPortal: [],
-                ebiAcUk: [],
-                mendeley: [],
-                R: []
-            },
-            containers: {
-                codeOcean: [],
-                colab: []
-            },
-            results: {
-                gsea: [],
-                figshare: []
-            },
-            trials: {
-                clinicalTrial: []
-            },
-            packages: {
-                bioconductor: [],
-                pypi: [],
-                CRAN: []
-            },
-            miscellaneous: {
-                IEEE: [],
-                pdf: [],
-                docx: [],
-                zip: []
-            }
+            code: {},
+            data: {},
+            containers: {},
+            results: {},
+            trials: {},
+            packages: {},
+            miscellaneous: {}
         },
         otherLinks: [],
         submitter: ''
