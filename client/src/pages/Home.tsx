@@ -36,6 +36,8 @@ const resourceTypes: Option[] = [
     { name: 'Containers' },
     { name: 'Results' },
     { name: 'Trials' },
+    { name: 'Protocols' },
+    { name: 'Packages' },
     { name: 'Miscellaneous' }
 ];
 

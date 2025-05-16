@@ -216,7 +216,6 @@ const PiProfile: React.FC = () => {
                 email: authContext?.user?.email,
                 mailOptIn: mailOptIn
             });
-            console.log(mail.data);
             setMailOptIn(mail.data);
         } catch (error) {
             console.error('Error updating mailing preference:', error);

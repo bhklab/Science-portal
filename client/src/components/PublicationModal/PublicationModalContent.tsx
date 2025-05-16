@@ -21,12 +21,14 @@ interface Option {
 }
 
 const options: Option[] = [
-    { name: 'Code' },
-    { name: 'Data' },
-    { name: 'Containers' },
-    { name: 'Results' },
-    { name: 'Trials' },
-    { name: 'Miscellaneous' }
+    { name: 'code' },
+    { name: 'data' },
+    { name: 'containers' },
+    { name: 'results' },
+    { name: 'trials' },
+    { name: 'protocols' },
+    { name: 'packages' },
+    { name: 'miscellaneous' }
 ];
 
 interface LinksState {
@@ -128,10 +130,6 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({
             setEditMode(false);
         }
     };
-
-    useEffect(() => {
-        console.log(scientists);
-    }, [scientists]);
 
     return (
         <div>
