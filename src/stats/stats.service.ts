@@ -116,7 +116,7 @@ async findLabStats(lab: string) {
     ];
 
     try {
-      const author = await this.authorModel.findOne({ email }).exec();
+      const author = await this.authorModel.findOne({ email: new RegExp(`^${email}$`, 'i') }).exec();
       if (!author) {
         throw new Error(`Author with email ${email} not found`);
       }

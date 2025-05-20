@@ -49,8 +49,8 @@ const Analytics: React.FC = () => {
         <div className="py-20 px-32 md:px-6">
             <div className="flex flex-col px-10 sm:px-2 gap-3 bg-white border-1 border-gray-200 rounded-md pb-10">
                 <div className="flex flex-row justify-between items-center">
-                    <div className="flex flex-col gap-1 py-10">
-                        <h1 className="text-heading2Xl sm:text-headingLg font-semibold">
+                    <div className="flex flex-col gap-1 py-10 xs:max-w-[60%]">
+                        <h1 className="text-heading2Xl sm:text-headingLg xs:text-headingMd font-semibold">
                             Princess Margaret Cancer Centre Resource Statistics
                         </h1>
                         <p className="text-bodySm sm:text-bodyXs text-gray-500">
@@ -58,7 +58,7 @@ const Analytics: React.FC = () => {
                         </p>
                     </div>
 
-                    <div className="flex flex-row sm:flex-col gap-4">
+                    <div className="flex flex-row sm:flex-col xs:items-end gap-4">
                         <FilterDropdown
                             legendItems={legendItems}
                             activeItems={activeLegendItems}

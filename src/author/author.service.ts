@@ -23,12 +23,13 @@ export class AuthorService {
     // Find a single author/scientist
     async findOneAuthor(email: string) {
         try {
-            const author = await this.AuthorModel.findOne({ email: email }).exec();
+			const author = await this.AuthorModel.findOne({ email: new RegExp(`^${email}$`, 'i') }).exec();
             if (!author) {
                 return "Author not found"
             }
             return author;
         } catch (error) {
+            console.log(error)
             throw new Error(`Error fetching single author: ${(error as Error).message}`);
         }
     }

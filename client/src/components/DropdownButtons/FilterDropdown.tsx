@@ -43,7 +43,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
             <Menu as="div" className="relative inline-block text-left">
                 <div>
                     <Menu.Button
-                        className="flex flex-row justify-center items-center text-center gap-1 w-full bg-black/20 text-headingXs font-semibold text-black"
+                        className="flex flex-row justify-center items-center text-center gap-1 w-full bg-black/20 text-headingXs xs:text-bodyXs font-semibold text-black"
                         onClick={() => setIsOpen(!isOpen)}
                     >
                         <img src="/images/assets/filter-icon.svg" alt="Filter icon" />

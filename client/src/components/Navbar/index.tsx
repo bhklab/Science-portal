@@ -101,6 +101,15 @@ export const Navbar: React.FC = () => {
                     >
                         Statistics
                     </Link>
+                    <Link
+                        to="/about"
+                        className={`p-4 text-gray-700 hover:text-black ${
+                            location.pathname === '/about' ? 'font-bold' : 'font-light'
+                        }`}
+                        onClick={() => setMenuOpen(false)}
+                    >
+                        About
+                    </Link>
                     {authContext?.user ? (
                         <ProfileDropdown />
                     ) : (

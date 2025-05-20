@@ -7,6 +7,5 @@ export interface AuthorDocument extends Document {
 	primaryResearchInstitute: string;
 	primaryAppointment: string;
 	email: string;
-	emailOptIn: boolean;
 }
 

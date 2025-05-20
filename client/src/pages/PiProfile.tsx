@@ -252,7 +252,7 @@ const PiProfile: React.FC = () => {
     if (piData === 'DNE') {
         return (
             <div className="flex flex-col items-center py-36 smd:px-4 px-10 min-h-screen bg-white">
-                <div className="flex flex-row smd:flex-col gap-5 justify-center mx-auto">
+                <div className="flex flex-row smd:flex-col smd:items-center gap-5 justify-center mx-auto">
                     <div className="flex flex-col max-w-[285px] gap-10 sticky smd:static top-36 h-fit smd:mb-10">
                         <div className="flex flex-col gap-5 smd:justify-center smd:items-center ">
                             <div className="flex flex-col gap-2">
@@ -325,7 +325,7 @@ const PiProfile: React.FC = () => {
 
     return (
         <div className="flex flex-col items-center py-36 smd:px-4 px-10 min-h-screen bg-white">
-            <div className="flex flex-row smd:flex-col gap-5 justify-center mx-auto">
+            <div className="flex flex-row smd:flex-col smd:items-center gap-5 justify-center mx-auto">
                 <div className="flex flex-col max-w-[285px] gap-10 sticky smd:static top-36 h-fit smd:mb-10">
                     <div className="flex flex-col gap-5 smd:justify-center smd:items-center ">
                         <div className="flex flex-col gap-2">
@@ -394,16 +394,18 @@ const PiProfile: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="flex flex-col gap-5">
-                    <div className="flex flex-row justify-between items-center w-full">
-                        <div className="flex flex-col">
-                            <h2 className="text-headingLg font-semibold text-black-900">My Publication Statistics</h2>
-                            <p className="text-bodySm text-gray-500">
+                <div className="flex flex-col gap-5 xs:justify-center xs:items-center">
+                    <div className="flex flex-row justify-between items-center w-full xs:gap-2">
+                        <div className="flex flex-col xs:max-w-[60%]">
+                            <h2 className="text-headingLg xs:text-headingMd font-semibold text-black-900">
+                                My Publication Statistics
+                            </h2>
+                            <p className="text-bodySm xs:text-bodyXs text-gray-500">
                                 Total publications of yours that contain at least one resource
                             </p>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <label htmlFor="toggle-slider" className="text-bodyMd font-medium">
+                        <div className="flex items-center gap-2 xs:flex-col xs:items-start">
+                            <label htmlFor="toggle-slider" className="text-bodyMd xs:text-bodyXs font-medium">
                                 Detailed View
                             </label>
                             <div
@@ -421,11 +423,11 @@ const PiProfile: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="flex flex-row items-center gap-5 flex-wrap w-[860px] wrap:w-[600px] wrapSmall:w-[450px] sm:w-[420px] xs:w-[350px] ">
+                    <div className="flex flex-row items-center gap-5 flex-wrap w-[860px] wrap:w-[600px] wrapSmall:w-[450px] sm:w-[420px] xs:w-[325px] xs:justify-center">
                         {sections.map(item => (
                             <div
                                 key={item.statIndex}
-                                className="flex flex-col gap-5 p-5 w-[420px] xs:w-[350px] wrap:w-full border-1 border-gray-200 rounded-lg overflow-hidden"
+                                className="flex flex-col gap-5 p-5 w-[420px] xs:w-[300px] xs:justify-center wrap:w-full border-1 border-gray-200 rounded-lg overflow-hidden"
                             >
                                 <div className="flex flex-row justify-between items-start gap-4">
                                     <div className="flex flex-col">
@@ -433,11 +435,11 @@ const PiProfile: React.FC = () => {
                                             <img src={`/images/assets/${item.image}`} alt={item.name} />
                                             <p className="text-headingXs font-semibold">{item.name}</p>
                                         </div>
-                                        <h3 className="text-cyan-1100 text-headingXl mb-4 font-semibold">
+                                        <h3 className="text-cyan-1100 text-headingXl xs:text-headingMd mb-4 font-semibold">
                                             {categoryStats[item.statIndex].authorContributions} publications with{' '}
                                             {item.description}
                                         </h3>
-                                        <p className="text-bodySm">
+                                        <p className="text-bodySm xs:text-bodyXs">
                                             You are in the{' '}
                                             <span className="font-bold">
                                                 {categoryStats[item.statIndex].percentage < 50 ? 'top' : 'bottom'}{' '}
@@ -460,7 +462,7 @@ const PiProfile: React.FC = () => {
 
                                 {toggleDetailed && (
                                     <div className="flex flex-col gap-2 animate-show">
-                                        <p className="text-bodySm">
+                                        <p className="text-bodySm xs:text-bodyXs">
                                             <span className="font-bold">
                                                 {categoryStats[item.statIndex].openSciencePercentage}% of your
                                                 publications
@@ -496,15 +498,15 @@ const PiProfile: React.FC = () => {
 
                         <div className="flex flex-col gap-3 px-10 sm:px-2 bg-white border-1 border-gray-200 rounded-md w-full">
                             <div className="flex flex-row justify-between items-center">
-                                <div className="flex flex-col py-10">
-                                    <h1 className="text-heading2Xl sm:text-headingLg font-semibold">
+                                <div className="flex flex-col py-10 xs:max-w-[60%]">
+                                    <h1 className="text-heading2Xl smd:text-headingXl sm:text-headingLg xs:text-headingMd font-semibold">
                                         My Annual Resource Sharing
                                     </h1>
                                     <p className="text-bodySm sm:text-bodyXs text-gray-500">
                                         Total publications of yours that share resources
                                     </p>
                                 </div>
-                                <div className="flex flex-row sm:flex-col gap-4">
+                                <div className="flex flex-row smd:flex-col gap-4 smd:items-end">
                                     <FilterDropdown
                                         legendItems={legendItems}
                                         activeItems={barActiveLegendItems}
@@ -535,15 +537,15 @@ const PiProfile: React.FC = () => {
                             id="scatter-plot"
                         >
                             <div className="flex flex-row justify-between items-center">
-                                <div className="flex flex-col py-10">
-                                    <h1 className="text-heading2Xl sm:text-headingLg font-semibold">
+                                <div className="flex flex-col py-10 xs:max-w-[60%]">
+                                    <h1 className="text-heading2Xl smd:text-headingXl sm:text-headingLg xs:text-headingMd font-semibold">
                                         My Resource Sharing Rank
                                     </h1>
                                     <p className="text-bodySm sm:text-bodyXs text-gray-500">
                                         Your resource sharing vs. the institution's resource sharing
                                     </p>
                                 </div>
-                                <div className="flex flex-row sm:flex-col gap-4">
+                                <div className="flex flex-row smd:flex-col gap-4 smd:items-end">
                                     <FilterDropdown
                                         legendItems={legendItems}
                                         activeItems={scatterActiveLegendItems}
