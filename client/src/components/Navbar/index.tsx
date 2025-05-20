@@ -25,7 +25,7 @@ export const Navbar: React.FC = () => {
                 <div className="sm:hidden flex h-full justify-center align-center">
                     <Link
                         to="/"
-                        className={`flex flex-col p-2.5 justify-center align-center text-center ${
+                        className={`flex flex-col p-2.5 justify-center align-center text-center smd:text-bodyMd mmd:text-bodySm smd:p-1 ${
                             location.pathname === '/'
                                 ? 'font-bold border-b-2 border-black-900'
                                 : 'text-gray-700 font-light'
@@ -36,7 +36,7 @@ export const Navbar: React.FC = () => {
 
                     <Link
                         to="/analytics"
-                        className={`flex flex-col p-2.5 justify-center align-center text-center ${
+                        className={`flex flex-col p-2.5 justify-center align-center text-center smd:text-bodyMd mmd:text-bodySm smd:p-1 ${
                             location.pathname === '/analytics'
                                 ? 'font-bold border-b-2 border-black-900'
                                 : 'text-gray-700 font-light'
@@ -47,7 +47,7 @@ export const Navbar: React.FC = () => {
 
                     <Link
                         to="/about"
-                        className={`flex flex-col p-2.5 justify-center align-center text-center ${
+                        className={`flex flex-col p-2.5 justify-center align-center text-center smd:text-bodyMd mmd:text-bodySm smd:p-1 ${
                             location.pathname === '/about'
                                 ? 'font-bold border-b-2 border-black-900'
                                 : 'text-gray-700 font-light'
