@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import axios from 'axios';
-import ExportDomButton from 'components/ExportDom/ExportDomButton';
+import ExportDomButton from 'components/DropdownButtons/ExportDomButton';
 import { useNavigate } from 'react-router-dom';
 import { Toast } from 'primereact/toast';
 import { Checkbox } from 'primereact/checkbox';
