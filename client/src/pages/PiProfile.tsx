@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import axios from 'axios';
+import ExportDomButton from 'components/DropdownButtons/ExportDomButton';
 import { useNavigate } from 'react-router-dom';
 import { Toast } from 'primereact/toast';
 import { Checkbox } from 'primereact/checkbox';
@@ -85,6 +86,9 @@ const PiProfile: React.FC = () => {
 
     // Decoded JWT token of user (aka. signed in user's data)
     const authContext = useContext(AuthContext);
+
+    //
+    const exportRef = useRef<HTMLDivElement>(null);
 
     // Used to navigate to a new page
     const navigate = useNavigate();
@@ -404,97 +408,110 @@ const PiProfile: React.FC = () => {
                                 Total publications of yours that contain at least one resource
                             </p>
                         </div>
-                        <div className="flex items-center gap-2 xs:flex-col xs:items-start">
-                            <label htmlFor="toggle-slider" className="text-bodyMd xs:text-bodyXs font-medium">
-                                Detailed View
-                            </label>
-                            <div
-                                onClick={() => setToggleDetailed(prev => !prev)}
-                                className={`relative inline-flex h-6 w-12 cursor-pointer rounded-full p-0.5 transition-colors duration-200 ease-in-out ${
-                                    toggleDetailed ? 'bg-blue-500' : 'bg-gray-300'
-                                }`}
-                            >
-                                <span
-                                    className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform duration-200 ease-in-out ${
-                                        toggleDetailed ? 'translate-x-6' : 'translate-x-0'
+                        <div className="flex flex-row gap-1">
+                            <ExportDomButton targetRef={exportRef} filename="open_science_adherence" />
+
+                            <div className="flex items-center gap-2 xs:flex-col xs:items-start">
+                                <label htmlFor="toggle-slider" className="text-bodyMd xs:text-bodyXs font-medium">
+                                    Detailed View
+                                </label>
+                                <div
+                                    onClick={() => setToggleDetailed(prev => !prev)}
+                                    className={`relative inline-flex h-6 w-12 cursor-pointer rounded-full p-0.5 transition-colors duration-200 ease-in-out ${
+                                        toggleDetailed ? 'bg-blue-500' : 'bg-gray-300'
                                     }`}
-                                />
+                                >
+                                    <span
+                                        className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform duration-200 ease-in-out ${
+                                            toggleDetailed ? 'translate-x-6' : 'translate-x-0'
+                                        }`}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex flex-row items-center gap-5 flex-wrap w-[860px] wrap:w-[600px] wrapSmall:w-[450px] sm:w-[420px] xs:w-[325px] xs:justify-center">
-                        {sections.map(item => (
-                            <div
-                                key={item.statIndex}
-                                className="flex flex-col gap-5 p-5 w-[420px] xs:w-[300px] xs:justify-center wrap:w-full border-1 border-gray-200 rounded-lg overflow-hidden"
-                            >
-                                <div className="flex flex-row justify-between items-start gap-4">
-                                    <div className="flex flex-col">
-                                        <div className="flex flex-row gap-1 items-center mb-1">
-                                            <img src={`/images/assets/${item.image}`} alt={item.name} />
-                                            <p className="text-headingXs font-semibold">{item.name}</p>
+                    <div className="flex flex-col items-center gap-5 flex-wrap w-[860px] wrap:w-[600px] wrapSmall:w-[450px] sm:w-[420px] xs:w-[325px] xs:justify-center">
+                        <div className="flex flex-row items-center gap-5 flex-wrap xs:justify-center" ref={exportRef}>
+                            {sections.map(item => {
+                                return (
+                                    <div
+                                        key={item.statIndex}
+                                        className="flex flex-col gap-5 p-5 w-[420px] xs:w-[300px] xs:justify-center wrap:w-full border-1 border-gray-200 rounded-lg overflow-hidden"
+                                    >
+                                        <div className="flex flex-row justify-between items-start gap-4">
+                                            <div className="flex flex-col">
+                                                <div className="flex flex-row gap-1 items-center mb-1">
+                                                    <img src={`/images/assets/${item.image}`} alt={item.name} />
+                                                    <p className="text-headingXs font-semibold">{item.name}</p>
+                                                </div>
+                                                <h3 className="text-cyan-1100 text-headingXl xs:text-headingMd mb-4 font-semibold">
+                                                    {categoryStats[item.statIndex].authorContributions} publications
+                                                    with {item.description}
+                                                </h3>
+                                                <p className="text-bodySm xs:text-bodyXs">
+                                                    You are in the{' '}
+                                                    <span className="font-bold">
+                                                        {categoryStats[item.statIndex].percentage < 50
+                                                            ? 'top'
+                                                            : 'bottom'}{' '}
+                                                        {categoryStats[item.statIndex].percentage}%
+                                                    </span>{' '}
+                                                    of {item.sentence} sharing within publications at Princess Margaret.
+                                                </p>
+                                            </div>
+                                            <div className="relative h-[100px] w-[100px] flex-shrink-0 overflow-visible">
+                                                <img
+                                                    src={`/images/placeholders/${getPyramidImage(
+                                                        categoryStats[item.statIndex].percentage
+                                                    )}`}
+                                                    alt="pyramids"
+                                                    className="absolute bottom-0 left-0"
+                                                    style={{ height: '150%', width: '200%' }}
+                                                />
+                                            </div>
                                         </div>
-                                        <h3 className="text-cyan-1100 text-headingXl xs:text-headingMd mb-4 font-semibold">
-                                            {categoryStats[item.statIndex].authorContributions} publications with{' '}
-                                            {item.description}
-                                        </h3>
-                                        <p className="text-bodySm xs:text-bodyXs">
-                                            You are in the{' '}
-                                            <span className="font-bold">
-                                                {categoryStats[item.statIndex].percentage < 50 ? 'top' : 'bottom'}{' '}
-                                                {categoryStats[item.statIndex].percentage}%
-                                            </span>{' '}
-                                            of {item.sentence} sharing within publications at Princess Margaret.
-                                        </p>
-                                    </div>
-                                    <div className="relative h-[100px] w-[100px] flex-shrink-0 overflow-visible">
-                                        <img
-                                            src={`/images/placeholders/${getPyramidImage(
-                                                categoryStats[item.statIndex].percentage
-                                            )}`}
-                                            alt="pyramids"
-                                            className="absolute bottom-0 left-0"
-                                            style={{ height: '150%', width: '200%' }}
-                                        />
-                                    </div>
-                                </div>
 
-                                {toggleDetailed && (
-                                    <div className="flex flex-col gap-2 animate-show">
-                                        <p className="text-bodySm xs:text-bodyXs">
-                                            <span className="font-bold">
-                                                {categoryStats[item.statIndex].openSciencePercentage}% of your
-                                                publications
-                                            </span>{' '}
-                                            share {item.name.toLowerCase()} with your community!
-                                        </p>
-                                        <div className="flex flex-row">
-                                            <div
-                                                className="bg-gradient-blue-cyan h-1.5 rounded-l-md"
-                                                style={{
-                                                    width: `${categoryStats[item.statIndex].openSciencePercentage}%`
-                                                }}
-                                            />
-                                            <div
-                                                className="bg-gray-1000 h-1.5 rounded-r-md"
-                                                style={{
-                                                    width: `${
-                                                        100 - categoryStats[item.statIndex].openSciencePercentage
-                                                    }%`
-                                                }}
-                                            />
-                                        </div>
-                                        <div className="flex flex-row justify-between">
-                                            <p className="text-cyan-1000 text-bodySm font-bold">
-                                                {categoryStats[item.statIndex].authorContributions}
-                                            </p>
-                                            <p className="text-gray-700 text-bodySm font-bold">{totalPublications}</p>
-                                        </div>
+                                        {toggleDetailed && (
+                                            <div className="flex flex-col gap-2 animate-show">
+                                                <p className="text-bodySm xs:text-bodyXs">
+                                                    <span className="font-bold">
+                                                        {categoryStats[item.statIndex].openSciencePercentage}% of your
+                                                        publications
+                                                    </span>{' '}
+                                                    share {item.name.toLowerCase()} with your community!
+                                                </p>
+                                                <div className="flex flex-row">
+                                                    <div
+                                                        className="bg-gradient-blue-cyan h-1.5 rounded-l-md"
+                                                        style={{
+                                                            width: `${categoryStats[item.statIndex].openSciencePercentage}%`
+                                                        }}
+                                                    />
+                                                    <div
+                                                        className="bg-gray-1000 h-1.5 rounded-r-md"
+                                                        style={{
+                                                            width: `${
+                                                                100 -
+                                                                categoryStats[item.statIndex].openSciencePercentage
+                                                            }%`
+                                                        }}
+                                                    />
+                                                </div>
+                                                <div className="flex flex-row justify-between">
+                                                    <p className="text-cyan-1000 text-bodySm font-bold">
+                                                        {categoryStats[item.statIndex].authorContributions}
+                                                    </p>
+                                                    <p className="text-gray-700 text-bodySm font-bold">
+                                                        {totalPublications}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
-                                )}
-                            </div>
-                        ))}
+                                );
+                            })}
+                        </div>
 
                         <div className="flex flex-col gap-3 px-10 sm:px-2 bg-white border-1 border-gray-200 rounded-md w-full">
                             <div className="flex flex-row justify-between items-center">

@@ -20,6 +20,7 @@
     "chartjs-chart-box-and-violin-plot": "^4.0.0",
     "chartjs-plugin-datalabels": "^2.2.0",
     "glamor": "^2.20.40",
+    "html2canvas": "^1.4.1",
     "jwt-decode": "^4.0.0",
     "plotly.js": "^2.35.3",
     "plotly.js-dist": "^3.0.0",
