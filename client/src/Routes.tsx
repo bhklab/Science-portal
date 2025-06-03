@@ -8,6 +8,7 @@ import PiProfile from './pages/PiProfile';
 import Login from './pages/Login';
 import PrivateRoute from './PrivateRoute';
 import SubmitPublication from './pages/SubmitPublication';
+import Unsubscribe from 'pages/Unsubscribe';
 
 const ProjectRoutes = () => {
     return (
@@ -18,6 +19,7 @@ const ProjectRoutes = () => {
                 <Route path="/about" element={<About />} />
                 <Route path="/publication/:doi" element={<Publication />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/unsubscribe" element={<Unsubscribe />} />
                 <Route
                     path="/profile"
                     element={

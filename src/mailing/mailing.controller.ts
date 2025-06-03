@@ -22,7 +22,6 @@ export class MailingController {
 	@Post('opting')
     async mailingOptIn(@Body('email') email: string, @Body('mailOptIn') mailOptIn: boolean) {
 		try {
-			console.log(!mailOptIn)
 			await this.loggingService.logAction(
 				`User has opted ${mailOptIn ? 'out of' : 'in' } mailing`, 
 				email ? email : 'Not signed in',
