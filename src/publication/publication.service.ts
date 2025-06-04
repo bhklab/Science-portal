@@ -3,14 +3,18 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { PublicationDocument } from '../interfaces/publication.interface';
 import { PublicationChangesDocument } from '../interfaces/publication-changes.interface';
+import { PublicationDocumentNew } from 'src/interfaces/publication-new.interface';
+import axios from 'axios'
+import * as dotenv from 'dotenv';
 
+dotenv.config();
 
 @Injectable()
 export class PublicationService {
     constructor(
       @InjectModel('Publication') private publicationModel: Model<PublicationDocument>,
       @InjectModel('PublicationChanges') private publicationChangesModel: Model<PublicationChangesDocument>,
-      @InjectModel('PublicationsNew') private readonly publicationsNewModel: Model<PublicationDocument>,
+      @InjectModel('PublicationsNew') private publicationsNewModel: Model<PublicationDocumentNew>,
     ) {}
     
 
@@ -142,13 +146,38 @@ export class PublicationService {
         return await newChange.save();
     }
 
-    async createPublication(newPub: PublicationDocument): Promise<PublicationDocument> {
-        if (newPub.date === null){
-            newPub.date = "";
-        }
-        const pub = {...newPub, date: newPub.date.toString().substring(0, 10)};
-        const createdPublication = new this.publicationsNewModel(pub);
-        return await createdPublication.save();
-    }
-    
+    async createPublication(newPub: PublicationDocumentNew): Promise<any> {
+
+		const publication = await this.publicationModel.findOne({ doi: newPub.doi }).exec();
+		if (publication) {
+			return "DOI exists already";
+		}
+
+		console.log(newPub.fanout.request);
+
+		// If not being sent to director, don't scrape immediately, rather queue it in database
+		if(!newPub.fanout.request){
+			if (newPub.date === null){
+				newPub.date = new Date().toISOString();
+			}
+			const pub = {...newPub, date: newPub.date.toString().substring(0, 10)};
+			const createdPublication = new this.publicationsNewModel(pub);
+			const savedPublication = await createdPublication.save()
+			console.log(savedPublication)
+			return savedPublication
+		}
+
+		// Scrape publication's crossref and supplementary data
+		let success = false
+		try {
+			success = await axios.post('http://localhost:8000/scrape/publication', newPub)
+		} catch (error) {
+			console.log(error)
+		}
+
+		// If publication scrape and upload is successful + the user requests sending to the director, email director about the new publication
+		if (success && newPub.fanout.request) {
+			const email = await axios.post('http://localhost:8000/email/director', newPub)
+		}
+    }    
 }

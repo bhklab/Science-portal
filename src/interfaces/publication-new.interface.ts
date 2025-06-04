@@ -1,6 +1,6 @@
 import { Document } from 'mongoose';
 
-export interface PublicationDocument extends Document {
+export interface PublicationDocumentNew extends Document {
 	PMID: number;
 	doi: string;
 	date: string;
@@ -15,11 +15,11 @@ export interface PublicationDocument extends Document {
 	publisher: string;
 	status: string;
 	image: string;
-	scraped?: boolean;
-    fanout?: {
-        request: boolean;
-        completed: boolean;
-    };
+	scraped: boolean;
+	fanout: {
+		request: boolean,
+		completed: boolean
+	}
 	supplementary: {
 		code?: {};
 		data?: {};
@@ -29,6 +29,7 @@ export interface PublicationDocument extends Document {
 		packages?: {};
 		miscellaneous?: {};
 	};
+	otherLinks: {};
 	submitter?: string;
 }
 

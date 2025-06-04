@@ -26,7 +26,7 @@ const Unsubscribe: React.FC = () => {
     };
 
     return (
-        <div className="my-24 w-1/2 mx-auto gap-3">
+        <div className="flex flex-col justify-center h-screen w-1/2 smd:w-full smd:px-4 mx-auto gap-3">
             <label className="text-sm text-gray-600">Your Email</label>
             <input
                 value={email}

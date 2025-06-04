@@ -10,6 +10,11 @@ export interface NewPub {
     status: string;
     publisher: string;
     date: any;
+    scraped: boolean;
+    fanout: {
+        request: boolean;
+        completed: boolean;
+    };
     supplementary: {
         code?: Record<string, string[]>;
         data?: Record<string, string[]>;
@@ -41,6 +46,11 @@ export function createDefaultNewPub(): NewPub {
         status: 'Published',
         publisher: '',
         date: new Date(),
+        scraped: false,
+        fanout: {
+            request: false,
+            completed: false
+        },
         supplementary: {
             code: {},
             data: {},

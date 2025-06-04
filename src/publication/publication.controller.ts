@@ -3,6 +3,7 @@ import { PublicationService } from './publication.service';
 import { LoggingService } from '../logging/logs.service';
 import { PublicationDocument } from 'src/interfaces/publication.interface';
 import { PublicationChangesDocument } from '../interfaces/publication-changes.interface';
+import { PublicationDocumentNew } from 'src/interfaces/publication-new.interface';
 
 @Controller('publications')
 export class PublicationController {
@@ -68,12 +69,14 @@ export class PublicationController {
 
 
 	@Post('new')
-	async createPublication(@Body() newPub: PublicationDocument) {
+	async createPublication(@Body() newPub: PublicationDocumentNew) {
 		try {
 			const createdPublication = await this.publicationService.createPublication(newPub);
-			return createdPublication;
+			console.log(createdPublication)
+			return createdPublication
 		} catch (error) {
 			throw new HttpException(`Error creating publication: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+		
 	}
 }

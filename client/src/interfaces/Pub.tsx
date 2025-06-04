@@ -16,6 +16,11 @@ export default interface Pub {
     publisher: string;
     status: string;
     image: string;
+    scraped?: boolean;
+    fanout?: {
+        request: boolean;
+        completed: boolean;
+    };
     supplementary: {
         code?: Record<string, string[]>;
         data?: Record<string, string[]>;

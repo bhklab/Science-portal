@@ -20,6 +20,7 @@ export class StatsController {
         }
     }
 
+	// Data extraction for Analytics page
 	@Post('supplementary')
     async getAllSupplementary(@Body('email') email: string){
 

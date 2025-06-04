@@ -37,6 +37,9 @@ const SubmitPublication: React.FC = () => {
     const [clickedTitle, setClickedTitle] = useState<boolean>(false);
     const [clickedDoi, setClickedDoi] = useState<boolean>(false);
 
+    // State for sending to director checkbox
+    const [sendDirector, setSendDirector] = useState<boolean>(false);
+
     const toast = useRef<Toast>(null);
 
     // For all subcategories that store an array of strings
@@ -94,19 +97,33 @@ const SubmitPublication: React.FC = () => {
             // Construct the final object to send
             const updatedPub: NewPub = {
                 ...newPub,
+                scraped: false,
+                fanout: {
+                    request: sendDirector,
+                    completed: false
+                },
                 supplementary: updatedSupplementary,
                 otherLinks,
                 submitter: authContext?.user.email
             };
 
-            await axios.post('/api/publications/new', updatedPub);
-
-            toast.current?.show({
-                severity: 'success',
-                summary: 'Successful Publication Submission',
-                detail: 'A new publication request has been successfully submitted. Thank you for contributing!',
-                life: 8000
-            });
+            const response = await axios.post('/api/publications/new', updatedPub);
+            if (typeof response.data === 'string') {
+                console.log(response);
+                toast.current?.show({
+                    severity: 'error',
+                    summary: 'Publication Not Submitted',
+                    detail: response.data,
+                    life: 8000
+                });
+            } else {
+                toast.current?.show({
+                    severity: 'success',
+                    summary: 'Successful Publication Submission',
+                    detail: 'A new publication request has been successfully submitted. Check back in 24 hours to see it in the platform!',
+                    life: 8000
+                });
+            }
         } catch (error) {
             toast.current?.show({
                 severity: 'error',
@@ -127,15 +144,11 @@ const SubmitPublication: React.FC = () => {
                     <div className="flex flex-row justify-center items-center gap-2">
                         <input
                             type="checkbox"
-                            // checked={}
-                            // onChange={() => }
-                            disabled={true}
-                            className="rounded-sm text-gray-400"
+                            checked={sendDirector}
+                            onChange={e => setSendDirector(!sendDirector)}
+                            className="rounded-sm text-blue-600"
                         />
-                        <p className="text-bodySm text-gray-400">
-                            Notify director of new publication{' '}
-                            <span className="text-red-400">(feature coming soon!)</span>
-                        </p>
+                        <p className="text-bodySm">Notify director of new publication</p>
                     </div>
                     <button
                         disabled={newPub.name && newPub.doi ? false : true}

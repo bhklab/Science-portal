@@ -36,71 +36,72 @@ async findLabStats(lab: string) {
 	}
 
   async findAllSupplementary() {
-    const colors = [
-      { barColour: 'rgba(127, 97, 219, 1)', borderColour: 'rgba(127, 97, 219, 1)' },
-      { barColour: 'rgba(89, 113, 203, 1)', borderColour: 'rgba(89, 113, 203, 1)' },
-      { barColour: 'rgba(89, 170, 106, 1)', borderColour: 'rgba(89, 170, 106, 1)' },
-      { barColour: 'rgba(242, 172, 60, 1)', borderColour: 'rgba(242, 172, 60, 1)' },
-      { barColour: 'rgba(203, 93, 56, 1)', borderColour: 'rgba(203, 93, 56, 1)' },
-      { barColour: 'rgba(68, 152, 145, 1)', borderColour: 'rgba(68, 152, 145, 1)' },
-    ];
+	const colors = [
+		{ barColour: 'rgba(127, 97, 219, 1)', borderColour: 'rgba(127, 97, 219, 1)' },
+		{ barColour: 'rgba(89, 113, 203, 1)', borderColour: 'rgba(89, 113, 203, 1)' },
+		{ barColour: 'rgba(89, 170, 106, 1)', borderColour: 'rgba(89, 170, 106, 1)' },
+		{ barColour: 'rgba(242, 172, 60, 1)', borderColour: 'rgba(242, 172, 60, 1)' },
+		{ barColour: 'rgba(203, 93, 56, 1)', borderColour: 'rgba(203, 93, 56, 1)' },
+		{ barColour: 'rgba(68, 152, 145, 1)', borderColour: 'rgba(68, 152, 145, 1)' },
+	];
 
     try {
-      const publications = await this.statsModel.find({});
-      // Filter for 2018 and onwards
-      const filteredPublications = publications.filter(
-        (pub) => new Date(pub.date) >= new Date('2018-01-01'),
-      );
+		const publications = await this.statsModel.find({});
+		// Filter for 2018 and onwards
+		const filteredPublications = publications.filter(
+			(pub) => new Date(pub.date) >= new Date('2018-01-01'),
+		);
 
-      const yearData: Record<
-        number,
-        Record<string, number>
-      > = {};
+      	const yearData: Record<
+			number,
+			Record<string, number>
+		> = {};
 
-      filteredPublications.forEach((pub) => {
-        const year = new Date(pub.date).getFullYear();
+		filteredPublications.forEach((pub) => {
 
-        // Initialize counters for each 'type' if needed
-        if (!yearData[year]) {
-          yearData[year] = {};
-          supplementary.forEach(({ type }) => {
-            yearData[year][type] = 0;
-          });
-        }
+			const year = new Date(pub.date).getFullYear();
 
-		let categoryTypes = new Set()
+			// Initialize counters for each 'type' if needed
+			if (!yearData[year]) {
+				yearData[year] = {};
+				supplementary.forEach(({ type }) => {
+					yearData[year][type] = 0;
+				});
+			}
 
-        // For each possible (category, subCategory, type)
-        supplementary.forEach(({ category, subCategory, type }) => {
-          const linkArray = pub.supplementary?.[category]?.[subCategory] || [];
-          if (linkArray.length > 0 && !categoryTypes.has(category)) {
-            yearData[year][type] += 1;
-			categoryTypes.add(category)
-          }
-        });
-      });
+			let categoryTypes = new Set()
 
-      // Build chart labels (year) and datasets
-      const labels = Object.keys(yearData).sort(); // e.g. [ '2018', '2019', ...]
+			// For each possible (category, subCategory, type)
+			supplementary.forEach(({ category, subCategory, type }) => {
+				const linkArray = pub.supplementary?.[category]?.[subCategory] || [];
+				if (linkArray.length > 0 && !categoryTypes.has(category)) {
+					yearData[year][type] += 1;
+					categoryTypes.add(category)
+				}
+			});
+		});
 
-      // Unique type names
-      const uniqueTypes = [...new Set(supplementary.map(({ type }) => type))];
+		// Build chart labels (year) and datasets
+		const labels = Object.keys(yearData).sort(); // e.g. [ '2018', '2019', ...]
 
-      const datasets = uniqueTypes.map((type, index) => {
-        const colorIndex = index % colors.length;
-        return {
-          label: type,
-          data: labels.map((year) => yearData[Number(year)][type]),
-          backgroundColor: colors[colorIndex].barColour,
-          borderColor: colors[colorIndex].borderColour,
-          borderWidth: 0,
-          maxBarThickness: 100,
-        };
-      });
+		// Unique type names
+		const uniqueTypes = [...new Set(supplementary.map(({ type }) => type))];
 
-      return { labels, datasets };
+		const datasets = uniqueTypes.map((type, index) => {
+			const colorIndex = index % colors.length;
+			return {
+				label: type,
+				data: labels.map((year) => yearData[Number(year)][type]),
+				backgroundColor: colors[colorIndex].barColour,
+				borderColor: colors[colorIndex].borderColour,
+				borderWidth: 0,
+				maxBarThickness: 100,
+			};
+		});
+
+      	return { labels, datasets };
     } catch (error) {
-      throw new Error(`Error fetching supplementary stats: ${error}`);
+      	throw new Error(`Error fetching supplementary stats: ${error}`);
     }
   }
 
