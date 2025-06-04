@@ -59,7 +59,8 @@ module.exports = {
                 deep_orange: { 400: '#e58938' },
                 base_node_icon: '#5971CB',
                 pipeline_diagram_view_button: '#2463BC',
-                icon_button_hover: '#F5F4F6'
+                icon_button_hover: '#F5F4F6',
+                sp_green: '#19615B'
             },
             fontFamily: { inter: 'Inter' },
             fontSize: {

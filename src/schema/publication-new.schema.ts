@@ -15,6 +15,11 @@ export const PublicationsNewSchema = new Schema({
 	publisher: String,
 	status: String,
 	image: String,
+	scraped: Boolean,
+	fanout: {
+		request: Boolean,
+		completed: Boolean,
+	},
 	supplementary: {
 		code: {},
 		data: {},
