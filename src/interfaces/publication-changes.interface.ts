@@ -72,4 +72,4 @@ export interface PublicationChangesDocument extends Document {
 	originalId: string;
 	SubmittterEmail: string;	
 	merged: boolean;
-  }
+}

@@ -108,11 +108,17 @@ const SubmitPublication: React.FC = () => {
             };
 
             const response = await axios.post('/api/publications/new', updatedPub);
-            if (typeof response.data === 'string') {
-                console.log(response);
+            if (response.data === 'DOI exists already') {
                 toast.current?.show({
                     severity: 'error',
-                    summary: 'Publication Not Submitted',
+                    summary: 'Unexpected error occured.',
+                    detail: response.data,
+                    life: 8000
+                });
+            } else if (typeof response.data === 'string') {
+                toast.current?.show({
+                    severity: 'error',
+                    summary: 'Unexpected error occured.',
                     detail: response.data,
                     life: 8000
                 });
@@ -128,7 +134,7 @@ const SubmitPublication: React.FC = () => {
             toast.current?.show({
                 severity: 'error',
                 summary: 'Publication Not Submitted',
-                detail: 'The publication has not been submitted due to an internal error. Please try again later.',
+                detail: `The publication has not been submitted due to an internal error. Please try again later. ${error}`,
                 life: 8000
             });
             console.error('Error submitting new publication:', error);

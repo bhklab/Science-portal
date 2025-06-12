@@ -153,31 +153,38 @@ export class PublicationService {
 			return "DOI exists already";
 		}
 
-		console.log(newPub.fanout.request);
+		if (newPub.date === null){
+			newPub.date = new Date().toISOString();
+		}
 
-		// If not being sent to director, don't scrape immediately, rather queue it in database
+		newPub.date = newPub.date.toString().substring(0, 10);
+		let scrapedPublication = null;
+
+		// If not being sent to director, scrape crossref and supplementary data, place results object in preliminary database
 		if(!newPub.fanout.request){
-			if (newPub.date === null){
-				newPub.date = new Date().toISOString();
+			try {
+				scrapedPublication = await axios.post('http://localhost:8000/scrape/publication', newPub)
+			} catch (error) {
+				console.log(error)
 			}
-			const pub = {...newPub, date: newPub.date.toString().substring(0, 10)};
-			const createdPublication = new this.publicationsNewModel(pub);
-			const savedPublication = await createdPublication.save()
-			console.log(savedPublication)
-			return savedPublication
+			return scrapedPublication
+		} else { // When being sent to director, scrape publication's crossref and supplementary data, upload to publication database, then send email to director
+			try {
+				scrapedPublication = await axios.post('http://localhost:8000/scrape/publication', newPub)
+			} catch (error) {
+				console.log(error)
+			}
+
+			// If publication scrape and upload is successful + the user requests sending to the director, email director about the new publication
+			if (scrapedPublication && newPub.fanout.request && !newPub.fanout.completed) {
+				try {
+					await axios.post('http://localhost:8000/email/director', newPub)
+					return `https://pmscience.ca/publication/${encodeURIComponent(newPub.doi)}`
+				} catch (error) {
+					console.log(error);
+				}
+			}
 		}
 
-		// Scrape publication's crossref and supplementary data
-		let success = false
-		try {
-			success = await axios.post('http://localhost:8000/scrape/publication', newPub)
-		} catch (error) {
-			console.log(error)
-		}
-
-		// If publication scrape and upload is successful + the user requests sending to the director, email director about the new publication
-		if (success && newPub.fanout.request) {
-			const email = await axios.post('http://localhost:8000/email/director', newPub)
-		}
     }    
 }
