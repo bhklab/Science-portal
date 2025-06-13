@@ -162,6 +162,7 @@ export class PublicationService {
 
 		// If not being sent to director, scrape crossref and supplementary data, place results object in preliminary database
 		if(!newPub.fanout.request){
+			console.log(newPub)
 			try {
 				scrapedPublication = await axios.post('http://localhost:8000/scrape/publication', newPub)
 			} catch (error) {

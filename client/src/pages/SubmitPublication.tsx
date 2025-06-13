@@ -40,6 +40,9 @@ const SubmitPublication: React.FC = () => {
     // State for sending to director checkbox
     const [sendDirector, setSendDirector] = useState<boolean>(false);
 
+    // Sate for affiliations
+    const [affiliations, setAffiliations] = useState<string[]>(['']);
+
     const toast = useRef<Toast>(null);
 
     // For all subcategories that store an array of strings
@@ -89,6 +92,22 @@ const SubmitPublication: React.FC = () => {
         setOtherLinks(prev => prev.filter((_, i) => i !== index));
     };
 
+    const addAffiliation = () => {
+        setAffiliations(prev => [...prev, '']);
+    };
+
+    const deleteAffiliation = (index: number) => {
+        setAffiliations(prev => prev.toSpliced(index, 1));
+    };
+
+    const handleAfilliationChange = (index: number, text: string) => {
+        setAffiliations(prev => {
+            const update = [...prev];
+            update[index] = text;
+            return update;
+        });
+    };
+
     const submitPublication = async () => {
         // Build the nested supplementary object from `links`:
         const updatedSupplementary = convertLinksToSupplementary(links);
@@ -97,6 +116,7 @@ const SubmitPublication: React.FC = () => {
             // Construct the final object to send
             const updatedPub: NewPub = {
                 ...newPub,
+                affiliations: affiliations,
                 scraped: false,
                 fanout: {
                     request: sendDirector,
@@ -257,13 +277,33 @@ const SubmitPublication: React.FC = () => {
                         {/* Affiliations */}
                         <div className="flex flex-col gap-1">
                             <p className="text-bodyMd">Affiliations</p>
-                            <InputText
-                                className="w-full"
-                                onChange={e => setNewPub({ ...newPub, affiliations: e.target.value })}
-                            />
-                            <p className="text-bodySm text-gray-700">
-                                List all affiliations made with this publication, no matter how small.
-                            </p>
+                            {affiliations.map((affil, index) => (
+                                <div className="flex flex-row gap-2">
+                                    <InputText
+                                        className="w-full"
+                                        onChange={e => handleAfilliationChange(index, e.target.value)}
+                                    />
+                                    <div className="flex justify-end">
+                                        <img
+                                            src="/images/assets/trashcan-icon.svg"
+                                            alt="Delete"
+                                            onClick={() => deleteAffiliation(index)}
+                                            className="cursor-pointer"
+                                        />
+                                    </div>
+                                </div>
+                            ))}
+                            <div className="flex justify-between items-center">
+                                <p className="text-bodySm text-gray-700">
+                                    List all affiliations made with this publication, seperated by semicolons.
+                                </p>
+                                <img
+                                    src="/images/assets/plus-icon.svg"
+                                    alt="Add Link"
+                                    className="cursor-pointer"
+                                    onClick={addAffiliation}
+                                />
+                            </div>
                         </div>
 
                         {/* Publisher */}

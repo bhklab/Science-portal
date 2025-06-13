@@ -5,11 +5,12 @@ export interface NewPub {
     type: string;
     authors: string;
     filteredAuthors: string;
-    affiliations: string;
+    affiliations: string[];
     citations: number;
     status: string;
     publisher: string;
     date: any;
+    dateAdded: string;
     scraped: boolean;
     fanout: {
         request: boolean;
@@ -41,11 +42,12 @@ export function createDefaultNewPub(): NewPub {
         type: '',
         authors: '',
         filteredAuthors: '',
-        affiliations: '',
+        affiliations: [''],
         citations: 0,
         status: 'Published',
         publisher: '',
         date: new Date(),
+        dateAdded: '',
         scraped: false,
         fanout: {
             request: false,
