@@ -9,7 +9,7 @@ export const PublicationsNewSchema = new Schema({
 	type: String,
 	authors: String,
 	filteredAuthors: String,
-	affiliations: String,
+	affiliations: [String],
 	citations: Number,
 	dateAdded: String,
 	publisher: String,

@@ -150,7 +150,7 @@ export class PublicationService {
 
 		const publication = await this.publicationModel.findOne({ doi: newPub.doi }).exec();
 		if (publication) {
-			return "DOI exists already";
+			return "DOI exists in database already";
 		}
 
 		if (newPub.date === null){
@@ -164,14 +164,22 @@ export class PublicationService {
 		if(!newPub.fanout.request){
 			console.log(newPub)
 			try {
-				scrapedPublication = await axios.post('http://localhost:8000/scrape/publication', newPub)
+				scrapedPublication = (await axios.post('http://127.0.0.1:8000/scrape/publication/one', newPub)).data
 			} catch (error) {
 				console.log(error)
 			}
-			return scrapedPublication
+
+			try {
+				await this.publicationsNewModel.create(scrapedPublication)
+				delete scrapedPublication.otherLinks; delete scrapedPublication.submitter;
+				await this.publicationModel.create(scrapedPublication);
+			} catch (error) {
+				console.log(error)
+			}
+			return `${process.env.DOMAIN}/publication/${encodeURIComponent(newPub.doi)}`
 		} else { // When being sent to director, scrape publication's crossref and supplementary data, upload to publication database, then send email to director
 			try {
-				scrapedPublication = await axios.post('http://localhost:8000/scrape/publication', newPub)
+				scrapedPublication = await axios.post('http://127.0.0.1:8000/scrape/publication/one', newPub)
 			} catch (error) {
 				console.log(error)
 			}
@@ -179,8 +187,8 @@ export class PublicationService {
 			// If publication scrape and upload is successful + the user requests sending to the director, email director about the new publication
 			if (scrapedPublication && newPub.fanout.request && !newPub.fanout.completed) {
 				try {
-					await axios.post('http://localhost:8000/email/director', newPub)
-					return `https://pmscience.ca/publication/${encodeURIComponent(newPub.doi)}`
+					await axios.post('http://127.0.0.1:8000/email/director', newPub)
+					return `${process.env.DOMAIN}/publication/${encodeURIComponent(newPub.doi)}`
 				} catch (error) {
 					console.log(error);
 				}
