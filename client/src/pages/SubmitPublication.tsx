@@ -45,7 +45,7 @@ const SubmitPublication: React.FC = () => {
     const [affiliations, setAffiliations] = useState<string[]>(['']);
 
     // Scraping progress
-    const [inprogress, setInprogress] = useState<boolean>(false);
+    const [submitInprogress, setSubmitInprogress] = useState<boolean>(false);
 
     const toast = useRef<Toast>(null);
 
@@ -116,16 +116,7 @@ const SubmitPublication: React.FC = () => {
         // Build the nested supplementary object from `links`:
         const updatedSupplementary = convertLinksToSupplementary(links);
 
-        const ToastSuccessDetail = (url: string) => {
-            return (
-                <div>
-                    <p>You're newly submitted publication can be found in the platform at: </p>
-                    <a href={url} target="_blank">
-                        {url}
-                    </a>
-                </div>
-            );
-        };
+        setSubmitInprogress(true);
 
         try {
             // Construct the final object to send
@@ -181,6 +172,7 @@ const SubmitPublication: React.FC = () => {
                     life: 8000
                 });
             }
+            setSubmitInprogress(false);
         } catch (error) {
             toast.current?.show({
                 severity: 'error',
@@ -188,6 +180,7 @@ const SubmitPublication: React.FC = () => {
                 detail: `The publication has not been submitted due to an internal error. Please try again later. ${error}`,
                 life: 8000
             });
+            setSubmitInprogress(false);
             console.error('Error submitting new publication:', error);
         }
     };
@@ -219,13 +212,14 @@ const SubmitPublication: React.FC = () => {
                 </div>
             </div>
 
-            {inprogress ? (
-                <div className="flex justify-content-center items-center">
+            {submitInprogress ? (
+                <div className="flex flex-col gap-2 justify-center items-center min-h-screen">
+                    <h2 className="text-center text-headingLg">Data scraping in progress</h2>
                     <ProgressSpinner
-                        style={{ width: '200px', height: '200px' }}
-                        strokeWidth="4"
+                        style={{ width: '300px', height: '300px' }}
+                        strokeWidth="3"
                         fill="var(--surface-ground)"
-                        animationDuration="1s"
+                        animationDuration="3s"
                     />
                 </div>
             ) : (
