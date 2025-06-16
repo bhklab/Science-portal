@@ -182,19 +182,19 @@ export class PublicationService {
 		} else { // When being sent to director, scrape publication's crossref and supplementary data, upload to publication database, then send email to director
 			try {
 				scrapedPublication = await axios.post('http://127.0.0.1:8000/scrape/publication/one', newPub)
+				// If publication scrape and upload is successful + the user requests sending to the director, email director about the new publication
+				if (scrapedPublication && newPub.fanout.request && !newPub.fanout.completed) {
+					try {
+						await axios.post('http://127.0.0.1:8000/email/director', newPub)
+						return `${process.env.DOMAIN}/publication/${encodeURIComponent(newPub.doi)}`
+					} catch (error) {
+						console.log(error);
+					}
+				}
 			} catch (error) {
 				console.log(error)
 			}
 
-			// If publication scrape and upload is successful + the user requests sending to the director, email director about the new publication
-			if (scrapedPublication && newPub.fanout.request && !newPub.fanout.completed) {
-				try {
-					await axios.post('http://127.0.0.1:8000/email/director', newPub)
-					return `${process.env.DOMAIN}/publication/${encodeURIComponent(newPub.doi)}`
-				} catch (error) {
-					console.log(error);
-				}
-			}
 		}
 
     }    
