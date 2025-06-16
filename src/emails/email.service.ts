@@ -18,4 +18,13 @@ export class EmailService {
             throw new Error(`Error fetching emails`);
         }
     }
+
+	async getFanout() {
+        try {
+			console.log(process.env.FANOUT_EMAILS)
+            return process.env.FANOUT_EMAILS;
+        } catch (error) {
+            throw new Error(`Error fetching emails`);
+        }
+    }
 }

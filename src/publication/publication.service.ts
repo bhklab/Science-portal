@@ -165,18 +165,20 @@ export class PublicationService {
 			console.log(newPub)
 			try {
 				scrapedPublication = (await axios.post('http://127.0.0.1:8000/scrape/publication/one', newPub)).data
+				try {
+					await this.publicationsNewModel.create(scrapedPublication)
+					delete scrapedPublication.otherLinks; delete scrapedPublication.submitter;
+					await this.publicationModel.create(scrapedPublication);
+				} catch (error) {
+					console.log(error)
+				}
+				return `${process.env.DOMAIN}/publication/${encodeURIComponent(newPub.doi)}`
 			} catch (error) {
 				console.log(error)
 			}
 
-			try {
-				await this.publicationsNewModel.create(scrapedPublication)
-				delete scrapedPublication.otherLinks; delete scrapedPublication.submitter;
-				await this.publicationModel.create(scrapedPublication);
-			} catch (error) {
-				console.log(error)
-			}
-			return `${process.env.DOMAIN}/publication/${encodeURIComponent(newPub.doi)}`
+			return "Scraping error occured. Please try again later."
+
 		} else { // When being sent to director, scrape publication's crossref and supplementary data, upload to publication database, then send email to director
 			try {
 				scrapedPublication = await axios.post('http://127.0.0.1:8000/scrape/publication/one', newPub)
