@@ -18,6 +18,7 @@ export default interface BlankPub {
         containers?: Record<string, string[]>;
         results?: Record<string, string[]>;
         trials?: Record<string, string[]>;
+        protocols?: Record<string, string[]>;
         packages?: Record<string, string[]>;
         miscellaneous?: Record<string, string[]>;
     };

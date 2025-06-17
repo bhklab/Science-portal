@@ -22,6 +22,7 @@ export interface NewPub {
         containers?: Record<string, string[]>;
         results?: Record<string, string[]>;
         trials?: Record<string, string[]>;
+        protocols?: Record<string, string[]>;
         packages?: Record<string, string[]>;
         miscellaneous?: Record<string, string[]>;
     };
@@ -59,6 +60,7 @@ export function createDefaultNewPub(): NewPub {
             containers: {},
             results: {},
             trials: {},
+            protocols: {},
             packages: {},
             miscellaneous: {}
         },

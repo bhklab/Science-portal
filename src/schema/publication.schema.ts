@@ -26,9 +26,11 @@ export const PublicationSchema = new Schema({
 		containers: {},
 		results: {},
 		trials: {},
+		protocols: {},
 		packages: {},
 		miscellaneous: {}
-	}
+	},
+	submitter: {type: String, required: false}
 }, { collection: 'publications' });
 
 PublicationSchema.index(

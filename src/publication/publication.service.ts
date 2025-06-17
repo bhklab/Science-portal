@@ -162,12 +162,11 @@ export class PublicationService {
 
 		// If not being sent to director, scrape crossref and supplementary data, place results object in preliminary database
 		if(!newPub.fanout.request){
-			console.log(newPub)
 			try {
 				scrapedPublication = (await axios.post('http://127.0.0.1:8000/scrape/publication/one', newPub)).data
 				try {
 					await this.publicationsNewModel.create(scrapedPublication)
-					delete scrapedPublication.otherLinks; delete scrapedPublication.submitter;
+					delete scrapedPublication.otherLinks;
 					await this.publicationModel.create(scrapedPublication);
 				} catch (error) {
 					console.log(error)
@@ -176,26 +175,34 @@ export class PublicationService {
 			} catch (error) {
 				console.log(error)
 			}
-
-			return "Scraping error occured. Please try again later."
-
 		} else { // When being sent to director, scrape publication's crossref and supplementary data, upload to publication database, then send email to director
 			try {
-				scrapedPublication = await axios.post('http://127.0.0.1:8000/scrape/publication/one', newPub)
+				scrapedPublication = (await axios.post('http://127.0.0.1:8000/scrape/publication/one', newPub)).data
+
 				// If publication scrape and upload is successful + the user requests sending to the director, email director about the new publication
 				if (scrapedPublication && newPub.fanout.request && !newPub.fanout.completed) {
 					try {
-						await axios.post('http://127.0.0.1:8000/email/director', newPub)
-						return `${process.env.DOMAIN}/publication/${encodeURIComponent(newPub.doi)}`
+						await axios.post('http://127.0.0.1:8000/email/director', scrapedPublication)
 					} catch (error) {
 						console.log(error);
 					}
 				}
+
+				try {
+					await this.publicationsNewModel.create(scrapedPublication)
+					delete scrapedPublication.otherLinks;
+					await this.publicationModel.create(scrapedPublication);
+				} catch (error) {
+					console.log(error)
+				}
+				return `${process.env.DOMAIN}/publication/${encodeURIComponent(newPub.doi)}`
+
 			} catch (error) {
 				console.log(error)
 			}
 
 		}
+		return "Scraping error occured. Please try again later."
 
     }    
 }

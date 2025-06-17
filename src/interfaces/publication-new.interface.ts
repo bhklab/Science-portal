@@ -26,6 +26,7 @@ export interface PublicationDocumentNew extends Document {
 		containers?: {};
 		results?: {};
 		trials?: {};
+		protocols: {};
 		packages?: {};
 		miscellaneous?: {};
 	};

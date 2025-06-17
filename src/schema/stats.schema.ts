@@ -70,6 +70,7 @@ export const StatsSchema = new Schema({
 		containers: {},
 		results: {},
 		trials: {},
+		protocols: {},
 		packages: {},
 		miscellaneous: {}
 }

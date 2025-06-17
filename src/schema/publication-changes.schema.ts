@@ -21,6 +21,7 @@ export const PublicationChangesSchema = new Schema({
 		containers: {},
 		results: {},
 		trials: {},
+		protocols: {},
 		packages: {},
 		miscellaneous: {}
 	},
