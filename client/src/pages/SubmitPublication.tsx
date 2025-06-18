@@ -1,4 +1,4 @@
-import React, { useContext, useState, useRef } from 'react';
+import React, { useContext, useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { Toast } from 'primereact/toast';
 import { ProgressSpinner } from 'primereact/progressspinner';
@@ -41,13 +41,14 @@ const SubmitPublication: React.FC = () => {
     // State for sending to director checkbox
     const [sendDirector, setSendDirector] = useState<boolean>(false);
 
-    // State for affiliations
-    const [affiliations, setAffiliations] = useState<string[]>(['']);
-
     // Scraping progress
     const [submitInprogress, setSubmitInprogress] = useState<boolean>(false);
 
     const toast = useRef<Toast>(null);
+
+    useEffect(() => {
+        console.log(newPub);
+    }, [newPub]);
 
     // For all subcategories that store an array of strings
     const addNewLink = (category: string) => {
@@ -96,25 +97,11 @@ const SubmitPublication: React.FC = () => {
         setOtherLinks(prev => prev.filter((_, i) => i !== index));
     };
 
-    const addAffiliation = () => {
-        setAffiliations(prev => [...prev, '']);
-    };
-
-    const deleteAffiliation = (index: number) => {
-        setAffiliations(prev => prev.toSpliced(index, 1));
-    };
-
-    const handleAfilliationChange = (index: number, text: string) => {
-        setAffiliations(prev => {
-            const update = [...prev];
-            update[index] = text;
-            return update;
-        });
-    };
-
     const submitPublication = async () => {
         // Build the nested supplementary object from `links`:
         const updatedSupplementary = convertLinksToSupplementary(links);
+
+        const copyPublication = { ...newPub };
 
         setSubmitInprogress(true);
 
@@ -122,7 +109,6 @@ const SubmitPublication: React.FC = () => {
             // Construct the final object to send
             const updatedPub: NewPub = {
                 ...newPub,
-                affiliations: affiliations,
                 scraped: false,
                 fanout: {
                     request: sendDirector,
@@ -149,6 +135,7 @@ const SubmitPublication: React.FC = () => {
                         ),
                         life: 8000
                     });
+                    setNewPub(createDefaultNewPub());
                 } else if (response.data === 'DOI exists in database already') {
                     toast.current?.show({
                         severity: 'error',
@@ -172,7 +159,6 @@ const SubmitPublication: React.FC = () => {
                     life: 8000
                 });
             }
-            setSubmitInprogress(false);
         } catch (error) {
             toast.current?.show({
                 severity: 'error',
@@ -180,9 +166,9 @@ const SubmitPublication: React.FC = () => {
                 detail: `The publication has not been submitted due to an internal error. Please try again later. ${error}`,
                 life: 8000
             });
-            setSubmitInprogress(false);
             console.error('Error submitting new publication:', error);
         }
+        setSubmitInprogress(false);
     };
 
     return (
@@ -214,7 +200,6 @@ const SubmitPublication: React.FC = () => {
 
             {submitInprogress ? (
                 <div className="flex flex-col gap-2 justify-center items-center min-h-screen">
-                    <h2 className="text-center text-headingLg">Data scraping in progress</h2>
                     <ProgressSpinner
                         style={{ width: '300px', height: '300px' }}
                         strokeWidth="3"
@@ -242,6 +227,7 @@ const SubmitPublication: React.FC = () => {
                                     Publication Title <span className="text-red-600"> *</span>
                                 </p>
                                 <InputText
+                                    value={newPub.name}
                                     className={`${newPub.name === '' && clickedTitle ? 'invalid-box' : ''} w-full`}
                                     onChange={e => setNewPub({ ...newPub, name: e.target.value })}
                                     onClick={() => setClickedTitle(true)}
@@ -260,6 +246,7 @@ const SubmitPublication: React.FC = () => {
                                     DOI <span className="text-red-600"> *</span>
                                 </p>
                                 <InputText
+                                    value={newPub.doi}
                                     className={`${newPub.doi === '' && clickedDoi ? 'invalid-box' : ''} w-full`}
                                     onChange={e => setNewPub({ ...newPub, doi: e.target.value })}
                                     onClick={() => setClickedDoi(true)}
@@ -276,6 +263,7 @@ const SubmitPublication: React.FC = () => {
                             <div className="flex flex-col gap-1">
                                 <p className="text-bodyMd">Journal</p>
                                 <InputText
+                                    value={newPub.journal}
                                     className="w-full"
                                     onChange={e => setNewPub({ ...newPub, journal: e.target.value })}
                                 />
@@ -285,6 +273,7 @@ const SubmitPublication: React.FC = () => {
                             <div className="flex flex-col gap-1">
                                 <p className="text-bodyMd">Type</p>
                                 <InputText
+                                    value={newPub.type}
                                     className="w-full"
                                     onChange={e => setNewPub({ ...newPub, type: e.target.value })}
                                 />
@@ -297,30 +286,46 @@ const SubmitPublication: React.FC = () => {
                             <div className="flex flex-col gap-1">
                                 <p className="text-bodyMd">Authors</p>
                                 <InputText
+                                    value={newPub.authors}
                                     className="w-full"
                                     onChange={e => setNewPub({ ...newPub, authors: e.target.value })}
                                 />
                                 <p className="text-bodySm text-gray-700">
                                     List co-authors in this format: LastName, FirstName with a semi-colon separating
                                     each individual author. Authors tagged here will be able to see the data shared in
-                                    publication on their personal statistics page.
+                                    the publication stats on their personal statistics page.
                                 </p>
                             </div>
 
                             {/* Affiliations */}
                             <div className="flex flex-col gap-1">
                                 <p className="text-bodyMd">Affiliations</p>
-                                {affiliations.map((affil, index) => (
-                                    <div className="flex flex-row gap-2">
+                                {newPub.affiliations.map((affil, index) => (
+                                    <div className="flex flex-row gap-2" key={index}>
                                         <InputText
                                             className="w-full"
-                                            onChange={e => handleAfilliationChange(index, e.target.value)}
+                                            value={affil}
+                                            onChange={e =>
+                                                setNewPub({
+                                                    ...newPub,
+                                                    affiliations: newPub.affiliations.toSpliced(
+                                                        index,
+                                                        1,
+                                                        e.target.value
+                                                    )
+                                                })
+                                            }
                                         />
                                         <div className="flex justify-end">
                                             <img
                                                 src="/images/assets/trashcan-icon.svg"
                                                 alt="Delete"
-                                                onClick={() => deleteAffiliation(index)}
+                                                onClick={() =>
+                                                    setNewPub({
+                                                        ...newPub,
+                                                        affiliations: newPub.affiliations.toSpliced(index, 1)
+                                                    })
+                                                }
                                                 className="cursor-pointer"
                                             />
                                         </div>
@@ -328,13 +333,22 @@ const SubmitPublication: React.FC = () => {
                                 ))}
                                 <div className="flex justify-between items-center">
                                     <p className="text-bodySm text-gray-700">
-                                        List all affiliations made with this publication, seperated by semicolons.
+                                        List all affiliations in this publication.
                                     </p>
                                     <img
                                         src="/images/assets/plus-icon.svg"
                                         alt="Add Link"
                                         className="cursor-pointer"
-                                        onClick={addAffiliation}
+                                        onClick={() =>
+                                            setNewPub({
+                                                ...newPub,
+                                                affiliations: newPub.affiliations.toSpliced(
+                                                    newPub.affiliations.length,
+                                                    0,
+                                                    ''
+                                                )
+                                            })
+                                        }
                                     />
                                 </div>
                             </div>
@@ -343,6 +357,7 @@ const SubmitPublication: React.FC = () => {
                             <div className="flex flex-col gap-1">
                                 <p className="text-bodyMd">Publisher</p>
                                 <InputText
+                                    value={newPub.publisher}
                                     className="w-full"
                                     onChange={e => setNewPub({ ...newPub, publisher: e.target.value })}
                                 />
@@ -655,7 +670,16 @@ function convertLinksToSupplementary(links: { [key: string]: string[] }) {
             figshare: links['figshare'] ?? []
         },
         trials: {
-            clinicalTrial: links['clinicalTrial'] ?? []
+            clinicalTrial: links['clinicalTrial'] ?? [],
+            euCTR: links['euCTR'] ?? [],
+            vivli: links['vivli'] ?? [],
+            yoda: links['yoday'] ?? []
+        },
+        protocols: {
+            protocolsIO: links['protocolsIO'] ?? [],
+            bioProtocol: links['bioProtocol'] ?? [],
+            benchling: links['benchling'] ?? [],
+            labArchives: links['labArchives'] ?? []
         },
         packages: {
             bioconductor: links['bioconductor'] ?? [],
