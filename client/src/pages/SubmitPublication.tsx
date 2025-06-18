@@ -101,8 +101,6 @@ const SubmitPublication: React.FC = () => {
         // Build the nested supplementary object from `links`:
         const updatedSupplementary = convertLinksToSupplementary(links);
 
-        const copyPublication = { ...newPub };
-
         setSubmitInprogress(true);
 
         try {
@@ -125,15 +123,22 @@ const SubmitPublication: React.FC = () => {
                     toast.current?.show({
                         severity: 'success',
                         summary: 'Successful Publication Submission',
-                        content: (
-                            <div>
-                                <p>Your newly submitted publication can be found in the platform at:</p>
-                                <a href={response.data} target="_blank" rel="noopener noreferrer" className="underline">
+                        detail: (
+                            <div className="flex flex-col w-full jusify-center items-center flex-wrap">
+                                <p className="text-bodyLg">
+                                    Your newly submitted publication can be found in the platform at:
+                                </p>
+                                <a
+                                    href={response.data}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="underline text-bodyLg"
+                                >
                                     {response.data}
                                 </a>
                             </div>
                         ),
-                        life: 8000
+                        life: 10000
                     });
                     setNewPub(createDefaultNewPub());
                 } else if (response.data === 'DOI exists in database already') {
