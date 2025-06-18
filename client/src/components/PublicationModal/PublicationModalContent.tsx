@@ -596,7 +596,7 @@ const AuthorsList: React.FC<{ authors: string; scientists: Author[] }> = ({ auth
                 <Dialog
                     visible={isVisible}
                     onHide={() => setIsVisible(false)}
-                    style={{ width: '300px', height: '200px', borderRadius: '15px' }}
+                    style={{ width: '350px', height: '200px', borderRadius: '15px' }}
                     dismissableMask
                     draggable={false}
                     closable={false}

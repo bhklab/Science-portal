@@ -15,7 +15,7 @@ export class MailingService {
 
             if (!mail) {
                 console.log("user not found");
-				await this.MailModel.create({ email: email, mailOptIn: false });
+				await this.MailModel.create({ email: email, mailOptIn: true });
 				return false
             }
 
