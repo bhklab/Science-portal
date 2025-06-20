@@ -1,11 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import axios from 'axios';
 import { AuthorDocument } from '../interfaces/author.interface';
+import { PublicationDocument } from 'src/interfaces/publication.interface';
+import { stat } from 'fs';
 
 @Injectable()
 export class EmailService {
-    constructor(@InjectModel('Author') private AuthorModel: Model<AuthorDocument>){}
+    constructor(
+		@InjectModel('Author') private AuthorModel: Model<AuthorDocument>,
+      	@InjectModel('Publication') private publicationModel: Model<PublicationDocument>
+	) {}
 	
 	async findAllEmails() {
         try {
@@ -25,5 +31,50 @@ export class EmailService {
         } catch (error) {
             throw new Error(`Error fetching emails`);
         }
+    }
+
+	async sendFanout(doi: string, verdict: boolean) {
+        try {
+			if (verdict) {
+				const response = axios.post('http://127.0.0.1:8000/email/fanout')
+				try {
+					await this.publicationModel.updateOne(
+						{ doi: doi },
+						{ $set: { 
+							fanout: {
+								request: true,
+								completed: true,
+								veridct: true,
+							}}
+						}
+					).exec();
+				} catch (error) {
+					console.log(error);
+					return {status: 500, message: `Database fanout update error: ${error}`};
+				}
+			} else {
+				try {
+					await this.publicationModel.updateOne(
+						{ doi: doi },
+						{ $set: { 
+							fanout: {
+								request: true,
+								completed: true,
+								veridct: false,
+							}}
+						}
+					).exec();
+					return {status: 200, message: "Successful decline of fanout email."}
+				} catch (error) {
+					console.log(error);
+					return {status: 500, message: `Database fanout update error: ${error}`};
+				}
+			}
+        } catch (error) {
+            console.log(error);
+			return {status: 500, message: `Email fanout error: ${error}`};
+        }
+
+		return {status: 200, message: "Email are currently being sent out, thank you!"}
     }
 }

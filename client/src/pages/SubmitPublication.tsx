@@ -110,7 +110,8 @@ const SubmitPublication: React.FC = () => {
                 scraped: false,
                 fanout: {
                     request: sendDirector,
-                    completed: false
+                    completed: false,
+                    verdict: null
                 },
                 supplementary: updatedSupplementary,
                 otherLinks,

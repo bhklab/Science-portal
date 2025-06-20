@@ -19,6 +19,7 @@ export const PublicationSchema = new Schema({
 	fanout: {
 		request: Boolean,
 		completed: Boolean,
+		verdict: Boolean
 	},
 	supplementary: {
 		code: {},

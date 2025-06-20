@@ -15,6 +15,7 @@ export interface NewPub {
     fanout: {
         request: boolean;
         completed: boolean;
+        verdict: boolean | null;
     };
     supplementary: {
         code?: Record<string, string[]>;
@@ -52,7 +53,8 @@ export function createDefaultNewPub(): NewPub {
         scraped: false,
         fanout: {
             request: false,
-            completed: false
+            completed: false,
+            verdict: false
         },
         supplementary: {
             code: {},

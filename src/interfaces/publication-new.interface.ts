@@ -18,8 +18,9 @@ export interface PublicationDocumentNew extends Document {
 	scraped: boolean;
 	fanout: {
 		request: boolean,
-		completed: boolean
-	}
+		completed: boolean,
+		verdict: boolean
+	};
 	supplementary: {
 		code?: {};
 		data?: {};

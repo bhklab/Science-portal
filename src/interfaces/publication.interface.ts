@@ -19,6 +19,7 @@ export interface PublicationDocument extends Document {
     fanout?: {
         request: boolean;
         completed: boolean;
+		verdict: boolean;
     };
 	supplementary: {
 		code?: {};

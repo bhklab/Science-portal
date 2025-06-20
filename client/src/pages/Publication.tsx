@@ -1,7 +1,8 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import { useParams } from 'react-router-dom';
+import { Toast } from 'primereact/toast';
 import axios from 'axios';
-import Pub from '../interfaces/Pub';
+import Pub, { createDefaultPub } from '../interfaces/Pub';
 import PublicationModalContent from '../components/PublicationModal/PublicationModalContent';
 import Author from 'interfaces/Author';
 import { AuthContext } from 'hooks/AuthContext';
@@ -15,10 +16,12 @@ interface PublicationModalProps {
 
 const Publication: React.FC = () => {
     const { doi } = useParams();
-    const [pub, setPub] = useState<Pub | null>(null);
+    const [pub, setPub] = useState<Pub>(createDefaultPub());
     const [editMode, setEditMode] = useState<boolean>(false);
     const [scientists, setScientists] = useState<Author[]>([]);
     const [fanoutEmail, setFanoutEmail] = useState<string>('');
+
+    const toast = useRef<Toast>(null);
 
     const authContext = useContext(AuthContext);
 
@@ -65,18 +68,36 @@ const Publication: React.FC = () => {
         getScientists();
     }, []);
 
+    const fanoutApproval = async (verdict: boolean) => {
+        setPub({ ...pub, fanout: { request: true, completed: true, verdict: true } });
+        const response = await axios.post('/api/emails/fanout/send', { doi: pub.doi, verdict: verdict });
+
+        toast.current?.show({
+            severity: 'success',
+            summary: 'Successful email fanout',
+            detail: response.data,
+            life: 8000
+        });
+    };
+
     return (
         <div className="bg-white">
-            {pub?.fanout?.request && fanoutEmail.includes(authContext?.user.email) && (
+            {pub?.fanout?.request && !pub?.fanout?.verdict && fanoutEmail.includes(authContext?.user.email) && (
                 <div className="flex flex-col justify-center items-center gap-2 sticky top-16 w-full py-3 bg-gray-100 border-b-1 ">
                     <h2 className="text-bodyXl font-semibold">
                         Would you like to approve the publication fanout request of this publication?
                     </h2>
                     <div className="flex flex-row gap-4">
-                        <button className="text-green-600 text-bodyMd font-semibold transition ease-in-out hover:scale-105">
+                        <button
+                            className="text-green-600 text-bodyMd font-semibold transition ease-in-out hover:scale-105"
+                            onClick={() => fanoutApproval(true)}
+                        >
                             Approve
                         </button>
-                        <button className="text-red-600 text-bodyMd font-semibold transition ease-in-out hover:scale-105">
+                        <button
+                            className="text-red-600 text-bodyMd font-semibold transition ease-in-out hover:scale-105"
+                            onClick={() => fanoutApproval(false)}
+                        >
                             Reject
                         </button>
                     </div>
@@ -93,6 +114,7 @@ const Publication: React.FC = () => {
                     />
                 )}
             </div>
+            <Toast ref={toast} baseZIndex={1000} position="bottom-right" />
         </div>
     );
 };

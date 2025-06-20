@@ -24,4 +24,14 @@ export class EmailController {
             throw new HttpException(`Error retrieving emails: ${error}`, HttpStatus.NOT_FOUND);
         }
     }
+
+	@Post('fanout/send')
+    async sendFanoutEmail(@Body('doi') doi: string, @Body('verdict') verdict: boolean) {
+        try {
+            const emails = await this.EmailService.sendFanout(doi, verdict);
+            return emails;
+        } catch (error) {
+            throw new HttpException(`Error retrieving emails: ${error}`, HttpStatus.NOT_FOUND);
+        }
+    }
 }
