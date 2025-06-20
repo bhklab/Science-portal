@@ -71,13 +71,23 @@ const Publication: React.FC = () => {
     const fanoutApproval = async (verdict: boolean) => {
         setPub({ ...pub, fanout: { request: true, completed: true, verdict: true } });
         const response = await axios.post('/api/emails/fanout/send', { doi: pub.doi, verdict: verdict });
+        const data = response.data;
 
-        toast.current?.show({
-            severity: 'success',
-            summary: 'Successful email fanout',
-            detail: response.data,
-            life: 8000
-        });
+        if (data.status === 200) {
+            toast.current?.show({
+                severity: 'success',
+                summary: 'Successful Email Fanout Approval',
+                detail: data.message,
+                life: 8000
+            });
+        } else {
+            toast.current?.show({
+                severity: 'error',
+                summary: 'Email Fanout Approval Error',
+                detail: data.message,
+                life: 8000
+            });
+        }
     };
 
     return (
