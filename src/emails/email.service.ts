@@ -33,18 +33,18 @@ export class EmailService {
         }
     }
 
-	async sendFanout(doi: string, verdict: boolean) {
+	async sendFanout(pub: PublicationDocument, verdict: boolean) {
         try {
 			if (verdict) {
-				const response = axios.post('http://127.0.0.1:8000/email/fanout')
+				const response = axios.post('http://127.0.0.1:8000/email/fanout', pub)
 				try {
 					await this.publicationModel.updateOne(
-						{ doi: doi },
+						{ doi: pub.doi },
 						{ $set: { 
 							fanout: {
 								request: true,
 								completed: true,
-								veridct: true,
+								verdict: true,
 							}}
 						}
 					).exec();
@@ -55,12 +55,12 @@ export class EmailService {
 			} else {
 				try {
 					await this.publicationModel.updateOne(
-						{ doi: doi },
+						{ doi: pub.doi },
 						{ $set: { 
 							fanout: {
 								request: true,
 								completed: true,
-								veridct: false,
+								verdict: false,
 							}}
 						}
 					).exec();
@@ -75,6 +75,6 @@ export class EmailService {
 			return {status: 500, message: `Email fanout error: ${error}`};
         }
 
-		return {status: 200, message: "Email are currently being sent out, thank you!"}
+		return {status: 200, message: "Emails are currently being sent out, thank you!"}
     }
 }

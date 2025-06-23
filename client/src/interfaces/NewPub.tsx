@@ -54,7 +54,7 @@ export function createDefaultNewPub(): NewPub {
         fanout: {
             request: false,
             completed: false,
-            verdict: false
+            verdict: null
         },
         supplementary: {
             code: {},

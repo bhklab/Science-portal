@@ -16,7 +16,7 @@ interface PublicationModalProps {
 
 const Publication: React.FC = () => {
     const { doi } = useParams();
-    const [pub, setPub] = useState<Pub>(createDefaultPub());
+    const [pub, setPub] = useState<Pub>(null);
     const [editMode, setEditMode] = useState<boolean>(false);
     const [scientists, setScientists] = useState<Author[]>([]);
     const [fanoutEmail, setFanoutEmail] = useState<string>('');
@@ -32,6 +32,7 @@ const Publication: React.FC = () => {
                 try {
                     const encodedDoi = encodeURIComponent(doi);
                     const res = await axios.get(`/api/publications/${encodedDoi}`, { timeout: 10000 });
+                    console.log(res.data);
                     setPub(res.data);
                 } catch (error) {
                     console.log(error);
@@ -69,8 +70,11 @@ const Publication: React.FC = () => {
     }, []);
 
     const fanoutApproval = async (verdict: boolean) => {
-        setPub({ ...pub, fanout: { request: true, completed: true, verdict: true } });
-        const response = await axios.post('/api/emails/fanout/send', { doi: pub.doi, verdict: verdict });
+        //Ensure the publication isn't null before assignment
+        if (pub) {
+            setPub({ ...pub, fanout: { request: true, completed: true, verdict: true } });
+        }
+        const response = await axios.post('/api/emails/fanout/send', { pub: pub, verdict: verdict });
         const data = response.data;
 
         if (data.status === 200) {
@@ -92,10 +96,10 @@ const Publication: React.FC = () => {
 
     return (
         <div className="bg-white">
-            {pub?.fanout?.request && !pub?.fanout?.verdict && fanoutEmail.includes(authContext?.user.email) && (
+            {pub?.fanout?.request && !pub?.fanout?.completed && fanoutEmail.includes(authContext?.user.email) && (
                 <div className="flex flex-col justify-center items-center gap-2 sticky top-16 w-full py-3 bg-gray-100 border-b-1 ">
                     <h2 className="text-bodyXl font-semibold">
-                        Would you like to approve the publication fanout request of this publication?
+                        Would you like to approve the publication fanout request?
                     </h2>
                     <div className="flex flex-row gap-4">
                         <button

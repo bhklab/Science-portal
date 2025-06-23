@@ -1,5 +1,6 @@
 import { Controller, Get, Body, HttpException, HttpStatus, Param, Post } from '@nestjs/common';
 import { EmailService } from './email.service';
+import { PublicationDocument } from 'src/interfaces/publication.interface';
 
 @Controller('emails')
 export class EmailController {
@@ -26,9 +27,9 @@ export class EmailController {
     }
 
 	@Post('fanout/send')
-    async sendFanoutEmail(@Body('doi') doi: string, @Body('verdict') verdict: boolean) {
+    async sendFanoutEmail(@Body('pub') pub: PublicationDocument, @Body('verdict') verdict: boolean) {
         try {
-            const emails = await this.EmailService.sendFanout(doi, verdict);
+            const emails = await this.EmailService.sendFanout(pub, verdict);
             return emails;
         } catch (error) {
             throw new HttpException(`Error retrieving emails: ${error}`, HttpStatus.NOT_FOUND);

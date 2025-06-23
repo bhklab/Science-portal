@@ -4,7 +4,7 @@ export default interface Pub {
     };
     PMID: number;
     doi: string;
-    date: any;
+    date: string;
     name: string;
     journal: string;
     type: string;
@@ -57,7 +57,7 @@ export function createDefaultPub(): Pub {
         citations: 0,
         status: 'Published',
         publisher: '',
-        date: new Date(),
+        date: '',
         dateAdded: '',
         image: '',
         scraped: false,
