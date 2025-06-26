@@ -35,7 +35,6 @@ const SubmitPublication: React.FC = () => {
     const [otherLinks, setOtherLinks] = useState<NewPub['otherLinks']>([]);
 
     // Manage when to show 'Required Field' popup
-    const [clickedTitle, setClickedTitle] = useState<boolean>(false);
     const [clickedDoi, setClickedDoi] = useState<boolean>(false);
 
     // State for sending to director checkbox
@@ -193,9 +192,9 @@ const SubmitPublication: React.FC = () => {
                         <p className="text-bodySm">Notify director of new publication</p>
                     </div>
                     <button
-                        disabled={newPub.name && newPub.doi ? false : true}
+                        disabled={newPub.doi ? false : true}
                         className={`flex flex-row justify-center items-center px-5 py-2 ${
-                            newPub.name && newPub.doi ? 'bg-blue-1000' : 'bg-gray-400'
+                            newPub.doi ? 'bg-blue-1000' : 'bg-gray-400'
                         } text-white shadow-button rounded-md`}
                         onClick={submitPublication}
                     >
@@ -227,25 +226,6 @@ const SubmitPublication: React.FC = () => {
                         </div>
 
                         <div className="flex flex-col gap-4 w-full">
-                            {/* Title */}
-                            <div className="flex flex-col gap-1">
-                                <p className="text-bodyMd">
-                                    Publication Title <span className="text-red-600"> *</span>
-                                </p>
-                                <InputText
-                                    value={newPub.name}
-                                    className={`${newPub.name === '' && clickedTitle ? 'invalid-box' : ''} w-full`}
-                                    onChange={e => setNewPub({ ...newPub, name: e.target.value })}
-                                    onClick={() => setClickedTitle(true)}
-                                />
-                                {newPub.name === '' && clickedTitle && (
-                                    <div className="flex flex-row gap-1">
-                                        <img src="/images/assets/required-icon.svg" alt="" />
-                                        <p className="text-bodySm text-red-1000">Required Field</p>
-                                    </div>
-                                )}
-                            </div>
-
                             {/* DOI */}
                             <div className="flex flex-col gap-1">
                                 <p className="text-bodyMd">
@@ -263,6 +243,16 @@ const SubmitPublication: React.FC = () => {
                                         <p className="text-bodySm text-red-1000">Required Field</p>
                                     </div>
                                 )}
+                            </div>
+
+                            {/* Title */}
+                            <div className="flex flex-col gap-1">
+                                <p className="text-bodyMd">Publication Title</p>
+                                <InputText
+                                    value={newPub.name}
+                                    className="w-full"
+                                    onChange={e => setNewPub({ ...newPub, name: e.target.value })}
+                                />
                             </div>
 
                             {/* Journal */}
