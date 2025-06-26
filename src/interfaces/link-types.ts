@@ -34,11 +34,20 @@ export const supplementary = [
   
 	// -- trials
 	{ category: 'trials', subCategory: 'clinicalTrial', displayName: 'ClinicalTrials.gov', type: 'Trials' },
-  
+	{ category: 'trials', subCategory: 'euCTR', displayName: 'EU Clinical Trials Register', type: 'Trials' },
+	{ category: 'trials', subCategory: 'vivli', displayName: 'Vivli', type: 'Trials' },
+	{ category: 'trials', subCategory: 'yoda', displayName: 'The YODA Project', type: 'Trials' },
+	
+	// -- protocols
+	{ category: 'protocols', subCategory: 'protocolsIO', displayName: 'Protocols.io', type: 'Protocols' },
+	{ category: 'protocols', subCategory: 'bioProtocol', displayName: 'Bio-protocol', type: 'Protocols' },
+	{ category: 'protocols', subCategory: 'benchling', displayName: 'Benchling', type: 'Protocols' },
+	{ category: 'protocols', subCategory: 'labArchives', displayName: 'LabArchives', type: 'Protocols' },
+
 	// -- packages
-	// { category: 'packages', subCategory: 'bioconductor', displayName: 'Bioconductor', type: 'Packages' },
-	// { category: 'packages', subCategory: 'pypi', displayName: 'PyPI', type: 'Packages' },
-	// { category: 'packages', subCategory: 'CRAN', displayName: 'CRAN', type: 'Packages' },
+	{ category: 'packages', subCategory: 'bioconductor', displayName: 'Bioconductor', type: 'Packages' },
+	{ category: 'packages', subCategory: 'pypi', displayName: 'PyPI', type: 'Packages' },
+	{ category: 'packages', subCategory: 'CRAN', displayName: 'CRAN', type: 'Packages' },
   
 	// -- miscellaneous
 	// { category: 'miscellaneous', subCategory: 'IEEE', displayName: 'IEEE', type: 'Miscellaneous' },
