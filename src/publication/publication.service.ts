@@ -170,11 +170,11 @@ export class PublicationService {
 					await this.publicationModel.create(scrapedPublication);
 				} catch (error) {
 					console.log(error)
-					return  "Database upload error occured. Please try again later."
+					return  `Database upload error occured. Please try again later. ${error}`
 				}
 			} catch (error) {
 				console.log(error)
-				return "Scraping error occured. Please try again later."
+				return `Scraping error occured. Please try again later. ${error}`
 			}
 		} else { // When being sent to director, scrape publication's crossref and supplementary data, upload to publication database, then send email to director
 			try {
@@ -186,7 +186,7 @@ export class PublicationService {
 						await axios.post(`${process.env.SCRAPING_API}/email/director`, scrapedPublication)
 					} catch (error) {
 						console.log(error);
-						return  "Emailing director error. Please try again later."
+						return  `Emailing director error. Please try again later.${error}` 
 					}
 				}
 
@@ -196,14 +196,14 @@ export class PublicationService {
 					await this.publicationModel.create(scrapedPublication);
 				} catch (error) {
 					console.log(error)
-					return  "Database upload error occured. Please try again later"
+					return  `Database upload error occured. Please try again later ${error}`
 				}
 
 				return `${process.env.DOMAIN}/publication/${encodeURIComponent(newPub.doi)}`
 
 			} catch (error) {
 				console.log(error)
-				return "Scraping error occured. Please try again later."
+				return `Scraping error occured. Please try again later. ${error}`
 			}
 
 		}
