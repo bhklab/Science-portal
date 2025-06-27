@@ -21,8 +21,6 @@ export const ListView: React.FC<publications> = ({ pubs }) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [scientists, setScientists] = useState<Author[]>([]);
 
-    console.log(pubs);
-
     const openModal = (pub: Pub) => {
         setSelectedPub(pub);
         setIsModalVisible(true);

@@ -45,9 +45,9 @@ const SubmitPublication: React.FC = () => {
 
     const toast = useRef<Toast>(null);
 
-    useEffect(() => {
-        console.log(newPub);
-    }, [newPub]);
+    // useEffect(() => {
+    //     console.log(newPub);
+    // }, [newPub]);
 
     // For all subcategories that store an array of strings
     const addNewLink = (category: string) => {

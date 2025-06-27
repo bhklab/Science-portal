@@ -32,7 +32,6 @@ const Publication: React.FC = () => {
                 try {
                     const encodedDoi = encodeURIComponent(doi);
                     const res = await axios.get(`/api/publications/${encodedDoi}`, { timeout: 10000 });
-                    console.log(res.data);
                     setPub(res.data);
                 } catch (error) {
                     console.log(error);

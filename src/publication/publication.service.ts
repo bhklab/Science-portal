@@ -163,7 +163,7 @@ export class PublicationService {
 		// If not being sent to director, scrape crossref and supplementary data, place results object in preliminary database
 		if(!newPub.fanout.request){
 			try {
-				scrapedPublication = (await axios.post('http://127.0.0.1:8000/scrape/publication/one', newPub)).data
+				scrapedPublication = (await axios.post(`${process.env.SCRAPING_API}/scrape/publication/one`, newPub)).data
 				try {
 					await this.publicationsNewModel.create(scrapedPublication)
 					delete scrapedPublication.otherLinks;
@@ -178,12 +178,12 @@ export class PublicationService {
 			}
 		} else { // When being sent to director, scrape publication's crossref and supplementary data, upload to publication database, then send email to director
 			try {
-				scrapedPublication = (await axios.post('http://127.0.0.1:8000/scrape/publication/one', newPub)).data
+				scrapedPublication = (await axios.post(`${process.env.SCRAPING_API}/scrape/publication/one`, newPub)).data
 
 				// If publication scrape and upload is successful + the user requests sending to the director, email director about the new publication
 				if (scrapedPublication && newPub.fanout.request && !newPub.fanout.completed) {
 					try {
-						await axios.post('http://127.0.0.1:8000/email/director', scrapedPublication)
+						await axios.post(`${process.env.SCRAPING_API}/email/director`, scrapedPublication)
 					} catch (error) {
 						console.log(error);
 						return  "Emailing director error. Please try again later."

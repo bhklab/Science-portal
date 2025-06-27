@@ -36,7 +36,7 @@ export class EmailService {
 	async sendFanout(pub: PublicationDocument, verdict: boolean) {
         try {
 			if (verdict) {
-				const response = axios.post('http://127.0.0.1:8000/email/fanout', pub)
+				const response = axios.post(`${process.env.SCRAPING_API}/email/fanout`, pub)
 				try {
 					await this.publicationModel.updateOne(
 						{ doi: pub.doi },
