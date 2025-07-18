@@ -111,7 +111,7 @@ export class PublicationService {
             return publications;
 
         } catch (error) {
-            throw new Error(`Error fetching: ${error}`);
+            throw new Error(`selecting publication error ${error}`);
         }
     }
 
