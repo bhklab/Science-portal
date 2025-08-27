@@ -9,6 +9,7 @@ import Login from './pages/Login';
 import PrivateRoute from './PrivateRoute';
 import SubmitPublication from './pages/SubmitPublication';
 import Unsubscribe from 'pages/Unsubscribe';
+import Admin from 'pages/Admin';
 
 const ProjectRoutes = () => {
     return (
@@ -23,17 +24,25 @@ const ProjectRoutes = () => {
                 <Route
                     path="/profile"
                     element={
-                        // <PrivateRoute>
-                        <PiProfile />
-                        // </PrivateRoute>
+                        <PrivateRoute>
+                            <PiProfile />
+                        </PrivateRoute>
                     }
                 />
                 <Route
                     path="/submit-publication"
                     element={
-                        // <PrivateRoute>
-                        <SubmitPublication />
-                        // </PrivateRoute>
+                        <PrivateRoute>
+                            <SubmitPublication />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/admin"
+                    element={
+                        <PrivateRoute>
+                            <Admin />
+                        </PrivateRoute>
                     }
                 />
             </Routes>
