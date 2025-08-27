@@ -1,8 +1,7 @@
 import React, { useState, useContext } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { ProfileDropdown } from '../DropdownButtons/ProfileDropdown';
 import { AuthContext } from '../../hooks/AuthContext';
-import { Menu } from 'primereact/menu';
 
 export const Navbar: React.FC = () => {
     const location = useLocation();
@@ -55,6 +54,18 @@ export const Navbar: React.FC = () => {
                     >
                         About
                     </Link>
+                    {authContext?.user?.email === 'matthew.boccalon@uhn.ca' && (
+                        <Link
+                            to="/admin"
+                            className={`flex flex-col p-2.5 justify-center align-center text-center smd:text-bodyMd mmd:text-bodySm smd:p-1 ${
+                                location.pathname === '/admin'
+                                    ? 'font-bold border-b-2 border-black-900'
+                                    : 'text-gray-700 font-light'
+                            }`}
+                        >
+                            Admin
+                        </Link>
+                    )}
                 </div>
             </div>
 
