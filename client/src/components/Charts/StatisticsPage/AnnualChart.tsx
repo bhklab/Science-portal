@@ -152,13 +152,16 @@ const AnnualChart = forwardRef<AnnualChartRef, AnnualChartProps>(({ chartData, a
     }, [chartData]);
 
     useEffect(() => {
-        if (chartInstance.current) {
-            chartInstance.current.data.datasets.forEach((dataset: any) => {
-                dataset.hidden = !activeLegendItems.has(dataset.label);
-            });
-            chartInstance.current.update();
-        }
-    }, [activeLegendItems]);
+        if (!chartInstance.current || !chartData) return;
+
+        chartInstance.current.data.labels = chartData.labels;
+        chartInstance.current.data.datasets = chartData.datasets.map((ds: any) => ({
+            ...ds,
+            hidden: !activeLegendItems.has(ds.label)
+        }));
+
+        chartInstance.current.update();
+    }, [chartData, activeLegendItems]);
 
     useImperativeHandle(ref, () => ({
         downloadChartImage: (format: string) => {

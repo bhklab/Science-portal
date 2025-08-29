@@ -119,7 +119,7 @@ const Admin: React.FC = () => {
                 <div className="flex flex-row justify-between items-center">
                     <div className="flex flex-col gap-1 py-10 xs:max-w-[60%]">
                         <h1 className="text-heading2Xl sm:text-headingLg xs:text-headingMd font-semibold">
-                            Princess Margaret Cancer Centre Resource Statistics
+                            Insititution Wide Statistics
                         </h1>
                         <p className="text-bodySm sm:text-bodyXs text-gray-500">
                             Total publications that share resources
@@ -128,18 +128,14 @@ const Admin: React.FC = () => {
 
                     <div className="flex flex-row sm:flex-col xs:items-end gap-4">
                         <FilterDropdown
-                            // Legend props (unchanged)
                             legendItems={legendItems}
                             activeItems={activeLegendItems}
                             toggleLegendItem={toggleLegendItem}
                             chartType="legend"
-                            // Slider props (new)
                             minYear={minYear ?? undefined}
                             maxYear={maxYear ?? undefined}
                             yearRange={yearRange ?? undefined}
                             onYearRangeChange={setYearRange}
-                            // If you want to show the raw year labels anywhere in the UI:
-                            yearItems={yearItems}
                         />
                         <ExportDropdown onDownload={downloadChartImage} />
                     </div>
