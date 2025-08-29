@@ -44,6 +44,14 @@ div {
     min-height: 500px; /* or any desired height */
 }
 
+.p-slider-handle {
+	border: 1px solid gray;
+}
+
+.p-slider .p-slider-handle:focus {
+	box-shadow: 'none' !important;
+}
+
 @media (prefers-color-scheme: light) {
     :root {
         color: #213547;
