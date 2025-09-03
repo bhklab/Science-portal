@@ -109,7 +109,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({
                     ...backendPub,
                     supplementary: links,
                     otherLinks: otherLinks,
-                    dateAdded: new Date().toISOString(),
+                    dateAdded: new Date(),
                     originalId: pub._id,
                     submitterEmail: authContext?.user.email
                 });

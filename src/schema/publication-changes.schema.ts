@@ -9,7 +9,7 @@ export const PublicationChangesSchema = new Schema({
 	type: { type: String },
 	authors: { type: String },
 	filteredAuthors: { type: String },
-	affiliations: { type: String },
+	affiliations: { type: [String] },
 	citations: { type: Number },
 	dateAdded: { type: Date, default: Date.now },
 	publisher: { type: String },

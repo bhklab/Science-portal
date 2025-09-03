@@ -11,7 +11,7 @@ export const PublicationSchema = new Schema({
 	filteredAuthors: String,
 	affiliations: [String],
 	citations: Number,
-	dateAdded: String,
+	dateAdded: Date,
 	publisher: String,
 	status: String,
 	image: String,

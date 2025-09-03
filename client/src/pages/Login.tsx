@@ -3,6 +3,7 @@ import axios from 'axios';
 import { InputText } from 'primereact/inputtext';
 import { AuthContext } from '../hooks/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 
 const Login: React.FC = () => {
@@ -11,6 +12,7 @@ const Login: React.FC = () => {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const authContext = useContext(AuthContext);
     const navigate = useNavigate();
+    const location = useLocation();
 
     const login = async () => {
         try {
@@ -30,7 +32,8 @@ const Login: React.FC = () => {
                 // Remove error message
                 setErrorMessage(null);
 
-                navigate('/');
+                const redirectPath = location?.state?.from?.pathname || '/';
+                navigate(redirectPath, { replace: true });
             }
         } catch (error) {
             setErrorMessage('Login failed. Please check your credentials.');

@@ -6,6 +6,7 @@ import { PublicationChangesDocument } from '../interfaces/publication-changes.in
 import { PublicationDocumentNew } from 'src/interfaces/publication-new.interface';
 import axios from 'axios'
 import * as dotenv from 'dotenv';
+import { error } from 'console';
 
 dotenv.config();
 
@@ -149,6 +150,7 @@ export class PublicationService {
     async createPublication(newPub: PublicationDocumentNew): Promise<any> {
 
 		const publication = await this.publicationModel.findOne({ doi: newPub.doi }).exec();
+		console.log(publication)
 		if (publication) {
 			return "DOI exists in database already";
 		}
@@ -173,7 +175,7 @@ export class PublicationService {
 					return  `Database upload error occured. Please try again later. ${error}`
 				}
 			} catch (error) {
-				console.log(error)
+				console.dir(error, { depth: null, color: true })
 				return `Scraping error occured. Please try again later. ${error}`
 			}
 		} else { // When being sent to director, scrape publication's crossref and supplementary data, upload to publication database, then send email to director
@@ -185,7 +187,7 @@ export class PublicationService {
 					try {
 						await axios.post(`${process.env.SCRAPING_API}/email/director`, scrapedPublication)
 					} catch (error) {
-						console.log(error);
+						console.log(JSON.stringify(error));
 						return  `Emailing director error. Please try again later.${error}` 
 					}
 				}
@@ -202,7 +204,7 @@ export class PublicationService {
 				return `${process.env.DOMAIN}/publication/${encodeURIComponent(newPub.doi)}`
 
 			} catch (error) {
-				console.log(error)
+				console.dir(error, { depth: null, color: true })
 				return `Scraping error occured. Please try again later. ${error}`
 			}
 

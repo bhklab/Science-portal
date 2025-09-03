@@ -74,7 +74,11 @@ export const Navbar: React.FC = () => {
                 {authContext?.user ? (
                     <ProfileDropdown />
                 ) : (
-                    <Link to="/login" className="text-bodyMd text-gray-700 hover:text-black font-semibold">
+                    <Link
+                        to="/login"
+                        state={{ from: location }}
+                        className="text-bodyMd text-gray-700 hover:text-black font-semibold"
+                    >
                         Log in
                     </Link>
                 )}

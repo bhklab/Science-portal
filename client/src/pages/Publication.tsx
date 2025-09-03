@@ -95,7 +95,7 @@ const Publication: React.FC = () => {
 
     return (
         <div className="bg-white">
-            {pub?.fanout?.request && !pub?.fanout?.completed && fanoutEmail.includes(authContext?.user.email) && (
+            {pub?.fanout?.request && !pub?.fanout?.completed && fanoutEmail.includes(authContext?.user?.email) && (
                 <div className="flex flex-col justify-center items-center gap-2 sticky top-16 w-full py-3 bg-gray-100 border-b-1 ">
                     <h2 className="text-bodyXl font-semibold">
                         Would you like to approve the publication fanout request?

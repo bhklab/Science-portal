@@ -114,7 +114,7 @@ const SubmitPublication: React.FC = () => {
                 },
                 supplementary: updatedSupplementary,
                 otherLinks,
-                submitter: authContext?.user.email
+                submitter: authContext?.user?.email
             };
 
             const response = await axios.post('/api/publications/new', updatedPub);
