@@ -44,8 +44,6 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
         };
     }, [isOpen]);
 
-    const hasYearRange = typeof minYear === 'number' && typeof maxYear === 'number' && Array.isArray(yearRange);
-
     return (
         <div
             className="flex flex-row justify-center items-center text-center bg-white rounded-md p-2 w-[90px] border-1 border-gray-300 shadow-button"
@@ -89,10 +87,10 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
                                 </Menu.Item>
                             ))}
                             <div className="h-px bg-gray-200 my-3" />
-
-                            <h2 className="text-headingXs font-semibold text-gray-500 my-2">Years</h2>
                             {yearRange && (
                                 <>
+                                    <h2 className="text-headingXs font-semibold text-gray-500 my-2">Years</h2>
+
                                     <div className="flex items-center justify-between text-bodySm text-black-900 mb-2.5">
                                         <span>{yearRange![0]}</span>
                                         <span>{yearRange![1]}</span>

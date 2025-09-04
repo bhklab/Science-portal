@@ -14,9 +14,10 @@ const Admin: React.FC = () => {
     const [activeLegendItems, setActiveLegendItems] = useState(new Set<string>());
 
     // Years filter state variables
-    const [yearItems, setYearItems] = useState<(string | number)[]>([]);
-    const [minYear, setMinYear] = useState<number | null>(null);
-    const [maxYear, setMaxYear] = useState<number | null>(null);
+    const [minMaxYear, setMinMaxYear] = useState<{ minYear: number | null; maxYear: number | null }>({
+        minYear: null,
+        maxYear: null
+    });
     const [yearRange, setYearRange] = useState<[number, number] | null>(null);
 
     const chartRef = useRef<AnnualChartRef>(null);
@@ -51,7 +52,6 @@ const Admin: React.FC = () => {
 
                 // Years from x-axis labels
                 const years = (res.data.labels as (string | number)[]) || [];
-                setYearItems(years);
 
                 // Normalize numbers for slider logic
                 const numericYears = years
@@ -61,12 +61,16 @@ const Admin: React.FC = () => {
                 if (numericYears.length > 0) {
                     const yMin = Math.min(...numericYears);
                     const yMax = Math.max(...numericYears);
-                    setMinYear(yMin);
-                    setMaxYear(yMax);
+                    setMinMaxYear({
+                        minYear: yMin,
+                        maxYear: yMax
+                    });
                     setYearRange([yMin, yMax]);
                 } else {
-                    setMinYear(null);
-                    setMaxYear(null);
+                    setMinMaxYear({
+                        minYear: null,
+                        maxYear: null
+                    });
                     setYearRange(null);
                 }
             } catch (error) {
@@ -81,7 +85,7 @@ const Admin: React.FC = () => {
         if (!chartData) return null;
 
         // If no slider yet, show original
-        if (!yearRange || minYear === null || maxYear === null) {
+        if (!yearRange || minMaxYear.minYear === null || minMaxYear.maxYear === null) {
             const datasets = chartData.datasets.filter((ds: any) => activeLegendItems.has(ds.label));
             return { ...chartData, datasets };
         }
@@ -111,7 +115,7 @@ const Admin: React.FC = () => {
             labels: filteredLabels,
             datasets: filteredDatasets
         };
-    }, [chartData, activeLegendItems, yearRange, minYear, maxYear]);
+    }, [chartData, activeLegendItems, yearRange, minMaxYear]);
 
     return (
         <div className="py-20 px-32 md:px-6">
@@ -132,12 +136,12 @@ const Admin: React.FC = () => {
                             activeItems={activeLegendItems}
                             toggleLegendItem={toggleLegendItem}
                             chartType="legend"
-                            minYear={minYear ?? undefined}
-                            maxYear={maxYear ?? undefined}
+                            minYear={minMaxYear.minYear ?? undefined}
+                            maxYear={minMaxYear.maxYear ?? undefined}
                             yearRange={yearRange ?? undefined}
                             onYearRangeChange={setYearRange}
                         />
-                        <ExportDropdown onDownload={downloadChartImage} />
+                        <ExportDropdown onDownload={downloadChartImage} chartType="bar" />
                     </div>
                 </div>
                 {filteredChartData ? (
