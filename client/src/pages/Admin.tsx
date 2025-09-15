@@ -39,21 +39,127 @@ const Admin: React.FC = () => {
         }
     };
 
+    const buildCSVFromChartData = (data: any): string => {
+        if (!data || !Array.isArray(data.labels) || !Array.isArray(data.datasets)) return '';
+
+        const lines: string[] = [];
+        lines.push('year,category,value');
+
+        const labels = data.labels;
+        data.datasets.forEach((ds: any) => {
+            const cat = String(ds?.label ?? '');
+            const arr = Array.isArray(ds?.data) ? ds.data : [];
+            for (let i = 0; i < labels.length; i++) {
+                const yearRaw = labels[i];
+                const year = typeof yearRaw === 'string' ? yearRaw : String(yearRaw);
+                const val = Number(arr[i] ?? 0);
+                // escape category if needed
+                const catEsc = /[",\n]/.test(cat) ? `"${cat.replace(/"/g, '""')}"` : cat;
+                const yearEsc = /[",\n]/.test(year) ? `"${year.replace(/"/g, '""')}"` : year;
+                lines.push(`${yearEsc},${catEsc},${val}`);
+            }
+        });
+
+        return lines.join('\n');
+    };
+
+    const triggerCSVDownload = (csv: string, filename: string) => {
+        const BOM = '\uFEFF';
+        const blob = new Blob([BOM + csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    };
+
+    const downloadCSV = (scope: 'filtered' | 'full' = 'filtered') => {
+        const data = scope === 'filtered' ? filteredChartData : chartData;
+        if (!data) return;
+
+        const csv = buildCSVFromChartData(data);
+        const ts = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+        const fname =
+            scope === 'filtered' ? `supplementary_stats_filtered_${ts}.csv` : `supplementary_stats_full_${ts}.csv`;
+
+        triggerCSVDownload(csv, fname);
+    };
+
     useEffect(() => {
         const getChartData = async () => {
             try {
                 const res = await axios.post('/api/stats/supplementary', { email: authContext?.user?.email });
-                setChartData(res.data);
 
-                // Legend items from datasets
-                const labels = res.data.datasets.map((dataset: any) => dataset.label);
-                setLegendItems(labels);
-                setActiveLegendItems(new Set(labels)); // all active by default
+                // Labels to merge → Source Code
+                const MERGE_LABELS = ['code', 'containers', 'packages'];
+                const isMergeTarget = (lbl: unknown) =>
+                    MERGE_LABELS.includes(
+                        String(lbl ?? '')
+                            .trim()
+                            .toLowerCase()
+                    );
 
-                // Years from x-axis labels
-                const years = (res.data.labels as (string | number)[]) || [];
+                const input = res.data ?? { labels: [], datasets: [] };
+                const allDatasets = Array.isArray(input.datasets) ? input.datasets : [];
+                const xLabels = Array.isArray(input.labels) ? input.labels : [];
 
-                // Normalize numbers for slider logic
+                // Split datasets
+                const mergeParts = allDatasets.filter((d: any) => isMergeTarget(d?.label));
+                const keepParts = allDatasets.filter((d: any) => !isMergeTarget(d?.label));
+
+                let transformed = input;
+
+                if (mergeParts.length > 0) {
+                    // Element-wise sum across the data arrays
+                    const L = xLabels.length;
+                    const summed = new Array(L).fill(0);
+                    mergeParts.forEach((ds: any) => {
+                        const arr = Array.isArray(ds?.data) ? ds.data : [];
+                        for (let i = 0; i < L; i++) {
+                            const v = Number(arr[i] ?? 0);
+                            if (!Number.isNaN(v)) summed[i] += v;
+                        }
+                    });
+
+                    // Use first merged dataset as a visual base (optional)
+                    const base = mergeParts[0] || {};
+                    const sourceCodeDataset = {
+                        ...base,
+                        label: 'Source Code',
+                        data: summed
+                    };
+
+                    transformed = {
+                        ...input,
+                        datasets: [sourceCodeDataset, ...keepParts]
+                    };
+                } else {
+                    // If nothing to merge but you still want any stray labels normalized:
+                    transformed = {
+                        ...input,
+                        datasets: allDatasets.map((d: any) =>
+                            isMergeTarget(d?.label) ? { ...d, label: 'Source Code' } : d
+                        )
+                    };
+                }
+
+                // Save chart data
+                setChartData(transformed);
+                console.log('Transformed data:', transformed);
+
+                // Rebuild legend labels from transformed datasets (deduped)
+                const legend = Array.from(
+                    new Set((transformed.datasets || []).map((d: any) => String(d?.label ?? '')))
+                );
+                setLegendItems(legend);
+                setActiveLegendItems(new Set(legend)); // all active by default
+
+                // Years from x-axis labels (unchanged)
+                const years = (transformed.labels as (string | number)[]) || [];
                 const numericYears = years
                     .map(y => (typeof y === 'string' ? parseInt(y, 10) : y))
                     .filter(y => !Number.isNaN(y)) as number[];
@@ -61,22 +167,17 @@ const Admin: React.FC = () => {
                 if (numericYears.length > 0) {
                     const yMin = Math.min(...numericYears);
                     const yMax = Math.max(...numericYears);
-                    setMinMaxYear({
-                        minYear: yMin,
-                        maxYear: yMax
-                    });
+                    setMinMaxYear({ minYear: yMin, maxYear: yMax });
                     setYearRange([yMin, yMax]);
                 } else {
-                    setMinMaxYear({
-                        minYear: null,
-                        maxYear: null
-                    });
+                    setMinMaxYear({ minYear: null, maxYear: null });
                     setYearRange(null);
                 }
             } catch (error) {
                 console.error('Error fetching chart data:', error);
             }
         };
+
         getChartData();
     }, []);
 
@@ -141,6 +242,14 @@ const Admin: React.FC = () => {
                             yearRange={yearRange ?? undefined}
                             onYearRangeChange={setYearRange}
                         />
+                        <button
+                            type="button"
+                            onClick={() => downloadCSV('filtered')}
+                            className="flex flex-row gap-1 justify-center items-center text-center bg-blue-1000 rounded-md p-2 w-[120px] xs:w-[110px] text-headingXs xs:text-bodyXs font-semibold text-white "
+                        >
+                            <img src="/images/assets/download-icon.svg" alt="Download icon" />
+                            Export CSV
+                        </button>
                         <ExportDropdown onDownload={downloadChartImage} chartType="bar" />
                     </div>
                 </div>
