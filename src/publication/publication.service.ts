@@ -164,11 +164,10 @@ export class PublicationService {
 
 		const retry_max = 3;
 		let retry_count = 0;
-		let success = false;
 
 		// If not being sent to director, scrape crossref and supplementary data, place results object in preliminary database
 		if(!newPub.fanout.request){
-			while (!success && !(retry_count < retry_max)) {
+			while (retry_count < retry_max) {
 				try {
 					scrapedPublication = (await axios.post(`${process.env.SCRAPING_API}/scrape/publication/one`, newPub)).data
 					try {
@@ -179,6 +178,7 @@ export class PublicationService {
 						console.log(error)
 						return  `Database upload error occured. Please try again later. ${error}`
 					}
+					break
 				} catch (error) {
 					console.dir(error, { depth: null, color: true })
 					if (retry_count >= 2) return `Scraping error occured. Please try again later. ${error}`
@@ -187,7 +187,7 @@ export class PublicationService {
 			}
 
 		} else { // When being sent to director, scrape publication's crossref and supplementary data, upload to publication database, then send email to director
-			while (!success && !(retry_count < retry_max)) {
+			while (retry_count < retry_max) {
 				try {
 					scrapedPublication = (await axios.post(`${process.env.SCRAPING_API}/scrape/publication/one`, newPub)).data
 
@@ -208,6 +208,7 @@ export class PublicationService {
 						console.log(error)
 						return  `Database upload error occured. Please try again later ${error}`
 					}
+					break
 				} catch (error) {
 					console.dir(error, { depth: null, color: true })
 					if (retry_count >= 2) return `Scraping error occured. Please try again later. ${error}`
