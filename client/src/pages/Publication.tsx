@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import { Toast } from 'primereact/toast';
 import axios from 'axios';
 import Pub, { createDefaultPub } from '../interfaces/Pub';
@@ -24,6 +24,7 @@ const Publication: React.FC = () => {
     const toast = useRef<Toast>(null);
 
     const authContext = useContext(AuthContext);
+    const location = useLocation();
 
     useEffect(() => {
         //Fetch publication based on DOI in the URL
@@ -95,6 +96,16 @@ const Publication: React.FC = () => {
 
     return (
         <div className="bg-white">
+            {pub?.fanout?.request && !pub?.fanout?.completed && !authContext?.user && (
+                <div className="flex justify-center items-center gap-2 sticky top-16 w-full py-5 bg-gray-100 border-b-1 ">
+                    <h2 className="text-bodyXl font-semibold">
+                        To approve this publication as an admin, please login{' '}
+                        <Link to="/login" state={{ from: location }} className="text-blue-700 font-semibold">
+                            here
+                        </Link>
+                    </h2>
+                </div>
+            )}
             {pub?.fanout?.request && !pub?.fanout?.completed && fanoutEmail.includes(authContext?.user?.email) && (
                 <div className="flex flex-col justify-center items-center gap-2 sticky top-16 w-full py-3 bg-gray-100 border-b-1 ">
                     <h2 className="text-bodyXl font-semibold">

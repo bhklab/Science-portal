@@ -6,7 +6,6 @@ import { PublicationChangesDocument } from '../interfaces/publication-changes.in
 import { PublicationDocumentNew } from 'src/interfaces/publication-new.interface';
 import axios from 'axios'
 import * as dotenv from 'dotenv';
-import { error } from 'console';
 
 dotenv.config();
 
@@ -96,7 +95,7 @@ export class PublicationService {
             }
 
             if (search !== '') {
-            sortOption['score'] = { $meta: 'textScore' };
+            	sortOption['score'] = { $meta: 'textScore' };
             }
 
             // Query database
