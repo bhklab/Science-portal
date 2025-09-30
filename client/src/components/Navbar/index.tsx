@@ -1,7 +1,8 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ProfileDropdown } from '../DropdownButtons/ProfileDropdown';
 import { AuthContext } from '../../hooks/AuthContext';
+import axios from 'axios';
 
 export const Navbar: React.FC = () => {
     const location = useLocation();
@@ -9,6 +10,20 @@ export const Navbar: React.FC = () => {
 
     const [menuOpen, setMenuOpen] = useState(false);
     const toggleMenu = () => setMenuOpen(!menuOpen);
+    const [adminEmails, setAdminEmails] = useState<String[]>(['']);
+
+    useEffect(() => {
+        const fetchAdminEmails = async () => {
+            try {
+                const res = await axios.get('/api/user/emails/admin');
+                console.log(res);
+                setAdminEmails(res.data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchAdminEmails();
+    }, []);
 
     return (
         <div className="flex justify-between fixed top-0 z-20 w-full h-16 bg-white border-b-1 border-gray-200">
@@ -54,18 +69,21 @@ export const Navbar: React.FC = () => {
                     >
                         About
                     </Link>
-                    {authContext?.user?.email === 'matthew.boccalon@uhn.ca' && (
-                        <Link
-                            to="/admin"
-                            className={`flex flex-col p-2.5 justify-center align-center text-center smd:text-bodyMd mmd:text-bodySm smd:p-1 ${
-                                location.pathname === '/admin'
-                                    ? 'font-bold border-b-2 border-black-900'
-                                    : 'text-gray-700 font-light'
-                            }`}
-                        >
-                            Admin
-                        </Link>
-                    )}
+                    {adminEmails &&
+                        adminEmails.some(email =>
+                            email.toLowerCase().includes(authContext?.user?.email.toLowerCase())
+                        ) && (
+                            <Link
+                                to="/admin"
+                                className={`flex flex-col p-2.5 justify-center align-center text-center smd:text-bodyMd mmd:text-bodySm smd:p-1 ${
+                                    location.pathname === '/admin'
+                                        ? 'font-bold border-b-2 border-black-900'
+                                        : 'text-gray-700 font-light'
+                                }`}
+                            >
+                                Admin
+                            </Link>
+                        )}
                 </div>
             </div>
 
