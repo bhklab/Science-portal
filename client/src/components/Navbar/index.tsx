@@ -16,7 +16,6 @@ export const Navbar: React.FC = () => {
         const fetchAdminEmails = async () => {
             try {
                 const res = await axios.get('/api/user/emails/admin');
-                console.log(res);
                 setAdminEmails(res.data);
             } catch (error) {
                 console.log(error);
