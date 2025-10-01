@@ -10,9 +10,9 @@ export default interface Pub {
     type: string;
     authors: string;
     filteredAuthors: string;
-    affiliations: [string];
+    affiliations: string[];
     citations: number;
-    dateAdded: string;
+    dateAdded: Date;
     publisher: string;
     status: string;
     image: string;
@@ -58,7 +58,7 @@ export function createDefaultPub(): Pub {
         status: 'Published',
         publisher: '',
         date: '',
-        dateAdded: '',
+        dateAdded: new Date(),
         image: '',
         scraped: false,
         fanout: {

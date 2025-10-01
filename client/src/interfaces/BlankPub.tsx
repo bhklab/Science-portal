@@ -8,7 +8,7 @@ export default interface BlankPub {
     type: string;
     authors: string;
     filteredAuthors: string;
-    affiliations: string;
+    affiliations: string[];
     citations: number;
     status: string;
     publisher: string;

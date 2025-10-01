@@ -9,9 +9,9 @@ export interface PublicationChangesDocument extends Document {
 	type: string;
 	authors: string;
 	filteredAuthors: string;
-	affiliations: string;
+	affiliations: string[];
 	citations: number;
-	dateAdded: string;
+	dateAdded: Date;
 	publisher: string;
 	status: string;
 	image: string;

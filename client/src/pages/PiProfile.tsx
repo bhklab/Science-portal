@@ -1,15 +1,14 @@
-import React, { useEffect, useState, useContext, useRef } from 'react';
+import React, { useEffect, useState, useContext, useRef, useMemo } from 'react';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import axios from 'axios';
 import ExportDomButton from 'components/DropdownButtons/ExportDomButton';
 import { useNavigate } from 'react-router-dom';
 import { Toast } from 'primereact/toast';
-import { Checkbox } from 'primereact/checkbox';
 
 import { AuthContext } from '../hooks/AuthContext';
 import Author from '../interfaces/Author';
 
-import PersonalBarChart, { PersonalBarChartRef } from '../components/Charts/Profile/PersonalBarChart';
+import AnnualChart, { AnnualChartRef } from 'components/Charts/StatisticsPage/AnnualChart';
 import PersonalScatterPlot, { PersonalScatterPlotRef } from '../components/Charts/Profile/PersonalScatterPlot';
 import PersonalHistogram, { PersonalHistogramRef } from '../components/Charts/Profile/PersonalHistogram';
 import { ExportDropdown } from '../components/DropdownButtons/ExportDropdown';
@@ -67,14 +66,25 @@ const PiProfile: React.FC = () => {
     const [scatterPlotData, setScatterPlotData] = useState<any | null>(null);
     const [histogramData, setHistogramData] = useState<any | null>(null);
 
-    // Legend management for both charts
+    // Resource legend management for charts
     const [legendItems, setLegendItems] = useState<string[]>([]);
     const [barActiveLegendItems, setBarActiveLegendItems] = useState<Set<string>>(new Set());
-    const [scatterActiveLegendItems, setScatterActiveLegendItems] = useState<Set<string>>(new Set());
+    const [scatterActiveLegendItems, setScatterActiveLegendItems] = useState<Set<string>>(new Set(['code']));
     const [histogramActiveLegendItems, setHistogramActiveLegendItems] = useState<Set<string>>(new Set());
 
+    // Year legend management for charts
+    const [yearRange, setYearRange] = useState<[number, number] | null>(null);
+    const [barMinMaxYear, setBarMinMaxYear] = useState<{ minYear: number | null; maxYear: number | null }>({
+        minYear: null,
+        maxYear: null
+    });
+    const [scatterMinMaxYear, setScatterMinMaxYear] = useState<{ minYear: number | null; maxYear: number | null }>({
+        minYear: null,
+        maxYear: null
+    });
+
     // Chart references
-    const barChartRef = useRef<PersonalBarChartRef>(null);
+    const barChartRef = useRef<AnnualChartRef>(null);
     const scatterPlotRef = useRef<PersonalScatterPlotRef>(null);
     const histogramRef = useRef<PersonalHistogramRef>(null);
 
@@ -146,7 +156,6 @@ const PiProfile: React.FC = () => {
                     email: authContext?.user?.email
                 });
                 setBarChartData(barResponse.data);
-                const barLabels = barResponse.data.datasets.map((d: any) => d.label);
 
                 // Scatter chart data
                 const scatterResponse = await axios.get(`/api/stats/author/${scientistData.data.ENID}`);
@@ -174,6 +183,38 @@ const PiProfile: React.FC = () => {
                     setScatterActiveLegendItems(new Set(['Code']));
                     setHistogramActiveLegendItems(new Set(['Code']));
                 }
+
+                // Years from x-axis labels
+                const years = (barResponse.data.labels as (string | number)[]) || [];
+
+                // Normalize numbers for slider logic
+                const numericYears = years
+                    .map(y => (typeof y === 'string' ? parseInt(y, 10) : y))
+                    .filter(y => !Number.isNaN(y)) as number[];
+
+                if (numericYears.length > 0) {
+                    const yMin = Math.min(...numericYears);
+                    const yMax = Math.max(...numericYears);
+                    setBarMinMaxYear({
+                        minYear: yMin,
+                        maxYear: yMax
+                    });
+                    setScatterMinMaxYear({
+                        minYear: yMin,
+                        maxYear: yMax
+                    });
+                    setYearRange([yMin, yMax]);
+                } else {
+                    setBarMinMaxYear({
+                        minYear: null,
+                        maxYear: null
+                    });
+                    setScatterMinMaxYear({
+                        minYear: null,
+                        maxYear: null
+                    });
+                    setYearRange(null);
+                }
             } catch (err) {
                 console.error('Error fetching data for user profile:', err);
             }
@@ -183,6 +224,43 @@ const PiProfile: React.FC = () => {
             fetchPiData();
         }
     }, [authContext?.user]);
+
+    // Legend + optional year filter (use for BAR / HIST where labels are years)
+    function filterByLegendAndYear(
+        chartData: any | null,
+        activeLegendItems: Set<string>,
+        yearRange: [number, number] | null,
+        minMaxYear: { minYear: number | null; maxYear: number | null }
+    ) {
+        if (!chartData) return null;
+
+        // If no year filtering available, just legend-filter
+        if (!yearRange || minMaxYear.minYear == null || minMaxYear.maxYear == null) {
+            const datasets = (chartData.datasets || []).filter((ds: any) => activeLegendItems.has(ds.label));
+            return { ...chartData, datasets };
+        }
+
+        const [low, high] = yearRange;
+
+        const keepIdx: number[] = [];
+        (chartData.labels || []).forEach((lbl: string | number, i: number) => {
+            const yr = typeof lbl === 'string' ? parseInt(lbl, 10) : lbl;
+            if (typeof yr === 'number' && !Number.isNaN(yr) && yr >= low && yr <= high) {
+                keepIdx.push(i);
+            }
+        });
+
+        const filteredLabels = keepIdx.map(i => chartData.labels[i]);
+        const filteredDatasets = (chartData.datasets || [])
+            .filter((ds: any) => activeLegendItems.has(ds.label))
+            .map((ds: any) => ({ ...ds, data: keepIdx.map(i => ds.data[i]) }));
+
+        return { ...chartData, labels: filteredLabels, datasets: filteredDatasets };
+    }
+
+    const filteredBarChartData = useMemo(() => {
+        return filterByLegendAndYear(barChartData, barActiveLegendItems, yearRange, barMinMaxYear);
+    }, [barChartData, barActiveLegendItems, yearRange, barMinMaxYear]);
 
     // For the pyramid icons
     const getPyramidImage = (percentage: number) => {
@@ -529,6 +607,10 @@ const PiProfile: React.FC = () => {
                                         activeItems={barActiveLegendItems}
                                         toggleLegendItem={toggleLegendItem}
                                         chartType="bar"
+                                        minYear={barMinMaxYear.minYear ?? undefined}
+                                        maxYear={barMinMaxYear.maxYear ?? undefined}
+                                        yearRange={yearRange ?? undefined}
+                                        onYearRangeChange={setYearRange}
                                     />
                                     <ExportDropdown
                                         onDownload={format => downloadChartImage(format as 'png' | 'jpeg', 'bar')}
@@ -541,9 +623,9 @@ const PiProfile: React.FC = () => {
                                 className="chart-container relative w-full"
                                 style={{ height: '500px', paddingBottom: '20px' }}
                             >
-                                <PersonalBarChart
+                                <AnnualChart
                                     ref={barChartRef}
-                                    chartData={barChartData}
+                                    chartData={filteredBarChartData}
                                     activeLegendItems={barActiveLegendItems}
                                 />
                             </div>
@@ -568,6 +650,10 @@ const PiProfile: React.FC = () => {
                                         activeItems={scatterActiveLegendItems}
                                         toggleLegendItem={toggleLegendItem}
                                         chartType="scatter"
+                                        minYear={undefined}
+                                        maxYear={undefined}
+                                        yearRange={undefined}
+                                        onYearRangeChange={() => {}}
                                     />
                                     <ExportDropdown
                                         onDownload={format => downloadChartImage(format as 'png' | 'jpeg', 'scatter')}

@@ -10,6 +10,7 @@ import { EmailModule } from './emails/email.module';
 import { AuthModule } from './auth/auth.module';
 import { FeedbackModule } from './feedback/feedback.module';
 import { MailingModule } from './mailing/mailing.module';
+import { UserModule } from './users/user.module';
 
 @Module({
   	imports: [
@@ -20,7 +21,8 @@ import { MailingModule } from './mailing/mailing.module';
 		EmailModule,
 		AuthModule,
 		FeedbackModule,
-		MailingModule
+		MailingModule,
+		UserModule
   	],
   	controllers: [AppController],
   	providers: [AppService],

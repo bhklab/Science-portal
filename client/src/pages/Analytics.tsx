@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useContext } from 'react';
+import React, { useEffect, useState, useRef, useContext, useMemo } from 'react';
 import axios from 'axios';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { ExportDropdown } from '../components/DropdownButtons/ExportDropdown';
@@ -8,17 +8,28 @@ import { AuthContext } from 'hooks/AuthContext';
 
 const Analytics: React.FC = () => {
     const [chartData, setChartData] = useState<any | null>(null);
+
+    // Resource type filtering state variables
     const [legendItems, setLegendItems] = useState<string[]>([]);
     const [activeLegendItems, setActiveLegendItems] = useState(new Set<string>());
+
+    // Years filter state variables
+    const [minMaxYear, setMinMaxYear] = useState<{ minYear: number | null; maxYear: number | null }>({
+        minYear: null,
+        maxYear: null
+    });
+    const [yearRange, setYearRange] = useState<[number, number] | null>(null);
+
     const chartRef = useRef<AnnualChartRef>(null);
     const authContext = useContext(AuthContext);
 
-    const toggleLegendItem = (item: string) => {
+    // Keep name: toggleLegendItem (legend only)
+    const toggleLegendItem = (item: string, _chartType: string) => {
         setActiveLegendItems(prev => {
-            const newSet = new Set(prev);
-            if (newSet.has(item)) newSet.delete(item);
-            else newSet.add(item);
-            return newSet;
+            const next = new Set(prev);
+            if (next.has(item)) next.delete(item);
+            else next.add(item);
+            return next;
         });
     };
 
@@ -34,16 +45,77 @@ const Analytics: React.FC = () => {
                 const res = await axios.post('/api/stats/supplementary', { email: authContext?.user?.email });
                 setChartData(res.data);
 
-                // Extract legend items (dataset labels) dynamically
+                // Legend items from datasets
                 const labels = res.data.datasets.map((dataset: any) => dataset.label);
                 setLegendItems(labels);
-                setActiveLegendItems(new Set(labels)); // Initialize all items as active
+                setActiveLegendItems(new Set(labels)); // all active by default
+
+                // Years from x-axis labels
+                const years = (res.data.labels as (string | number)[]) || [];
+
+                // Normalize numbers for slider logic
+                const numericYears = years
+                    .map(y => (typeof y === 'string' ? parseInt(y, 10) : y))
+                    .filter(y => !Number.isNaN(y)) as number[];
+
+                if (numericYears.length > 0) {
+                    const yMin = Math.min(...numericYears);
+                    const yMax = Math.max(...numericYears);
+                    setMinMaxYear({
+                        minYear: yMin,
+                        maxYear: yMax
+                    });
+                    setYearRange([yMin, yMax]);
+                } else {
+                    setMinMaxYear({
+                        minYear: null,
+                        maxYear: null
+                    });
+                    setYearRange(null);
+                }
             } catch (error) {
                 console.error('Error fetching chart data:', error);
             }
         };
         getChartData();
     }, []);
+
+    // Filter data by legend + yearRange
+    const filteredChartData = useMemo(() => {
+        if (!chartData) return null;
+
+        // If no slider yet, show original
+        if (!yearRange || minMaxYear.minYear === null || minMaxYear.maxYear === null) {
+            const datasets = chartData.datasets.filter((ds: any) => activeLegendItems.has(ds.label));
+            return { ...chartData, datasets };
+        }
+
+        const [low, high] = yearRange;
+
+        // Determine which label indices to keep based on year range (inclusive)
+        const keepIdx: number[] = [];
+        chartData.labels.forEach((lbl: string | number, i: number) => {
+            const yr = typeof lbl === 'string' ? parseInt(lbl, 10) : lbl;
+            if (!Number.isNaN(yr) && typeof yr === 'number' && yr >= low && yr <= high) {
+                keepIdx.push(i);
+            }
+        });
+
+        const filteredLabels = keepIdx.map((i: number) => chartData.labels[i]);
+
+        const filteredDatasets = chartData.datasets
+            .filter((ds: any) => activeLegendItems.has(ds.label))
+            .map((ds: any) => ({
+                ...ds,
+                data: keepIdx.map((i: number) => ds.data[i])
+            }));
+
+        return {
+            ...chartData,
+            labels: filteredLabels,
+            datasets: filteredDatasets
+        };
+    }, [chartData, activeLegendItems, yearRange, minMaxYear]);
 
     return (
         <div className="py-20 px-32 md:px-6">
@@ -63,13 +135,22 @@ const Analytics: React.FC = () => {
                             legendItems={legendItems}
                             activeItems={activeLegendItems}
                             toggleLegendItem={toggleLegendItem}
+                            chartType="legend"
+                            minYear={minMaxYear.minYear ?? undefined}
+                            maxYear={minMaxYear.maxYear ?? undefined}
+                            yearRange={yearRange ?? undefined}
+                            onYearRangeChange={setYearRange}
                         />
-                        <ExportDropdown onDownload={downloadChartImage} />
+                        <ExportDropdown onDownload={downloadChartImage} chartType="bar" />
                     </div>
                 </div>
-                {chartData ? (
+                {filteredChartData ? (
                     <div className="chart-container relative w-full" style={{ height: '700px' }}>
-                        <AnnualChart ref={chartRef} chartData={chartData} activeLegendItems={activeLegendItems} />
+                        <AnnualChart
+                            ref={chartRef}
+                            chartData={filteredChartData}
+                            activeLegendItems={activeLegendItems}
+                        />
                     </div>
                 ) : (
                     <div className="flex justify-content-center items-center">

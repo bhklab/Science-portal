@@ -95,7 +95,7 @@ export class PublicationService {
             }
 
             if (search !== '') {
-            sortOption['score'] = { $meta: 'textScore' };
+            	sortOption['score'] = { $meta: 'textScore' };
             }
 
             // Query database
@@ -149,6 +149,7 @@ export class PublicationService {
     async createPublication(newPub: PublicationDocumentNew): Promise<any> {
 
 		const publication = await this.publicationModel.findOne({ doi: newPub.doi }).exec();
+		console.log(publication)
 		if (publication) {
 			return "DOI exists in database already";
 		}
@@ -160,52 +161,59 @@ export class PublicationService {
 		newPub.date = newPub.date.toString().substring(0, 10);
 		let scrapedPublication = null;
 
+		const retry_max = 3;
+		let retry_count = 0;
+
 		// If not being sent to director, scrape crossref and supplementary data, place results object in preliminary database
 		if(!newPub.fanout.request){
-			try {
-				scrapedPublication = (await axios.post(`${process.env.SCRAPING_API}/scrape/publication/one`, newPub)).data
+			while (retry_count < retry_max) {
 				try {
-					await this.publicationsNewModel.create(scrapedPublication)
-					delete scrapedPublication.otherLinks;
-					await this.publicationModel.create(scrapedPublication);
-				} catch (error) {
-					console.log(error)
-					return  `Database upload error occured. Please try again later. ${error}`
-				}
-			} catch (error) {
-				console.log(error)
-				return `Scraping error occured. Please try again later. ${error}`
-			}
-		} else { // When being sent to director, scrape publication's crossref and supplementary data, upload to publication database, then send email to director
-			try {
-				scrapedPublication = (await axios.post(`${process.env.SCRAPING_API}/scrape/publication/one`, newPub)).data
-
-				// If publication scrape and upload is successful + the user requests sending to the director, email director about the new publication
-				if (scrapedPublication && newPub.fanout.request && !newPub.fanout.completed) {
+					scrapedPublication = (await axios.post(`${process.env.SCRAPING_API}/scrape/publication/one`, newPub)).data
 					try {
-						await axios.post(`${process.env.SCRAPING_API}/email/director`, scrapedPublication)
+						await this.publicationsNewModel.create(scrapedPublication)
+						delete scrapedPublication.otherLinks;
+						await this.publicationModel.create(scrapedPublication);
 					} catch (error) {
-						console.log(error);
-						return  `Emailing director error. Please try again later.${error}` 
+						console.log(error)
+						return  `Database upload error occured. Please try again later. ${error}`
 					}
-				}
-
-				try {
-					await this.publicationsNewModel.create(scrapedPublication)
-					delete scrapedPublication.otherLinks;
-					await this.publicationModel.create(scrapedPublication);
+					break
 				} catch (error) {
-					console.log(error)
-					return  `Database upload error occured. Please try again later ${error}`
+					console.dir(error, { depth: null, color: true })
+					if (retry_count >= 2) return `Scraping error occured. Please try again later. ${error}`
 				}
-
-				return `${process.env.DOMAIN}/publication/${encodeURIComponent(newPub.doi)}`
-
-			} catch (error) {
-				console.log(error)
-				return `Scraping error occured. Please try again later. ${error}`
+				retry_count += 1
 			}
 
+		} else { // When being sent to director, scrape publication's crossref and supplementary data, upload to publication database, then send email to director
+			while (retry_count < retry_max) {
+				try {
+					scrapedPublication = (await axios.post(`${process.env.SCRAPING_API}/scrape/publication/one`, newPub)).data
+
+					// If publication scrape and upload is successful + the user requests sending to the director, email director about the new publication
+					if (scrapedPublication && newPub.fanout.request && !newPub.fanout.completed) {
+						try {
+							await axios.post(`${process.env.SCRAPING_API}/email/director`, scrapedPublication)
+						} catch (error) {
+							console.log(JSON.stringify(error));
+							return  `Emailing director error. Please try again later.${error}` 
+						}
+					}
+					try {
+						await this.publicationsNewModel.create(scrapedPublication)
+						delete scrapedPublication.otherLinks;
+						await this.publicationModel.create(scrapedPublication);
+					} catch (error) {
+						console.log(error)
+						return  `Database upload error occured. Please try again later ${error}`
+					}
+					break
+				} catch (error) {
+					console.dir(error, { depth: null, color: true })
+					if (retry_count >= 2) return `Scraping error occured. Please try again later. ${error}`
+				}
+				retry_count += 1
+			}
 		}
 		return `${process.env.DOMAIN}/publication/${encodeURIComponent(newPub.doi)}`
 

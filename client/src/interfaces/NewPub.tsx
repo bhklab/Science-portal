@@ -10,7 +10,7 @@ export interface NewPub {
     status: string;
     publisher: string;
     date: any;
-    dateAdded: string;
+    dateAdded: Date;
     scraped: boolean;
     fanout: {
         request: boolean;
@@ -49,7 +49,7 @@ export function createDefaultNewPub(): NewPub {
         status: 'Published',
         publisher: '',
         date: new Date(),
-        dateAdded: '',
+        dateAdded: new Date(),
         scraped: false,
         fanout: {
             request: false,
