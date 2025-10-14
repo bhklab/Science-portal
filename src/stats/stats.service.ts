@@ -6,6 +6,7 @@ import { StatsDocument } from '../interfaces/stats.interface';
 import { AuthorDocument } from '../interfaces/author.interface';
 import { PublicationDocument } from '../interfaces/publication.interface';
 import { supplementary } from '../interfaces/link-types';
+import { AuthorSupplementaryLinks } from 'src/interfaces/author-supplementary-list.interface';
 
 @Injectable()
 export class StatsService {
@@ -389,8 +390,8 @@ export class StatsService {
 			const publicationsByAuthor = allAuthors.reduce((acc, author) => {
 					const authorNamePattern = new RegExp(`${author.lastName}, ${author.firstName}`, 'i');
 					acc[author.ENID] = allPublications.filter((pub) =>
-					pub.authors.match(authorNamePattern),
-				);
+						pub.authors.match(authorNamePattern),
+					);
 				return acc;
 			}, {} as Record<number, any[]>);
 		
@@ -520,6 +521,49 @@ export class StatsService {
 		}
 	}
 	async getLinkStats(enid: string | number) {
+
+		try {
+			const enidNumber = Number(enid);
+			const scientist = await this.authorModel.findOne({ENID: enidNumber});
+			if (!scientist) throw new Error('Author not found');
+
+			const scientistName = `${scientist.lastName}, ${scientist.firstName}`
+
+			const pubs = await this.publicationModel.find({
+				authors: { $regex: scientistName, $options: "i" }
+			})
+			
+			let resourceExportData: AuthorSupplementaryLinks[] = [];
+
+			for (const pub of pubs) {
+				const supp = pub.supplementary || {};
+
+				// Loop over top-level resource categories: code, data, containers, etc.
+				for (const [resourceType, resources] of Object.entries(supp)) {
+
+					// Loop over specific resource types within that category: github, geo, dbgap, etc.
+					for (const [resource, links] of Object.entries(resources)) {
+						if (!Array.isArray(links)) continue;
+
+						for (const link of links) {
+							resourceExportData.push({
+								resourceType,
+								resource,
+								link,
+								name: pub.name,
+								doi: pub.doi,
+								author: scientistName
+							});
+						}
+					}
+				}
+			}
+
+			return resourceExportData
+
+		} catch (error) {
+			
+		}
 
 	}
 }

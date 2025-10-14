@@ -1,6 +1,8 @@
 export interface AuthorSupplementaryLinks {
+	resourceType: string;
+	resource: string;
+    link: string;
 	name: string;
 	doi: string;
-	resourceType: string
 	author: string;
 }
