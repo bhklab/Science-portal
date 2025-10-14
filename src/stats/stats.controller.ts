@@ -73,4 +73,14 @@ export class StatsController {
 			throw new HttpException( `Failed to get author histogram data: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+
+	// Using enid find all of the different supplementary resources attributed to a scientist
+	@Get('author/links/:enid')
+		async getLinkStats(@Param('enid') enid: string) {
+		try {
+			return await this.statsService.getLinkStats(enid);
+		} catch (error) {
+			throw new HttpException( `Failed to get author histogram data: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 }

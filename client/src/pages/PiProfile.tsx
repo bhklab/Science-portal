@@ -7,6 +7,7 @@ import { Toast } from 'primereact/toast';
 
 import { AuthContext } from '../hooks/AuthContext';
 import Author from '../interfaces/Author';
+import AuthorSupplementaryLinks from 'interfaces/AuthorSupplementaryLinks';
 
 import AnnualChart, { AnnualChartRef } from 'components/Charts/StatisticsPage/AnnualChart';
 import PersonalScatterPlot, { PersonalScatterPlotRef } from '../components/Charts/Profile/PersonalScatterPlot';
@@ -118,11 +119,14 @@ const PiProfile: React.FC = () => {
     // Decoded JWT token of user (aka. signed in user's data)
     const authContext = useContext(AuthContext);
 
-    //
+    // Reference for top statistics export
     const exportRef = useRef<HTMLDivElement>(null);
 
     // Used to navigate to a new page
     const navigate = useNavigate();
+
+    // Author link stats for csv exports
+    const [authorLinks, setAuthorLinks] = useState<AuthorSupplementaryLinks[]>([]);
 
     // Toggling the legend items for bar or scatter chart
     const toggleLegendItem = (item: string, chartType: string) => {
