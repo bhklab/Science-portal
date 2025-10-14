@@ -552,7 +552,8 @@ export class StatsService {
 								link,
 								name: pub.name,
 								doi: pub.doi,
-								author: scientistName
+								author: scientistName,
+								date: pub.date
 							});
 						}
 					}

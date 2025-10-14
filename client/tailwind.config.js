@@ -60,7 +60,8 @@ module.exports = {
                 base_node_icon: '#5971CB',
                 pipeline_diagram_view_button: '#2463BC',
                 icon_button_hover: '#F5F4F6',
-                sp_green: '#19615B'
+                sp_dark_green: '#19615B',
+                sp_light_green: '#24AEA3'
             },
             fontFamily: { inter: 'Inter' },
             fontSize: {

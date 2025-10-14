@@ -5,4 +5,5 @@ export interface AuthorSupplementaryLinks {
 	name: string;
 	doi: string;
 	author: string;
+	date: string;
 }

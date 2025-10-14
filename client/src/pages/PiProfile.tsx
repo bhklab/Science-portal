@@ -394,7 +394,7 @@ const PiProfile: React.FC = () => {
                                 Submit a publication
                             </button>
                             <div className="flex flex-row justify-center items-center">
-                                <button className="text-blue-1100 text-sm" onClick={() => setIsVisible(true)}>
+                                <button className="text-sp_dark_green text-sm" onClick={() => setIsVisible(true)}>
                                     Send Feedback
                                 </button>
                                 <FeedbackModal
@@ -433,7 +433,7 @@ const PiProfile: React.FC = () => {
     return (
         <div className="flex flex-col items-center py-36 smd:px-4 px-10 min-h-screen bg-white">
             <div className="flex flex-row smd:flex-col smd:items-center gap-5 justify-center mx-auto">
-                <div className="flex flex-col max-w-[285px] gap-10 sticky smd:static top-36 h-fit smd:mb-10">
+                <div className="flex flex-col max-w-[285px] gap-8 sticky smd:static top-36 h-fit smd:mb-10">
                     <div className="flex flex-col gap-5 smd:justify-center smd:items-center ">
                         <div className="flex flex-col gap-2">
                             <div className="h-[140px] w-[140px] rounded-[120px] overflow-clip">
@@ -456,6 +456,10 @@ const PiProfile: React.FC = () => {
                                 <p className="text-bodyMd">{authContext?.user.email}</p>
                             </div>
                         </div>
+                        <button className="flex flex-row gap-2 justify-center border-1 border-sp_light_green text-bodyMd py-1.5">
+                            <img src="/images/assets/download-icon-black.svg" alt="Download icon" />
+                            Export My Resources
+                        </button>
                     </div>
                     <hr className="bg-gray-200 h-[1px]" />
 
@@ -469,6 +473,19 @@ const PiProfile: React.FC = () => {
                             <p className="text-bodyMd">Citations</p>
                         </div>
                     </div>
+                    <div className="flex flex-col gap-5 smd:items-center">
+                        <div className="flex flex-row justify-center items-center gap-2">
+                            <input
+                                type="checkbox"
+                                checked={mailOptIn}
+                                onChange={() => mailingOpt()}
+                                className="mr-2 rounded-sm"
+                            />
+                            <p className="text-bodySm">Sign up for the newsletter and publication highlights</p>
+                        </div>
+                    </div>
+
+                    <hr className="bg-gray-200 h-[1px]" />
 
                     <div className="flex flex-col gap-5 smd:items-center">
                         <button
@@ -478,7 +495,10 @@ const PiProfile: React.FC = () => {
                             Submit a publication
                         </button>
                         <div className="flex flex-row justify-center items-center">
-                            <button className="text-blue-1100 text-sm" onClick={() => setIsVisible(true)}>
+                            <button
+                                className="text-sp_dark_green text-sm hover:text-sp_light_green hover:scale-110 transition ease-in-out delay-100"
+                                onClick={() => setIsVisible(true)}
+                            >
                                 Send Feedback
                             </button>
                             <FeedbackModal
@@ -486,17 +506,6 @@ const PiProfile: React.FC = () => {
                                 setIsVisible={setIsVisible}
                                 submitFeedback={submitFeedback}
                             />
-                        </div>
-                        <div className="flex flex-row justify-center items-center gap-2">
-                            <input
-                                type="checkbox"
-                                checked={mailOptIn}
-                                onChange={() => mailingOpt()}
-                                className="mr-2 rounded-sm"
-                            />
-                            <p className="text-bodySm">
-                                Sign up for our monthly email newsletter and publication highlights
-                            </p>
                         </div>
                     </div>
                 </div>
@@ -521,7 +530,7 @@ const PiProfile: React.FC = () => {
                                 <div
                                     onClick={() => setToggleDetailed(prev => !prev)}
                                     className={`relative inline-flex h-6 w-12 cursor-pointer rounded-full p-0.5 transition-colors duration-200 ease-in-out ${
-                                        toggleDetailed ? 'bg-blue-500' : 'bg-gray-300'
+                                        toggleDetailed ? 'bg-sp_light_green' : 'bg-gray-300'
                                     }`}
                                 >
                                     <span
