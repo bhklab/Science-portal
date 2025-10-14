@@ -51,7 +51,28 @@ const sections = [
         sentence: 'result',
         statIndex: 'Results',
         image: 'results-icon.svg'
+    },
+    {
+        name: 'Protocols',
+        description: 'protocols',
+        sentence: 'protocol',
+        statIndex: 'Protocols',
+        image: 'protocols-icon.svg'
+    },
+    {
+        name: 'Packages',
+        description: 'packages',
+        sentence: 'package',
+        statIndex: 'Packages',
+        image: 'packages-icon.svg'
     }
+    // {
+    //     name: 'Cell Lines',
+    //     description: 'cell lines',
+    //     sentence: 'cell line',
+    //     statIndex: 'Cell',
+    //     image: 'cell-lines-icon.svg'
+    // }
 ];
 
 const PiProfile: React.FC = () => {
@@ -91,7 +112,7 @@ const PiProfile: React.FC = () => {
     // Feedback modal state
     const [isVisible, setIsVisible] = useState<boolean>(false);
     // Toggle for detailed stats sections
-    const [toggleDetailed, setToggleDetailed] = useState<boolean>(false);
+    const [toggleDetailed, setToggleDetailed] = useState<boolean>(true);
     const toast = useRef<Toast>(null);
 
     // Decoded JWT token of user (aka. signed in user's data)
