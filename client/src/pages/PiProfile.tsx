@@ -7,6 +7,7 @@ import { Toast } from 'primereact/toast';
 
 import { AuthContext } from '../hooks/AuthContext';
 import Author from '../interfaces/Author';
+import AuthorSupplementaryLinks from 'interfaces/AuthorSupplementaryLinks';
 
 import AnnualChart, { AnnualChartRef } from 'components/Charts/StatisticsPage/AnnualChart';
 import PersonalScatterPlot, { PersonalScatterPlotRef } from '../components/Charts/Profile/PersonalScatterPlot';
@@ -14,6 +15,7 @@ import PersonalHistogram, { PersonalHistogramRef } from '../components/Charts/Pr
 import { ExportDropdown } from '../components/DropdownButtons/ExportDropdown';
 import { FilterDropdown } from '../components/DropdownButtons/FilterDropdown';
 import FeedbackModal from '../components/FeedbackModal/FeedbackModal';
+import ProfileResourcesExport from 'components/Buttons/ExportScientistResources';
 
 // Example resource sections used for stats
 const sections = [
@@ -118,11 +120,14 @@ const PiProfile: React.FC = () => {
     // Decoded JWT token of user (aka. signed in user's data)
     const authContext = useContext(AuthContext);
 
-    //
+    // Reference for top statistics export
     const exportRef = useRef<HTMLDivElement>(null);
 
     // Used to navigate to a new page
     const navigate = useNavigate();
+
+    // Author link stats for csv exports
+    const [authorLinks, setAuthorLinks] = useState<AuthorSupplementaryLinks[]>([]);
 
     // Toggling the legend items for bar or scatter chart
     const toggleLegendItem = (item: string, chartType: string) => {
@@ -390,7 +395,7 @@ const PiProfile: React.FC = () => {
                                 Submit a publication
                             </button>
                             <div className="flex flex-row justify-center items-center">
-                                <button className="text-blue-1100 text-sm" onClick={() => setIsVisible(true)}>
+                                <button className="text-sp_dark_green text-sm" onClick={() => setIsVisible(true)}>
                                     Send Feedback
                                 </button>
                                 <FeedbackModal
@@ -429,8 +434,8 @@ const PiProfile: React.FC = () => {
     return (
         <div className="flex flex-col items-center py-36 smd:px-4 px-10 min-h-screen bg-white">
             <div className="flex flex-row smd:flex-col smd:items-center gap-5 justify-center mx-auto">
-                <div className="flex flex-col max-w-[285px] gap-10 sticky smd:static top-36 h-fit smd:mb-10">
-                    <div className="flex flex-col gap-5 smd:justify-center smd:items-center ">
+                <div className="flex flex-col max-w-[285px] gap-8 sticky smd:static top-36 h-fit smd:mb-10">
+                    <div className="flex flex-col gap-4 smd:justify-center smd:items-center ">
                         <div className="flex flex-col gap-2">
                             <div className="h-[140px] w-[140px] rounded-[120px] overflow-clip">
                                 <img src="/images/assets/default-user-icon.svg" alt="PI" />
@@ -452,10 +457,12 @@ const PiProfile: React.FC = () => {
                                 <p className="text-bodyMd">{authContext?.user.email}</p>
                             </div>
                         </div>
+                        <ProfileResourcesExport enid={enid} />
                     </div>
+
                     <hr className="bg-gray-200 h-[1px]" />
 
-                    <div className="flex flex-row gap-5 text-black-900 smd:justify-center ">
+                    <div className="flex flex-row gap-3 text-black-900 smd:justify-center ">
                         <div className="flex flex-col gap-2">
                             <h3 className="text-heading3Xl font-semibold">{totalPublications}</h3>
                             <p className="text-bodyMd">Publications</p>
@@ -467,22 +474,6 @@ const PiProfile: React.FC = () => {
                     </div>
 
                     <div className="flex flex-col gap-5 smd:items-center">
-                        <button
-                            className="w-full border-1 border-open_border shadow-button rounded-[4px] p-2 text-headingSm text-black-900 font-semibold max-w-72"
-                            onClick={() => navigate('/submit-publication')}
-                        >
-                            Submit a publication
-                        </button>
-                        <div className="flex flex-row justify-center items-center">
-                            <button className="text-blue-1100 text-sm" onClick={() => setIsVisible(true)}>
-                                Send Feedback
-                            </button>
-                            <FeedbackModal
-                                isVisible={isVisible}
-                                setIsVisible={setIsVisible}
-                                submitFeedback={submitFeedback}
-                            />
-                        </div>
                         <div className="flex flex-row justify-center items-center gap-2">
                             <input
                                 type="checkbox"
@@ -490,9 +481,31 @@ const PiProfile: React.FC = () => {
                                 onChange={() => mailingOpt()}
                                 className="mr-2 rounded-sm"
                             />
-                            <p className="text-bodySm">
-                                Sign up for our monthly email newsletter and publication highlights
-                            </p>
+                            <p className="text-bodySm">Sign up for the newsletter and publication highlights</p>
+                        </div>
+                    </div>
+
+                    <hr className="bg-gray-200 h-[1px]" />
+
+                    <div className="flex flex-col gap-3 smd:items-center">
+                        <button
+                            className="w-full border-1 border-open_border shadow-button rounded-[4px] p-2 text-headingSm text-black-900 font-semibold max-w-72"
+                            onClick={() => navigate('/submit-publication')}
+                        >
+                            Submit a publication
+                        </button>
+                        <div className="flex flex-row justify-center items-center">
+                            <button
+                                className="text-sp_light_green text-sm hover:text-sp_dark_green transition ease-in-out delay-100"
+                                onClick={() => setIsVisible(true)}
+                            >
+                                Send Feedback
+                            </button>
+                            <FeedbackModal
+                                isVisible={isVisible}
+                                setIsVisible={setIsVisible}
+                                submitFeedback={submitFeedback}
+                            />
                         </div>
                     </div>
                 </div>
@@ -517,7 +530,9 @@ const PiProfile: React.FC = () => {
                                 <div
                                     onClick={() => setToggleDetailed(prev => !prev)}
                                     className={`relative inline-flex h-6 w-12 cursor-pointer rounded-full p-0.5 transition-colors duration-200 ease-in-out ${
-                                        toggleDetailed ? 'bg-blue-500' : 'bg-gray-300'
+                                        toggleDetailed
+                                            ? 'bg-sp_light_green hover:bg-sp_dark_green'
+                                            : 'bg-gray-300 hover:bg-gray-400'
                                     }`}
                                 >
                                     <span

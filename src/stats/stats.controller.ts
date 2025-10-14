@@ -66,9 +66,28 @@ export class StatsController {
 
 	// Using an authors employee Id find stats histogram on profile page
 	@Get('author/:enid/histogram')
-		async getAuthorHistogram(@Param('enid') enid: string) {
+	async getAuthorHistogram(@Param('enid') enid: string) {
 		try {
 			return await this.statsService.findPublicationHistogramData(enid);
+		} catch (error) {
+			throw new HttpException( `Failed to get author histogram data: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	// Using enid find all of the different supplementary resources attributed to a scientist
+	@Get('author/links/:enid')
+	async getLinkStats(@Param('enid') enid: string) {	
+		try {
+			await this.loggingService.logAction(
+				`Profile page export`, 
+				enid ? enid : 'Not signed in',
+				{}
+			);
+		} catch (error) {
+			console.log(error)
+		}	
+		try {
+			return await this.statsService.getLinkStats(enid);
 		} catch (error) {
 			throw new HttpException( `Failed to get author histogram data: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
 		}

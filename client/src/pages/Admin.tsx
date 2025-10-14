@@ -245,7 +245,7 @@ const Admin: React.FC = () => {
                         <button
                             type="button"
                             onClick={() => downloadCSV('filtered')}
-                            className="flex flex-row gap-1 justify-center items-center text-center bg-blue-1000 rounded-md p-2 w-[120px] xs:w-[110px] text-headingXs xs:text-bodyXs font-semibold text-white "
+                            className="flex flex-row gap-1 justify-center items-center text-center bg-sp_dark_green rounded-md p-2 w-[120px] xs:w-[110px] text-headingXs xs:text-bodyXs font-semibold text-white "
                         >
                             <img src="/images/assets/download-icon.svg" alt="Download icon" />
                             Export CSV

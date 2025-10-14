@@ -8,7 +8,7 @@ interface DropdownButtonProps {
 
 export const ExportDropdown: React.FC<DropdownButtonProps> = ({ onDownload, chartType }) => {
     return (
-        <div className="flex flex-row justify-center items-center text-center bg-blue-1000 rounded-md p-2 w-[120px] xs:w-[110px] ">
+        <div className="flex flex-row justify-center items-center text-center bg-sp_dark_green rounded-md p-2 w-[120px] xs:w-[110px] ">
             <Menu as="div" className="relative inline-block text-left">
                 <div>
                     <Menu.Button className="flex flex-row justify-center items-center text-center gap-1 w-full bg-black/20 text-headingXs xs:text-bodyXs font-semibold text-white">
