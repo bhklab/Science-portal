@@ -16,6 +16,16 @@ export class StatsService {
     @InjectModel('Publication') private publicationModel: Model<PublicationDocument>,
   ) {}
 
+  	colours = [
+		{ barColour: 'rgba(127, 97, 219, 1)', borderColour: 'rgba(127, 97, 219, 1)' },
+		{ barColour: 'rgba(89, 113, 203, 1)', borderColour: 'rgba(89, 113, 203, 1)' },
+		{ barColour: 'rgba(242, 172, 60, 1)', borderColour: 'rgba(242, 172, 60, 1)' },
+		{ barColour: 'rgba(89, 170, 106, 1)', borderColour: 'rgba(89, 170, 106, 1)' },
+		{ barColour: 'rgba(203, 93, 56, 1)', borderColour: 'rgba(203, 93, 56, 1)' },
+		{ barColour: 'rgba(112, 191, 202, 1)', borderColour: 'rgba(112, 191, 202, 1)' },
+		{ barColour: 'rgba(68, 152, 145, 1)', borderColour: 'rgba(68, 152, 145, 1)' },
+	];
+
 	async findLabStats(lab: string) {
 		const query = {
 			authors: { $regex: new RegExp(`\\b${lab}\\b`, 'i') },
@@ -37,16 +47,6 @@ export class StatsService {
 	}
 
 	async findAllSupplementary() {
-		const colors = [
-			{ barColour: 'rgba(127, 97, 219, 1)', borderColour: 'rgba(127, 97, 219, 1)' },
-			{ barColour: 'rgba(89, 113, 203, 1)', borderColour: 'rgba(89, 113, 203, 1)' },
-			{ barColour: 'rgba(242, 172, 60, 1)', borderColour: 'rgba(242, 172, 60, 1)' },
-			{ barColour: 'rgba(89, 170, 106, 1)', borderColour: 'rgba(89, 170, 106, 1)' },
-			{ barColour: 'rgba(203, 93, 56, 1)', borderColour: 'rgba(203, 93, 56, 1)' },
-			{ barColour: 'rgba(112, 191, 202, 1)', borderColour: 'rgba(112, 191, 202, 1)' },
-			{ barColour: 'rgba(68, 152, 145, 1)', borderColour: 'rgba(68, 152, 145, 1)' },
-		];
-
 		try {
 			const publications = await this.statsModel.find({});
 			// Filter for 2018 and onwards
@@ -90,12 +90,12 @@ export class StatsService {
 			const uniqueTypes = [...new Set(supplementary.map(({ type }) => type))];
 
 			const datasets = uniqueTypes.map((type, index) => {
-				const colorIndex = index % colors.length;
+				const colorIndex = index % this.colours.length;
 				return {
 					label: type,
 					data: labels.map((year) => yearData[Number(year)][type]),
-					backgroundColor: colors[colorIndex].barColour,
-					borderColor: colors[colorIndex].borderColour,
+					backgroundColor: this.colours[colorIndex].barColour,
+					borderColor: this.colours[colorIndex].borderColour,
 					borderWidth: 0,
 					maxBarThickness: 100,
 				};
@@ -109,14 +109,6 @@ export class StatsService {
 
 
 	async findAuthorAnnualSupplementary(email: string) {
-		const colors = [
-			{ barColour: 'rgba(127, 97, 219, 1)', borderColour: 'rgba(127, 97, 219, 1)' },
-			{ barColour: 'rgba(89, 113, 203, 1)', borderColour: 'rgba(89, 113, 203, 1)' },
-			{ barColour: 'rgba(89, 170, 106, 1)', borderColour: 'rgba(89, 170, 106, 1)' },
-			{ barColour: 'rgba(242, 172, 60, 1)', borderColour: 'rgba(242, 172, 60, 1)' },
-			{ barColour: 'rgba(203, 93, 56, 1)', borderColour: 'rgba(203, 93, 56, 1)' },
-			{ barColour: 'rgba(68, 152, 145, 1)', borderColour: 'rgba(68, 152, 145, 1)' },
-		];
 
 		try {
 			const author = await this.authorModel.findOne({ email: new RegExp(`^${email}$`, 'i') }).exec();
@@ -164,12 +156,12 @@ export class StatsService {
 			const labels = Object.keys(yearData).sort();
 			const uniqueTypes = [...new Set(supplementary.map(({ type }) => type))];
 			const datasets = uniqueTypes.map((type, index) => {
-				const colorIndex = index % colors.length;
+				const colorIndex = index % this.colours.length;
 				return {
 					label: type,
 					data: labels.map((year) => yearData[Number(year)][type]),
-					backgroundColor: colors[colorIndex].barColour,
-					borderColor: colors[colorIndex].borderColour,
+					backgroundColor: this.colours[colorIndex].barColour,
+					borderColor: this.colours[colorIndex].borderColour,
 					borderWidth: 0,
 					maxBarThickness: 100,
 				};
@@ -186,15 +178,6 @@ export class StatsService {
 	async findPublicationsByAuthor(enid: string | number) {
 			try {
 				const enidNumber = Number(enid);
-
-				const colors = [
-					{ fillColor: 'rgba(127, 97, 219, 1)', borderColor: 'rgba(127, 97, 219, 1)' },
-					{ fillColor: 'rgba(89, 113, 203, 1)', borderColor: 'rgba(89, 113, 203, 1)' },
-					{ fillColor: 'rgba(89, 170, 106, 1)', borderColor: 'rgba(89, 170, 106, 1)' },
-					{ fillColor: 'rgba(242, 172, 60, 1)', borderColor: 'rgba(242, 172, 60, 1)' },
-					{ fillColor: 'rgba(203, 93, 56, 1)', borderColor: 'rgba(203, 93, 56, 1)' },
-					{ fillColor: 'rgba(68, 152, 145, 1)', borderColor: 'rgba(68, 152, 145, 1)' },
-				];
 
 				// Fetch all authors and find targetAuthor
 				const allAuthors = await this.authorModel.find({}).lean();
@@ -316,7 +299,7 @@ export class StatsService {
 
 				const scatterData = {
 					datasets: uniqueTypes.map((type, index) => {
-					const { fillColor, borderColor } = colors[index % colors.length];
+					const { barColour, borderColour } = this.colours[index % this.colours.length];
 				
 					// Build the data array for x/y plus separate arrays for color/radius
 					const points = categoryRankings[type].map(entry => ({
@@ -327,16 +310,16 @@ export class StatsService {
 						: `Anonymous (${entry.contributions} contributions, ranked ${entry.rank})`
 					}));
 				
-					const pointBackgroundColors = categoryRankings[type].map(entry =>
+					const pointBackgroundcolours = categoryRankings[type].map(entry =>
 						entry.enid === enidNumber
 						? 'rgba(255, 99, 132, 1)'
-						: fillColor
+						: barColour
 					);
 				
-					const pointBorderColors = categoryRankings[type].map(entry =>
+					const pointBordercolours = categoryRankings[type].map(entry =>
 						entry.enid === enidNumber
 						? 'rgba(255, 99, 132, 1)'
-						: borderColor
+						: borderColour
 					);
 				
 					const pointRadii = categoryRankings[type].map(entry =>
@@ -346,10 +329,10 @@ export class StatsService {
 					return {
 						label: type,
 						data: points,
-						backgroundColor: fillColor,
-						borderColor,
-						pointBackgroundColor: pointBackgroundColors,
-						pointBorderColor: pointBorderColors,
+						backgroundColor: barColour,
+						borderColour,
+						pointBackgroundColor: pointBackgroundcolours,
+						pointBorderColor: pointBordercolours,
 						pointRadius: pointRadii
 					};
 					})
@@ -474,38 +457,28 @@ export class StatsService {
 					maxContribution
 				};
 			});
-		
-			// Use the same colors as in the scatter plot for consistency
-			const colors = [
-				{ barColour: 'rgba(127, 97, 219, 1)', borderColour: 'rgba(127, 97, 219, 1)' },
-				{ barColour: 'rgba(89, 113, 203, 1)', borderColour: 'rgba(89, 113, 203, 1)' },
-				{ barColour: 'rgba(89, 170, 106, 1)', borderColour: 'rgba(89, 170, 106, 1)' },
-				{ barColour: 'rgba(242, 172, 60, 1)', borderColour: 'rgba(242, 172, 60, 1)' },
-				{ barColour: 'rgba(203, 93, 56, 1)', borderColour: 'rgba(203, 93, 56, 1)' },
-				{ barColour: 'rgba(68, 152, 145, 1)', borderColour: 'rgba(68, 152, 145, 1)' },
-			];
 			
 			// Format data for Chart.js
 			const datasets = uniqueTypes.map((type, index) => {
 				const typeData = histogramData[type];
-				const colorIndex = index % colors.length;
+				const colorIndex = index % this.colours.length;
 				
-				// Create background colors array where user's bin is highlighted pink
-				const backgroundColors = typeData.bins.map(bin => 
-					bin.isUserBin ? 'rgba(255, 99, 132, 1)' : colors[colorIndex].barColour
+				// Create background colours array where user's bin is highlighted pink
+				const backgroundcolours = typeData.bins.map(bin => 
+					bin.isUserBin ? 'rgba(255, 99, 132, 1)' : this.colours[colorIndex].barColour
 				);
 				
-				// Create border colors array
-				const borderColors = typeData.bins.map(bin => 
-					bin.isUserBin ? 'rgba(255, 99, 132, 1)' : colors[colorIndex].borderColour
+				// Create border colours array
+				const bordercolours = typeData.bins.map(bin => 
+					bin.isUserBin ? 'rgba(255, 99, 132, 1)' : this.colours[colorIndex].borderColour
 				);
 				
 				return {
 					label: type,
 					data: typeData.bins.map(bin => bin.count),
 					binLabels: typeData.bins.map(bin => bin.binRange),
-					backgroundColor: backgroundColors,
-					borderColor: borderColors,
+					backgroundColor: backgroundcolours,
+					borderColor: bordercolours,
 					borderWidth: 1
 				};
 			});
