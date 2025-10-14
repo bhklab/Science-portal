@@ -1,9 +1,9 @@
 export default interface AuthorSupplementaryLinks {
-    resourceType: string;
-    resource: string;
     link: string;
-    name: string;
-    doi: string;
-    author: string;
+    resource_type: string;
+    resource: string;
+    publication_title: string;
+    publication_doi: string;
     date: string;
+    scientist: string;
 }

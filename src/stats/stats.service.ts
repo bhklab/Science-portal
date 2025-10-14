@@ -547,13 +547,13 @@ export class StatsService {
 
 						for (const link of links) {
 							resourceExportData.push({
-								resourceType,
-								resource,
 								link,
-								name: pub.name,
-								doi: pub.doi,
-								author: scientistName,
-								date: pub.date
+								resource_type: resourceType,
+								resource,
+								publication_title: pub.name,
+								publication_doi: pub.doi,
+								date: pub.date,
+								scientist: scientistName,
 							});
 						}
 					}

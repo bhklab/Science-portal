@@ -37,8 +37,8 @@ const AnnualChart = forwardRef<AnnualChartRef, AnnualChartProps>(({ chartData, a
                 }, 0)
             );
 
-            const maxDataValue = Math.max(...stackedMax); // Find the maximum stacked value
-            const buffer = 100; // Adjust buffer size as needed
+            // const maxDataValue = Math.max(...stackedMax); // Find the maximum stacked value
+            // const buffer = 100; // Adjust buffer size as needed
 
             chartInstance.current = new Chart(chartRef.current, {
                 type: 'bar',

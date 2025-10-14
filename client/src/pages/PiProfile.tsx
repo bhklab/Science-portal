@@ -15,6 +15,7 @@ import PersonalHistogram, { PersonalHistogramRef } from '../components/Charts/Pr
 import { ExportDropdown } from '../components/DropdownButtons/ExportDropdown';
 import { FilterDropdown } from '../components/DropdownButtons/FilterDropdown';
 import FeedbackModal from '../components/FeedbackModal/FeedbackModal';
+import ProfileResourcesExport from 'components/Buttons/ExportScientistResources';
 
 // Example resource sections used for stats
 const sections = [
@@ -434,7 +435,7 @@ const PiProfile: React.FC = () => {
         <div className="flex flex-col items-center py-36 smd:px-4 px-10 min-h-screen bg-white">
             <div className="flex flex-row smd:flex-col smd:items-center gap-5 justify-center mx-auto">
                 <div className="flex flex-col max-w-[285px] gap-8 sticky smd:static top-36 h-fit smd:mb-10">
-                    <div className="flex flex-col gap-5 smd:justify-center smd:items-center ">
+                    <div className="flex flex-col gap-4 smd:justify-center smd:items-center ">
                         <div className="flex flex-col gap-2">
                             <div className="h-[140px] w-[140px] rounded-[120px] overflow-clip">
                                 <img src="/images/assets/default-user-icon.svg" alt="PI" />
@@ -456,14 +457,12 @@ const PiProfile: React.FC = () => {
                                 <p className="text-bodyMd">{authContext?.user.email}</p>
                             </div>
                         </div>
-                        <button className="flex flex-row gap-2 justify-center border-1 border-sp_light_green text-bodyMd py-1.5">
-                            <img src="/images/assets/download-icon-black.svg" alt="Download icon" />
-                            Export My Resources
-                        </button>
+                        <ProfileResourcesExport enid={enid} />
                     </div>
+
                     <hr className="bg-gray-200 h-[1px]" />
 
-                    <div className="flex flex-row gap-5 text-black-900 smd:justify-center ">
+                    <div className="flex flex-row gap-3 text-black-900 smd:justify-center ">
                         <div className="flex flex-col gap-2">
                             <h3 className="text-heading3Xl font-semibold">{totalPublications}</h3>
                             <p className="text-bodyMd">Publications</p>
@@ -473,6 +472,7 @@ const PiProfile: React.FC = () => {
                             <p className="text-bodyMd">Citations</p>
                         </div>
                     </div>
+
                     <div className="flex flex-col gap-5 smd:items-center">
                         <div className="flex flex-row justify-center items-center gap-2">
                             <input
@@ -487,7 +487,7 @@ const PiProfile: React.FC = () => {
 
                     <hr className="bg-gray-200 h-[1px]" />
 
-                    <div className="flex flex-col gap-5 smd:items-center">
+                    <div className="flex flex-col gap-3 smd:items-center">
                         <button
                             className="w-full border-1 border-open_border shadow-button rounded-[4px] p-2 text-headingSm text-black-900 font-semibold max-w-72"
                             onClick={() => navigate('/submit-publication')}
@@ -496,7 +496,7 @@ const PiProfile: React.FC = () => {
                         </button>
                         <div className="flex flex-row justify-center items-center">
                             <button
-                                className="text-sp_dark_green text-sm hover:text-sp_light_green hover:scale-110 transition ease-in-out delay-100"
+                                className="text-sp_light_green text-sm hover:text-sp_dark_green transition ease-in-out delay-100"
                                 onClick={() => setIsVisible(true)}
                             >
                                 Send Feedback
@@ -530,7 +530,9 @@ const PiProfile: React.FC = () => {
                                 <div
                                     onClick={() => setToggleDetailed(prev => !prev)}
                                     className={`relative inline-flex h-6 w-12 cursor-pointer rounded-full p-0.5 transition-colors duration-200 ease-in-out ${
-                                        toggleDetailed ? 'bg-sp_light_green' : 'bg-gray-300'
+                                        toggleDetailed
+                                            ? 'bg-sp_light_green hover:bg-sp_dark_green'
+                                            : 'bg-gray-300 hover:bg-gray-400'
                                     }`}
                                 >
                                     <span
