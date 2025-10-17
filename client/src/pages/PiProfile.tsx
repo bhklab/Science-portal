@@ -603,7 +603,7 @@ const PiProfile: React.FC = () => {
                                                         }}
                                                     />
                                                     <div
-                                                        className="bg-gray-1000 h-1.5 rounded-r-md"
+                                                        className="bg-gray-200 h-1.5 rounded-r-md"
                                                         style={{
                                                             width: `${
                                                                 100 -

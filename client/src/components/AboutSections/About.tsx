@@ -5,9 +5,13 @@ type SectionProps = { scrollTarget?: string | null };
 
 export const Overview: React.FC<SectionProps> = ({ scrollTarget }) => {
     useEffect(() => {
-        if (!scrollTarget) return;
-        const el = document.getElementById(scrollTarget);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        async function scrollTo() {
+            await new Promise(resolve => setTimeout(resolve, 150));
+            if (!scrollTarget) return;
+            const el = document.getElementById(scrollTarget);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        scrollTo();
     }, [scrollTarget]);
     return (
         <div className="flex flex-col gap-4">
@@ -48,9 +52,13 @@ export const Overview: React.FC<SectionProps> = ({ scrollTarget }) => {
 
 export const Functionality: React.FC<SectionProps> = ({ scrollTarget }) => {
     useEffect(() => {
-        if (!scrollTarget) return;
-        const el = document.getElementById(scrollTarget);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        async function scrollTo() {
+            await new Promise(resolve => setTimeout(resolve, 150));
+            if (!scrollTarget) return;
+            const el = document.getElementById(scrollTarget);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        scrollTo();
     }, [scrollTarget]);
     return (
         <div className="flex flex-col gap-4">
@@ -223,10 +231,38 @@ export const Functionality: React.FC<SectionProps> = ({ scrollTarget }) => {
                 </h3>
                 <div className="flex flex-col gap-4">
                     <p className="text-bodyLg font-light xs:text-bodyMd">
-                        {' '}
-                        To complement the editing function, the Science Portal includes the ability for logged in users
-                        to{' '}
+                        To complement the edit function, the Science Portal includes the ability for logged in users to
+                        submit new publications to the platform. You can find the "submit a publication" button on left
+                        of the profile page. There is only a single mandatory criteria needed for submitting a new
+                        publication to the platform and that's the <span className="font-normal">DOI</span> field. The
+                        rest of the fields can be left blank and the data extraction tool will work to get all of the
+                        necessary information for that publication and add it to the platform.
                     </p>
+                    <div className="flex flex-col items-center gap-4">
+                        <Image
+                            src="/images/screenshots/submit-pub-button.png"
+                            alt="search-bar-highlight"
+                            className="border-1 rounded-lg overflow-hidden shadow-sm w-4/5"
+                            preview
+                            indicatorIcon={<></>}
+                        />
+                    </div>
+                    <p className="text-bodyLg font-light xs:text-bodyMd">
+                        Another useful feature of the submit publication is the ability to notify the scientific
+                        director of the institution of the publication you're submitting. If you press the 'Notify
+                        director' checkbox before submitting your publication the results of the data extraction will be
+                        passed to admins who will make a decision on if this publication should be circulated to the
+                        institution through an email.
+                    </p>
+                    <div className="flex flex-col items-center gap-4">
+                        <Image
+                            src="/images/screenshots/submit-pub-page.png"
+                            alt="search-bar-highlight"
+                            className="border-1 rounded-lg overflow-hidden shadow-sm w-4/5"
+                            preview
+                            indicatorIcon={<></>}
+                        />
+                    </div>
                 </div>
             </div>
         </div>
@@ -235,9 +271,13 @@ export const Functionality: React.FC<SectionProps> = ({ scrollTarget }) => {
 
 export const Data: React.FC<SectionProps> = ({ scrollTarget }) => {
     useEffect(() => {
-        if (!scrollTarget) return;
-        const el = document.getElementById(scrollTarget);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        async function scrollTo() {
+            await new Promise(resolve => setTimeout(resolve, 150));
+            if (!scrollTarget) return;
+            const el = document.getElementById(scrollTarget);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        scrollTo();
     }, [scrollTarget]);
     return (
         <div className="flex flex-col gap-4">
@@ -332,9 +372,13 @@ export const Data: React.FC<SectionProps> = ({ scrollTarget }) => {
 
 export const Future: React.FC<SectionProps> = ({ scrollTarget }) => {
     useEffect(() => {
-        if (!scrollTarget) return;
-        const el = document.getElementById(scrollTarget);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        async function scrollTo() {
+            await new Promise(resolve => setTimeout(resolve, 150));
+            if (!scrollTarget) return;
+            const el = document.getElementById(scrollTarget);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        scrollTo();
     }, [scrollTarget]);
     return (
         <>
