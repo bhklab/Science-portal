@@ -1,7 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Image } from 'primereact/image';
 
-export const Overview: React.FC = () => {
+type SectionProps = { scrollTarget?: string | null };
+
+export const Overview: React.FC<SectionProps> = ({ scrollTarget }) => {
+    useEffect(() => {
+        if (!scrollTarget) return;
+        const el = document.getElementById(scrollTarget);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, [scrollTarget]);
     return (
         <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
@@ -39,17 +46,22 @@ export const Overview: React.FC = () => {
     );
 };
 
-export const Functionality: React.FC = () => {
+export const Functionality: React.FC<SectionProps> = ({ scrollTarget }) => {
+    useEffect(() => {
+        if (!scrollTarget) return;
+        const el = document.getElementById(scrollTarget);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, [scrollTarget]);
     return (
         <div className="flex flex-col gap-4">
             <h2 className="text-heading3Xl xs:text-headingXl font-semibold text-gray-800">Functionalities</h2>
             <div className="flex flex-col gap-2">
-                <h3 className="text-headingLg xs:text-headingMd font-semibold text-black-900" id="search">
+                <h3 className="text-headingLg xs:text-headingMd font-semibold text-black-900 scroll-mt-20 " id="search">
                     Search
                 </h3>
                 <div className="flex flex-col gap-4">
                     <p className="text-bodyLg font-light xs:text-bodyMd">
-                        The science Portal provides two main search methods for indexing publications in the platform.
+                        The Science Portal provides two main search methods for indexing publications in the platform.
                         The first is through the top search bar where you can index publications through keywords (Ex.
                         RNA-seq, Chromatin), a scientist name, a journal, publication title, or doi.
                     </p>
@@ -58,55 +70,68 @@ export const Functionality: React.FC = () => {
                         RNA-seq Mesothelioma). Also, if a specific keyword is needed to be guaranteed in the result, it
                         can be placed within parentheses (Ex. mAb806 "Mesothelioma").
                     </p>
-                    <Image
-                        src="/images/screenshots/search-bar-highlight.png"
-                        alt="search-bar-highlight"
-                        className="border-1 rounded-lg overflow-hidden shadow-sm"
-                        preview
-                        indicatorIcon={<></>}
-                    />
+                    <div className="flex flex-col items-center gap-4">
+                        <Image
+                            src="/images/screenshots/search-bar-highlight.png"
+                            alt="search-bar-highlight"
+                            className="border-1 rounded-lg overflow-hidden shadow-sm w-4/5"
+                            preview
+                            indicatorIcon={<></>}
+                        />
+                    </div>
                     <p className="text-bodyLg font-light xs:text-bodyMd">
                         The second search can be executed by clicking the filter button directly to the left of the
                         search bar. This will open up a menu which allows you to filter publications by a specific
-                        author at the institution and/or publications that share selected resources within them.
+                        author at the institution and/or filter publications that share select resources.
                     </p>
-
-                    <Image
-                        src="/images/screenshots/filter-menu-button.png"
-                        alt="search-bar-highlight"
-                        className="border-1 rounded-lg overflow-hidden shadow-sm"
-                        preview
-                        indicatorIcon={<></>}
-                    />
-                    <Image
-                        src="/images/screenshots/filter-menu.png"
-                        alt="search-bar-highlight"
-                        className="border-1 rounded-lg overflow-hidden shadow-sm"
-                        preview
-                        indicatorIcon={<></>}
-                    />
+                    <div className="flex flex-col items-center gap-4">
+                        <Image
+                            src="/images/screenshots/filter-menu-button.png"
+                            alt="search-bar-highlight"
+                            className="border-1 rounded-lg overflow-hidden shadow-sm w-4/5"
+                            preview
+                            indicatorIcon={<></>}
+                        />
+                        <Image
+                            src="/images/screenshots/filter-menu.png"
+                            alt="search-bar-highlight"
+                            className="border-1 rounded-lg overflow-hidden shadow-sm w-4/5"
+                            preview
+                            indicatorIcon={<></>}
+                        />
+                    </div>
                 </div>
             </div>
             <div className="flex flex-col gap-2">
                 <h3
-                    className="text-headingLg xs:text-headingMd font-semibold text-black-900"
+                    className="text-headingLg xs:text-headingMd font-semibold text-black-900 scroll-mt-20 "
                     id="institution-statistics"
                 >
                     Institution Statistics
                 </h3>
                 <div className="flex flex-col gap-4">
-                    <p className="text-bodyLg font-light xs:text-bodyMd">On top of providing the ability </p>
-                    <Image
-                        src="/images/screenshots/search-bar-highlight.png"
-                        alt="search-bar-highlight"
-                        className="border-1 rounded-lg overflow-hidden shadow-sm"
-                        preview
-                        indicatorIcon={<></>}
-                    />
+                    <p className="text-bodyLg font-light xs:text-bodyMd">
+                        The platform also provides statistics and visualization to easily quantify various metrics about
+                        the institution. The main visualizations included are bar and scatter plots. These help users
+                        quickly and efficiently understand overall trends and get an idea of the type of data that can
+                        be found in the platform.
+                    </p>
+                    <div className="flex flex-col items-center gap-4">
+                        <Image
+                            src="/images/screenshots/statistics-bar-chart.png"
+                            alt="search-bar-highlight"
+                            className="border-1 rounded-lg overflow-hidden shadow-sm w-4/5"
+                            preview
+                            indicatorIcon={<></>}
+                        />
+                    </div>
                 </div>
             </div>
             <div className="flex flex-col gap-2">
-                <h3 className="text-headingLg xs:text-headingMd font-semibold text-black-900" id="scientist-statistcs">
+                <h3
+                    className="text-headingLg xs:text-headingMd font-semibold text-black-900 scroll-mt-20 "
+                    id="scientist-statistics"
+                >
                     Scientist Statistics
                 </h3>
                 <div className="flex flex-col gap-4">
@@ -127,13 +152,15 @@ export const Functionality: React.FC = () => {
                         Faculty can access their profile page by logging into the platform using their institution
                         credentials, then navigating to their profile page.
                     </p>
-                    <Image
-                        src="/images/screenshots/profile-dropdown.png"
-                        alt="search-bar-highlight"
-                        className="border-1 rounded-lg overflow-hidden shadow-sm"
-                        preview
-                        indicatorIcon={<></>}
-                    />
+                    <div className="flex flex-col items-center gap-4">
+                        <Image
+                            src="/images/screenshots/profile-dropdown.png"
+                            alt="search-bar-highlight"
+                            className="border-1 rounded-lg overflow-hidden shadow-sm w-4/5"
+                            preview
+                            indicatorIcon={<></>}
+                        />
+                    </div>
                     <p className="text-bodyLg font-light xs:text-bodyMd">
                         On the profile page, a scientist will be privied with statistics and visualizations that detail
                         how frequently they share resources and the type of resources they share most often within their
@@ -143,43 +170,62 @@ export const Functionality: React.FC = () => {
                         resources compiled to create statistics and visualizations for further clarity (and sometimes
                         bragging rights).
                     </p>
-                    <Image
-                        src="/images/screenshots/profile-page-and-export.png"
-                        alt="search-bar-highlight"
-                        className="border-1 rounded-lg overflow-hidden shadow-sm"
-                        preview
-                        indicatorIcon={<></>}
-                    />
-                    <Image
-                        src="/images/screenshots/profile-charts.png"
-                        alt="search-bar-highlight"
-                        className="border-1 rounded-lg overflow-hidden shadow-sm"
-                        preview
-                        indicatorIcon={<></>}
-                    />
+                    <div className="flex flex-col items-center gap-4">
+                        <Image
+                            src="/images/screenshots/profile-page-and-export.png"
+                            alt="search-bar-highlight"
+                            className="border-1 rounded-lg overflow-hidden shadow-sm w-4/5"
+                            preview
+                            indicatorIcon={<></>}
+                        />
+                        <Image
+                            src="/images/screenshots/profile-charts.png"
+                            alt="search-bar-highlight"
+                            className="border-1 rounded-lg overflow-hidden shadow-sm w-4/5"
+                            preview
+                            indicatorIcon={<></>}
+                        />
+                    </div>
                 </div>
             </div>
             <div className="flex flex-col gap-2">
-                <h3 className="text-headingLg xs:text-headingMd font-semibold text-gray-700" id="submit">
+                <h3 className="text-headingLg xs:text-headingMd font-semibold text-black-900 scroll-mt-20" id="edit">
+                    Editing A Publication
+                </h3>
+                <div className="flex flex-col gap-4">
+                    <p className="text-bodyLg font-light xs:text-bodyMd">
+                        The platform's data extraction/scraping methods are still in their infancies, so we've enabled
+                        users to submit publication edits to the Science Portal team. This edit function is only
+                        available to logged in users and is made for editing the resources part of a publication. You
+                        have the option of both editing, deleting, or adding resources to the packaged publication.
+                    </p>
+                    <div className="flex flex-col items-center gap-4">
+                        <Image
+                            src="/images/screenshots/edit-button.png"
+                            alt="search-bar-highlight"
+                            className="border-1 rounded-lg overflow-hidden shadow-sm w-4/5"
+                            preview
+                            indicatorIcon={<></>}
+                        />
+                        <Image
+                            src="/images/screenshots/edit-submit-button.png"
+                            alt="search-bar-highlight"
+                            className="border-1 rounded-lg overflow-hidden shadow-sm w-4/5"
+                            preview
+                            indicatorIcon={<></>}
+                        />
+                    </div>
+                </div>
+            </div>
+            <div className="flex flex-col gap-2">
+                <h3 className="text-headingLg xs:text-headingMd font-semibold text-black-900 scroll-mt-20" id="submit">
                     Submitting A Publication
                 </h3>
                 <div className="flex flex-col gap-4">
                     <p className="text-bodyLg font-light xs:text-bodyMd">
-                        The science Portal provides two main search methods for indexing publications in the platform.
-                        The first is through the top search bar where you can index publications through keywords (Ex.
-                        RNA-seq, Chromatin), a scientist name, a journal, publication title, or doi.
-                    </p>
-                    <Image
-                        src="/images/screenshots/search-bar-highlight.png"
-                        alt="search-bar-highlight"
-                        className="border-1 rounded-lg overflow-hidden shadow-sm"
-                        preview
-                        indicatorIcon={<></>}
-                    />
-                    <p className="text-bodyLg font-light xs:text-bodyMd">
-                        The second search can be executed by clicking the filter button directly to the left of the
-                        search bar. This will open up a menu which allows you to filter publications by a specific
-                        author at the institution and/or publications that share selected resources within them.
+                        {' '}
+                        To complement the editing function, the Science Portal includes the ability for logged in users
+                        to{' '}
                     </p>
                 </div>
             </div>
@@ -187,12 +233,20 @@ export const Functionality: React.FC = () => {
     );
 };
 
-export const Data: React.FC = () => {
+export const Data: React.FC<SectionProps> = ({ scrollTarget }) => {
+    useEffect(() => {
+        if (!scrollTarget) return;
+        const el = document.getElementById(scrollTarget);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, [scrollTarget]);
     return (
         <div className="flex flex-col gap-4">
             <h2 className="text-heading3Xl xs:text-headingXl font-semibold">Data Sources</h2>
             <div className="flex flex-col gap-2">
-                <h3 className="text-headingLg xs:text-headingMd font-semibold text-black-900" id="publications">
+                <h3
+                    className="text-headingLg xs:text-headingMd font-semibold text-black-900 scroll-mt-20 "
+                    id="publications"
+                >
                     Publications
                 </h3>
                 <p className="text-bodyLg font-light xs:text-bodyMd">
@@ -214,7 +268,7 @@ export const Data: React.FC = () => {
             </div>
             <div className="flex flex-col gap-2">
                 <h3
-                    className="text-headingLg xs:text-headingMd font-semibold text-black-900"
+                    className="text-headingLg xs:text-headingMd font-semibold text-black-900 scroll-mt-20 "
                     id="publication-resources"
                 >
                     Publication Resources
@@ -238,7 +292,10 @@ export const Data: React.FC = () => {
                 </p>
             </div>
             <div className="flex flex-col gap-2">
-                <h3 className="text-headingLg xs:text-headingMd font-semibold text-black-900" id="members">
+                <h3
+                    className="text-headingLg xs:text-headingMd font-semibold text-black-900 scroll-mt-20 "
+                    id="members"
+                >
                     Members
                 </h3>
                 <p className="text-bodyLg font-light xs:text-bodyMd">
@@ -248,7 +305,10 @@ export const Data: React.FC = () => {
                 </p>
             </div>
             <div className="flex flex-col gap-2">
-                <h3 className="text-headingLg xs:text-headingMd font-semibold text-black-900" id="citations">
+                <h3
+                    className="text-headingLg xs:text-headingMd font-semibold text-black-900 scroll-mt-20 "
+                    id="citations"
+                >
                     Citations
                 </h3>
                 <p className="text-bodyLg font-light xs:text-bodyMd">
@@ -270,7 +330,12 @@ export const Data: React.FC = () => {
     );
 };
 
-export const Future: React.FC = () => {
+export const Future: React.FC<SectionProps> = ({ scrollTarget }) => {
+    useEffect(() => {
+        if (!scrollTarget) return;
+        const el = document.getElementById(scrollTarget);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, [scrollTarget]);
     return (
         <>
             <div className="flex flex-col gap-4">
