@@ -5,9 +5,9 @@ const About: React.FC = () => {
     const sections = useMemo(
         () => [
             { id: 'Overview', component: Overview },
-            { id: 'Functionality', component: Functionality },
-            { id: 'Data', component: Data },
-            { id: 'Future', component: Future }
+            { id: 'Functionalities', component: Functionality },
+            { id: 'Data', component: Data }
+            // { id: 'Future', component: Future }
         ],
         []
     );

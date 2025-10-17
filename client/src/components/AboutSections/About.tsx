@@ -51,6 +51,12 @@ export const Functionality: React.FC = () => {
                         The first is through the top search bar where you can index publications through keywords (Ex.
                         RNA-seq, Chromatin), a scientist name, a journal, publication title, or doi.
                     </p>
+                    <p className="text-bodyLg font-light xs:text-bodyMd">
+                        <span className="font-bold">Extra details:</span> Several search inputs can also be strung
+                        together for a more dialed and concise result (Ex. RNA-seq Mesothelioma). If a specific keyword
+                        is needed to be guaranteed in the result, it can be placed within parentheses (Ex. mAb806
+                        "Mesothelioma").
+                    </p>
                     <Image
                         src="/images/screenshots/search-bar-highlight.png"
                         alt="search-bar-highlight"
@@ -81,6 +87,19 @@ export const Functionality: React.FC = () => {
                 </div>
             </div>
             <div className="flex flex-col gap-2">
+                <h3 className="text-headingLg xs:text-headingMd font-semibold text-gray-700">Institution Statistics</h3>
+                <div className="flex flex-col gap-4">
+                    <p className="text-bodyLg font-light xs:text-bodyMd">On top of providing the ability </p>
+                    <Image
+                        src="/images/screenshots/search-bar-highlight.png"
+                        alt="search-bar-highlight"
+                        className="border-1 rounded-lg overflow-hidden shadow-sm"
+                        preview
+                        indicatorIcon={<></>}
+                    />
+                </div>
+            </div>
+            <div className="flex flex-col gap-2">
                 <h3 className="text-headingLg xs:text-headingMd font-semibold text-gray-700">Scientist Statistics</h3>
                 <div className="flex flex-col gap-4">
                     <p className="text-bodyLg font-light xs:text-bodyMd">
@@ -94,11 +113,11 @@ export const Functionality: React.FC = () => {
                         >
                             FAIR{' '}
                         </a>{' '}
-                        principles, and impact (coming soon). A scientists is limited to only view their own statistics
-                        within their profile page. However, the profile page allows them to anonymously see how their
-                        staistics size up against others in the institution. Faculty can access their profile page by
-                        logging into the platform using their institution credentials, then navigating to their profile
-                        page.
+                        principles, and impact <span className="font-bold">(coming soon)</span>. Scientists are limited
+                        to only view their own statistics within the profile page. However, the profile page allows them
+                        to anonymously see how their staistics size up against others in the institution. Faculty can
+                        access their profile page by logging into the platform using their institution credentials, then
+                        navigating to their profile page.
                     </p>
                     <Image
                         src="/images/screenshots/profile-dropdown.png"
@@ -108,10 +127,13 @@ export const Functionality: React.FC = () => {
                         indicatorIcon={<></>}
                     />
                     <p className="text-bodyLg font-light xs:text-bodyMd">
-                        Once logged in, a scientist will be privied to see statistics detailing how frequently they
-                        share resources and the type of resources they share most often within their publications. A
-                        scientist may also export the resources with the platform is basing their statistics on for
-                        further clarity (and sometimes bragging rights) .
+                        On the profile page, a scientist will be privied with statistics and visualizations that detail
+                        how frequently they share resources and the type of resources they share most often within their
+                        publications. This includes cards detailing sharing frequency for all resource types and two
+                        charts that help quantify total and annual resources shared in publications. The profile page
+                        also offers a scientist ways to easily export any of the graphics and download the list of
+                        resources compiled to create statistics and visualizations for further clarity (and sometimes
+                        bragging rights).
                     </p>
                     <Image
                         src="/images/screenshots/profile-page-and-export.png"
@@ -129,29 +151,6 @@ export const Functionality: React.FC = () => {
                     />
                 </div>
             </div>
-            <div className="flex flex-col gap-2">
-                <h3 className="text-headingLg xs:text-headingMd font-semibold text-gray-700">Institution Statistics</h3>
-                <div className="flex flex-col gap-4">
-                    <p className="text-bodyLg font-light xs:text-bodyMd">
-                        The science Portal provides two main search methods for indexing publications in the platform.
-                        The first is through the top search bar where you can index publications through keywords (Ex.
-                        RNA-seq, Chromatin), a scientist name, a journal, publication title, or doi.
-                    </p>
-                    <Image
-                        src="/images/screenshots/search-bar-highlight.png"
-                        alt="search-bar-highlight"
-                        className="border-1 rounded-lg overflow-hidden shadow-sm"
-                        preview
-                        indicatorIcon={<></>}
-                    />
-                    <p className="text-bodyLg font-light xs:text-bodyMd">
-                        The second search can be executed by clicking the filter button directly to the left of the
-                        search bar. This will open up a menu which allows you to filter publications by a specific
-                        author at the institution and/or publications that share selected resources within them.
-                    </p>
-                </div>
-            </div>
-
             <div className="flex flex-col gap-2">
                 <h3 className="text-headingLg xs:text-headingMd font-semibold text-gray-700">
                     Submitting A Publication
@@ -226,9 +225,9 @@ export const Data: React.FC = () => {
             <div className="flex flex-col gap-2">
                 <h3 className="text-headingLg xs:text-headingMd font-semibold text-gray-700">Members</h3>
                 <p className="text-bodyLg font-light xs:text-bodyMd">
-                    All of the "members" tracked in the platform (377 faculty) are also provided to us by the UHN
-                    research analytics team. Just like publications in the platform we only extract UHN faculty that
-                    have a direct affiliation with Princess Margaret.
+                    All of the "members" tracked in the platform <span className="font-bold">(377 faculty)</span> are
+                    also provided to us by the UHN research analytics team. Just like publications in the platform we
+                    only extract UHN faculty that have a direct affiliation with Princess Margaret.
                 </p>
             </div>
             <div className="flex flex-col gap-2">
