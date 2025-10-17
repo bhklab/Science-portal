@@ -32,7 +32,7 @@ export const ExportDropdown: React.FC<DropdownButtonProps> = ({ onDownload, char
                                     <button
                                         onClick={() => onDownload('png', chartType)}
                                         className={`${
-                                            active ? 'bg-gray-100' : 'text-gray-900'
+                                            active ? 'bg-gray-100' : 'text-gray-1000'
                                         } group flex w-full items-center rounded-md px-2 py-2 text-xs`}
                                     >
                                         <img src="/images/assets/download-icon-black.svg" alt="icon" className="mr-1" />
@@ -45,7 +45,7 @@ export const ExportDropdown: React.FC<DropdownButtonProps> = ({ onDownload, char
                                     <button
                                         onClick={() => onDownload('jpeg', chartType)}
                                         className={`${
-                                            active ? 'bg-gray-100' : 'text-gray-900'
+                                            active ? 'bg-gray-100' : 'text-gray-1000'
                                         } group flex w-full items-center rounded-md px-2 py-2 text-xs`}
                                     >
                                         <img src="/images/assets/download-icon-black.svg" alt="icon" className="mr-1" />

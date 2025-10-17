@@ -91,7 +91,7 @@ const ExportDomDropdown: React.FC<ExportDomDropdownProps> = ({
                                     <button
                                         onClick={() => exportAsImage(targetRef, filename, 'png')}
                                         className={`${
-                                            active ? 'bg-gray-100' : 'text-gray-900'
+                                            active ? 'bg-gray-100' : 'text-gray-1000'
                                         } group flex w-full items-center rounded-md px-2 py-2 text-xs`}
                                     >
                                         <img src="/images/assets/download-icon-black.svg" alt="icon" className="mr-1" />
@@ -104,7 +104,7 @@ const ExportDomDropdown: React.FC<ExportDomDropdownProps> = ({
                                     <button
                                         onClick={() => exportAsImage(targetRef, filename, 'jpeg')}
                                         className={`${
-                                            active ? 'bg-gray-100' : 'text-gray-900'
+                                            active ? 'bg-gray-100' : 'text-gray-1000'
                                         } group flex w-full items-center rounded-md px-2 py-2 text-xs`}
                                     >
                                         <img src="/images/assets/download-icon-black.svg" alt="icon" className="mr-1" />
