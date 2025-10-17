@@ -3,22 +3,22 @@ import { Image } from 'primereact/image';
 
 export const Overview: React.FC = () => {
     return (
-        <div>
+        <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
                 <h2 className="text-heading4Xl xs:text-headingXl font-semibold">Overview</h2>
                 <p className="text-bodyLg font-light xs:text-bodyMd">
-                    Despite "<span className="font-bold">open science</span>" being essential for scientific progress,
+                    Despite "<span className="font-normal">open science</span>" being essential for scientific progress,
                     research outputs often remain difficult to find, limiting collaboration opportunities and impact.
-                    Making research contributions <span className="font-bold">openly</span> accessible requires
+                    Making research contributions <span className="font-normal">openly</span> accessible requires
                     significant time, resources, and expertise. Once made available, it can still be challenging to
                     track and reward these efforts effectively.
                 </p>
                 <p className="text-bodyLg font-light xs:text-bodyMd">
                     The Science Portal serves as a platform to centralize and simplify access to research outputs at
                     Princess Margaret. The Science Portal tackles common
-                    <span className="font-bold"> transparency </span> and
-                    <span className="font-bold"> reproducibility </span>issues faced in research by sharing diverse open
-                    science contributions and utilizing robust tools to track them.
+                    <span className="font-normal"> transparency </span> and
+                    <span className="font-normal"> reproducibility </span>issues faced in research by sharing diverse
+                    open science contributions and utilizing robust tools to track them.
                 </p>
             </div>
             <div className="flex flex-col gap-1 px-1 overflow-hidden">
@@ -29,7 +29,7 @@ export const Overview: React.FC = () => {
                     allowFullScreen
                     className="border-1"
                 />
-                <p className="text-bodySm">
+                <p className="text-bodySm text-gray-900">
                     0:00 - Intro | 1:11 - Search Functionality | 2:09 - Publication Overview | 2:57 - Public Statistics
                     | 3:37 - Profile Page and Personal Statistics | 7:06 - Submit a publication | 7:56 - Edit a
                     publication
@@ -42,9 +42,11 @@ export const Overview: React.FC = () => {
 export const Functionality: React.FC = () => {
     return (
         <div className="flex flex-col gap-4">
-            <h2 className="text-heading3Xl xs:text-headingXl font-semibold">Functionalities</h2>
+            <h2 className="text-heading3Xl xs:text-headingXl font-semibold text-gray-800">Functionalities</h2>
             <div className="flex flex-col gap-2">
-                <h3 className="text-headingLg xs:text-headingMd font-semibold text-gray-700">Search</h3>
+                <h3 className="text-headingLg xs:text-headingMd font-semibold text-black-900" id="search">
+                    Search
+                </h3>
                 <div className="flex flex-col gap-4">
                     <p className="text-bodyLg font-light xs:text-bodyMd">
                         The science Portal provides two main search methods for indexing publications in the platform.
@@ -52,10 +54,9 @@ export const Functionality: React.FC = () => {
                         RNA-seq, Chromatin), a scientist name, a journal, publication title, or doi.
                     </p>
                     <p className="text-bodyLg font-light xs:text-bodyMd">
-                        <span className="font-bold">Extra details:</span> Several search inputs can also be strung
-                        together for a more dialed and concise result (Ex. RNA-seq Mesothelioma). If a specific keyword
-                        is needed to be guaranteed in the result, it can be placed within parentheses (Ex. mAb806
-                        "Mesothelioma").
+                        Several search inputs can also be strung together for a more dialed and concise result (Ex.
+                        RNA-seq Mesothelioma). Also, if a specific keyword is needed to be guaranteed in the result, it
+                        can be placed within parentheses (Ex. mAb806 "Mesothelioma").
                     </p>
                     <Image
                         src="/images/screenshots/search-bar-highlight.png"
@@ -87,7 +88,12 @@ export const Functionality: React.FC = () => {
                 </div>
             </div>
             <div className="flex flex-col gap-2">
-                <h3 className="text-headingLg xs:text-headingMd font-semibold text-gray-700">Institution Statistics</h3>
+                <h3
+                    className="text-headingLg xs:text-headingMd font-semibold text-black-900"
+                    id="institution-statistics"
+                >
+                    Institution Statistics
+                </h3>
                 <div className="flex flex-col gap-4">
                     <p className="text-bodyLg font-light xs:text-bodyMd">On top of providing the ability </p>
                     <Image
@@ -100,7 +106,9 @@ export const Functionality: React.FC = () => {
                 </div>
             </div>
             <div className="flex flex-col gap-2">
-                <h3 className="text-headingLg xs:text-headingMd font-semibold text-gray-700">Scientist Statistics</h3>
+                <h3 className="text-headingLg xs:text-headingMd font-semibold text-black-900" id="scientist-statistcs">
+                    Scientist Statistics
+                </h3>
                 <div className="flex flex-col gap-4">
                     <p className="text-bodyLg font-light xs:text-bodyMd">
                         The Science Portal not only offers statistics for the institution but also for individual
@@ -113,11 +121,11 @@ export const Functionality: React.FC = () => {
                         >
                             FAIR{' '}
                         </a>{' '}
-                        principles, and impact <span className="font-bold">(coming soon)</span>. Scientists are limited
-                        to only view their own statistics within the profile page. However, the profile page allows them
-                        to anonymously see how their staistics size up against others in the institution. Faculty can
-                        access their profile page by logging into the platform using their institution credentials, then
-                        navigating to their profile page.
+                        principles, and impact <span className="font-normal">(coming soon)</span>. Scientists are
+                        limited to only view their own statistics within the profile page. However, the profile page
+                        allows them to anonymously see how their staistics size up against others in the institution.
+                        Faculty can access their profile page by logging into the platform using their institution
+                        credentials, then navigating to their profile page.
                     </p>
                     <Image
                         src="/images/screenshots/profile-dropdown.png"
@@ -152,7 +160,7 @@ export const Functionality: React.FC = () => {
                 </div>
             </div>
             <div className="flex flex-col gap-2">
-                <h3 className="text-headingLg xs:text-headingMd font-semibold text-gray-700">
+                <h3 className="text-headingLg xs:text-headingMd font-semibold text-gray-700" id="submit">
                     Submitting A Publication
                 </h3>
                 <div className="flex flex-col gap-4">
@@ -184,7 +192,9 @@ export const Data: React.FC = () => {
         <div className="flex flex-col gap-4">
             <h2 className="text-heading3Xl xs:text-headingXl font-semibold">Data Sources</h2>
             <div className="flex flex-col gap-2">
-                <h3 className="text-headingLg xs:text-headingMd font-semibold text-gray-700">Publications</h3>
+                <h3 className="text-headingLg xs:text-headingMd font-semibold text-black-900" id="publications">
+                    Publications
+                </h3>
                 <p className="text-bodyLg font-light xs:text-bodyMd">
                     All of the publications curated in the platform are kindly provided to us by the{' '}
                     <a
@@ -197,13 +207,18 @@ export const Data: React.FC = () => {
                     team. We receive updates on a rolling monthly basis from the previous month and work to add the new
                     publications to the platform as soon as possible. As we continue to work on refining our application
                     functionalities and backend data processing we have chosen to only import publications from{' '}
-                    <span className="font-bold">2018 onwards</span> to the platform. It is also important to note that
+                    <span className="font-normal">2018 onwards</span> to the platform. It is also important to note that
                     we only extract the publications from UHN research analytics that are deemed having having a direct
                     affiliation with Princess Margaret.
                 </p>
             </div>
             <div className="flex flex-col gap-2">
-                <h3 className="text-headingLg xs:text-headingMd font-semibold text-gray-700">Publication Resources</h3>
+                <h3
+                    className="text-headingLg xs:text-headingMd font-semibold text-black-900"
+                    id="publication-resources"
+                >
+                    Publication Resources
+                </h3>
                 <p className="text-bodyLg font-light xs:text-bodyMd">
                     Publication resources are simply any type of resource referenced in a publication that contributed
                     to the executed research. We have developed an algorithm that is able to parse publications via
@@ -223,15 +238,19 @@ export const Data: React.FC = () => {
                 </p>
             </div>
             <div className="flex flex-col gap-2">
-                <h3 className="text-headingLg xs:text-headingMd font-semibold text-gray-700">Members</h3>
+                <h3 className="text-headingLg xs:text-headingMd font-semibold text-black-900" id="members">
+                    Members
+                </h3>
                 <p className="text-bodyLg font-light xs:text-bodyMd">
-                    All of the "members" tracked in the platform <span className="font-bold">(377 faculty)</span> are
+                    All of the "members" tracked in the platform <span className="font-normal">(377 faculty)</span> are
                     also provided to us by the UHN research analytics team. Just like publications in the platform we
                     only extract UHN faculty that have a direct affiliation with Princess Margaret.
                 </p>
             </div>
             <div className="flex flex-col gap-2">
-                <h3 className="text-headingLg xs:text-headingMd font-semibold text-gray-700">Citations</h3>
+                <h3 className="text-headingLg xs:text-headingMd font-semibold text-black-900" id="citations">
+                    Citations
+                </h3>
                 <p className="text-bodyLg font-light xs:text-bodyMd">
                     Publication citations in the platform are retrieved from{' '}
                     <a

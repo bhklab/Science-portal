@@ -34,7 +34,7 @@ export const ProfileDropdown: React.FC = () => {
                                     <button
                                         onClick={() => navigate(`/profile`)}
                                         className={` ${
-                                            active ? 'bg-gray-100' : 'text-gray-900'
+                                            active ? 'bg-gray-100' : 'text-gray-1000'
                                         } flex flex-row items-center gap-2 p-1 w-full h-full`}
                                     >
                                         <img src="/images/assets/profile-icon.svg" alt="profile" />{' '}
@@ -47,7 +47,7 @@ export const ProfileDropdown: React.FC = () => {
                                     <button
                                         onClick={authContext?.logout}
                                         className={`${
-                                            active ? 'bg-gray-100' : 'text-gray-900'
+                                            active ? 'bg-gray-100' : 'text-gray-1000'
                                         } flex flex-row items-center gap-2 p-1 w-full h-full`}
                                     >
                                         <img src="/images/assets/logout-icon.svg" alt="logout" />
