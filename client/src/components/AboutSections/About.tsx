@@ -70,8 +70,9 @@ export const Functionality: React.FC<SectionProps> = ({ scrollTarget }) => {
                 <div className="flex flex-col gap-4">
                     <p className="text-bodyLg font-light xs:text-bodyMd">
                         The Science Portal provides two main search methods for indexing publications in the platform.
-                        The first is through the top search bar where you can index publications through keywords (Ex.
-                        RNA-seq, Chromatin), a scientist name, a journal, publication title, or doi.
+                        The first is through the search bar that runs horizontally across the top of the page. Here you
+                        can index publications through keywords (Ex. RNA-seq, Chromatin), a scientist name, a journal,
+                        publication title, or doi.
                     </p>
                     <p className="text-bodyLg font-light xs:text-bodyMd">
                         Several search inputs can also be strung together for a more dialed and concise result (Ex.
@@ -88,9 +89,9 @@ export const Functionality: React.FC<SectionProps> = ({ scrollTarget }) => {
                         />
                     </div>
                     <p className="text-bodyLg font-light xs:text-bodyMd">
-                        The second search can be executed by clicking the filter button directly to the left of the
-                        search bar. This will open up a menu which allows you to filter publications by a specific
-                        author at the institution and/or filter publications that share select resources.
+                        The second search can be executed by clicking the button directly to the left of the search bar
+                        we just discussed. This will open up a menu which allows you to filter publications by a
+                        specific author at the institution and/or filter publications that share select resources.
                     </p>
                     <div className="flex flex-col items-center gap-4">
                         <Image
@@ -146,7 +147,7 @@ export const Functionality: React.FC<SectionProps> = ({ scrollTarget }) => {
                     <p className="text-bodyLg font-light xs:text-bodyMd">
                         The Science Portal not only offers statistics for the institution but also for individual
                         scientists. These statistics help scientists gauge their resource contributions, transparency,
-                        reproducibility, adherence to{' '}
+                        adherence to{' '}
                         <a
                             target="_blank"
                             href="www.go-fair.org/fair-principles/"
@@ -176,8 +177,8 @@ export const Functionality: React.FC<SectionProps> = ({ scrollTarget }) => {
                         charts that help quantify total and annual resources shared in publications. The profile page
                         also has functions to easily export any graphics and download the list of resources compiled to
                         create statistics and visualizations. <span className="font-normal">The goal</span> of these
-                        export features is to provide users with full clarity and give graphics/data they can use in
-                        grants and reports.
+                        export features is to give users full clarity and provide them with graphics/data they can use
+                        in grants and reports.
                     </p>
                     <div className="flex flex-col items-center gap-4">
                         <Image
@@ -237,7 +238,9 @@ export const Functionality: React.FC<SectionProps> = ({ scrollTarget }) => {
                         of the profile page. There is only a single mandatory field needed for submitting a new
                         publication to the platform and that's the <span className="font-normal">DOI</span> field. The
                         rest of the fields can be left blank and the data extraction tool will work to get all of the
-                        necessary information for that publication and add it to the platform.
+                        necessary information for that publication and add it to the platform. If you want to enforce
+                        any of the listed fields, feel free to fill them out and our data extraction API will consider
+                        them when creating the database entry.
                     </p>
                     <div className="flex flex-col items-center gap-4">
                         <Image
@@ -249,11 +252,11 @@ export const Functionality: React.FC<SectionProps> = ({ scrollTarget }) => {
                         />
                     </div>
                     <p className="text-bodyLg font-light xs:text-bodyMd">
-                        Another useful feature of the submit publication is the ability to notify the scientific
-                        director of the institution of the publication you're submitting. If you press the 'Notify
+                        Another useful feature of the submit publication tool is the ability to notify the scientific
+                        director of the institution with the publication you're submitting. If you press the 'Notify
                         director' checkbox before submitting your publication the results of the data extraction will be
-                        passed to admins who will make a decision on if this publication should be circulated to the
-                        institution through an email.
+                        passed to admins and scientific director. They will then make a decision on if this publication
+                        should be considered for a circulation to the institution via email.
                     </p>
                     <div className="flex flex-col items-center gap-4">
                         <Image
