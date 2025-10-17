@@ -6,7 +6,7 @@ type SectionProps = { scrollTarget?: string | null };
 export const Overview: React.FC<SectionProps> = ({ scrollTarget }) => {
     useEffect(() => {
         async function scrollTo() {
-            await new Promise(resolve => setTimeout(resolve, 150));
+            await new Promise(resolve => setTimeout(resolve, 75));
             if (!scrollTarget) return;
             const el = document.getElementById(scrollTarget);
             if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -53,7 +53,7 @@ export const Overview: React.FC<SectionProps> = ({ scrollTarget }) => {
 export const Functionality: React.FC<SectionProps> = ({ scrollTarget }) => {
     useEffect(() => {
         async function scrollTo() {
-            await new Promise(resolve => setTimeout(resolve, 150));
+            await new Promise(resolve => setTimeout(resolve, 75));
             if (!scrollTarget) return;
             const el = document.getElementById(scrollTarget);
             if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -156,9 +156,9 @@ export const Functionality: React.FC<SectionProps> = ({ scrollTarget }) => {
                         </a>{' '}
                         principles, and impact <span className="font-normal">(coming soon)</span>. Scientists are
                         limited to only view their own statistics within the profile page. However, the profile page
-                        allows them to anonymously see how their staistics size up against others in the institution.
-                        Faculty can access their profile page by logging into the platform using their institution
-                        credentials, then navigating to their profile page.
+                        allows them to anonymously see how their staistics size up against others in the institution. A
+                        faculty member can access their profile page by logging into the platform using their
+                        institution credentials, then navigating to their profile page.
                     </p>
                     <div className="flex flex-col items-center gap-4">
                         <Image
@@ -174,9 +174,10 @@ export const Functionality: React.FC<SectionProps> = ({ scrollTarget }) => {
                         how frequently they share resources and the type of resources they share most often within their
                         publications. This includes cards detailing sharing frequency for all resource types and two
                         charts that help quantify total and annual resources shared in publications. The profile page
-                        also offers a scientist ways to easily export any of the graphics and download the list of
-                        resources compiled to create statistics and visualizations for further clarity (and sometimes
-                        bragging rights).
+                        also has functions to easily export any graphics and download the list of resources compiled to
+                        create statistics and visualizations. <span className="font-normal">The goal</span> of these
+                        export features is to provide users with full clarity and give graphics/data they can use in
+                        grants and reports.
                     </p>
                     <div className="flex flex-col items-center gap-4">
                         <Image
@@ -233,7 +234,7 @@ export const Functionality: React.FC<SectionProps> = ({ scrollTarget }) => {
                     <p className="text-bodyLg font-light xs:text-bodyMd">
                         To complement the edit function, the Science Portal includes the ability for logged in users to
                         submit new publications to the platform. You can find the "submit a publication" button on left
-                        of the profile page. There is only a single mandatory criteria needed for submitting a new
+                        of the profile page. There is only a single mandatory field needed for submitting a new
                         publication to the platform and that's the <span className="font-normal">DOI</span> field. The
                         rest of the fields can be left blank and the data extraction tool will work to get all of the
                         necessary information for that publication and add it to the platform.
@@ -272,7 +273,7 @@ export const Functionality: React.FC<SectionProps> = ({ scrollTarget }) => {
 export const Data: React.FC<SectionProps> = ({ scrollTarget }) => {
     useEffect(() => {
         async function scrollTo() {
-            await new Promise(resolve => setTimeout(resolve, 150));
+            await new Promise(resolve => setTimeout(resolve, 75));
             if (!scrollTarget) return;
             const el = document.getElementById(scrollTarget);
             if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -373,7 +374,7 @@ export const Data: React.FC<SectionProps> = ({ scrollTarget }) => {
 export const Future: React.FC<SectionProps> = ({ scrollTarget }) => {
     useEffect(() => {
         async function scrollTo() {
-            await new Promise(resolve => setTimeout(resolve, 150));
+            await new Promise(resolve => setTimeout(resolve, 75));
             if (!scrollTarget) return;
             const el = document.getElementById(scrollTarget);
             if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
