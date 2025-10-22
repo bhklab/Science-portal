@@ -393,7 +393,7 @@ const Home: React.FC = () => {
                         </div>
                     )}
                     <div
-                        className={`flex flex-row flex-wrap justify-center items-center gap-6 mmd:gap-2 mb-1 ${!loaded ? 'sticky bottom-1' : ''}`}
+                        className={`flex flex-row flex-wrap justify-center items-center gap-6 mmd:gap-2 mb-1 ${!loaded ? 'hidden' : ''}`}
                     >
                         <img src="/images/team-logos/pmcc.png" alt="pmcc logo" className="max-w-44" />
                         <img
