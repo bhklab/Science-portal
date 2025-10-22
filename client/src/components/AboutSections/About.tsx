@@ -32,7 +32,7 @@ export const Overview: React.FC<SectionProps> = ({ scrollTarget }) => {
                             <span className="font-normal">openly</span> accessible requires significant time, resources,
                             and expertise. Once made available, it can still be challenging to track and reward these
                             efforts effectively. This hinders the opportunity of building on the research of others,
-                            contributes to reduced collaborations, and overall reduced scientific progress.
+                            contributes to reduced collaborations, and an overall loss of scientific progress.
                         </p>
                         <p className="text-bodyLg font-light xs:text-bodyMd">
                             The Science Portal serves as a platform to centralize and simplify access to research
@@ -274,9 +274,9 @@ export const Functionality: React.FC<SectionProps> = ({ scrollTarget }) => {
                     <p className="text-bodyLg font-light xs:text-bodyMd">
                         Another useful feature of the submit publication tool is the ability to notify the scientific
                         director of the institution with the publication you are submitting. If you press the 'Notify
-                        director' checkbox before submitting your publication the results of the data extraction will be
-                        passed to admins and scientific director. They will then make a decision on if this publication
-                        should be considered for a circulation to the institution via email.
+                        director' checkbox before submitting your publication and the results of the data extraction
+                        will be passed to admins and scientific director. They will then make a decision on if this
+                        publication should be considered for a circulation to the institution via email.
                     </p>
                     <div className="flex flex-col items-center gap-4">
                         <Image

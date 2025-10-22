@@ -63,7 +63,7 @@ const Home: React.FC = () => {
     const [loaded, setLoaded] = useState<boolean>(false);
 
     // State of load more button total
-    const [totalPubs, setTotalPubs] = useState<number>(20);
+    const [totalPubs, setTotalPubs] = useState<number>(10);
 
     // State of new authors
     const [authors, setAuthors] = useState<Lab[]>([]);
@@ -80,7 +80,7 @@ const Home: React.FC = () => {
     useEffect(() => {
         setLoaded(false);
         const getPublications = async () => {
-            setTotalPubs(20); // Reset total pubs on filter change
+            setTotalPubs(10); // Reset total pubs on filter change
             try {
                 const res = await axios.post(
                     `/api/publications/select`,
@@ -165,7 +165,7 @@ const Home: React.FC = () => {
     const submitSearch = async () => {
         setLoaded(false);
         const getPublications = async () => {
-            setTotalPubs(20); // Reset total pubs on filter change
+            setTotalPubs(10); // Reset total pubs on filter change
             try {
                 const res = await axios.post(
                     `/api/publications/select`,
