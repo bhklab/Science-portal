@@ -10,7 +10,11 @@ type SectionDef = {
 const About: React.FC = () => {
     const sections: SectionDef[] = useMemo(
         () => [
-            { id: 'Overview', component: Overview, subsections: [] },
+            {
+                id: 'Overview',
+                component: Overview,
+                subsections: [{ id: 'open', value: 'Open Science' }]
+            },
             {
                 id: 'Functionalities',
                 component: Functionality,
@@ -18,8 +22,9 @@ const About: React.FC = () => {
                     { id: 'search', value: 'Search' },
                     { id: 'institution-statistics', value: 'Institution Statistcs' },
                     { id: 'scientist-statistics', value: 'Scientist Statistcs' },
-                    { id: 'edit', value: 'Editing A Publication' },
-                    { id: 'submit', value: 'Submitting a Publication' }
+                    { id: 'edit', value: 'Editing a Publication' },
+                    { id: 'submit', value: 'Submitting a Publication' },
+                    { id: 'notify', value: 'Notify Director' }
                 ]
             },
             {

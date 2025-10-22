@@ -17,20 +17,32 @@ export const Overview: React.FC<SectionProps> = ({ scrollTarget }) => {
         <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
                 <h2 className="text-heading4Xl xs:text-headingXl font-semibold">Overview</h2>
-                <p className="text-bodyLg font-light xs:text-bodyMd">
-                    Despite "<span className="font-normal">open science</span>" being essential for scientific progress,
-                    research outputs often remain difficult to find, limiting collaboration opportunities and impact.
-                    Making research contributions <span className="font-normal">openly</span> accessible requires
-                    significant time, resources, and expertise. Once made available, it can still be challenging to
-                    track and reward these efforts effectively.
-                </p>
-                <p className="text-bodyLg font-light xs:text-bodyMd">
-                    The Science Portal serves as a platform to centralize and simplify access to research outputs at
-                    Princess Margaret. The Science Portal tackles common
-                    <span className="font-normal"> transparency </span> and
-                    <span className="font-normal"> reproducibility </span>issues faced in research by sharing diverse
-                    open science contributions and utilizing robust tools to track them.
-                </p>
+                <div className="flex flex-col gap-2">
+                    <h3
+                        className="text-headingLg xs:text-headingMd font-semibold text-black-900 scroll-mt-20 "
+                        id="open"
+                    >
+                        Open Science
+                    </h3>
+                    <div className="flex flex-col gap-4">
+                        <p className="text-bodyLg font-light xs:text-bodyMd">
+                            Despite "<span className="font-normal">open science</span>" being essential for scientific
+                            progress, research outputs often remain difficult to find, limiting collaboration
+                            opportunities and impact. Making research contributions{' '}
+                            <span className="font-normal">openly</span> accessible requires significant time, resources,
+                            and expertise. Once made available, it can still be challenging to track and reward these
+                            efforts effectively. This hinders the opportunity of building on the research of others,
+                            contributes to reduced collaborations, and overall reduced scientific progress.
+                        </p>
+                        <p className="text-bodyLg font-light xs:text-bodyMd">
+                            The Science Portal serves as a platform to centralize and simplify access to research
+                            outputs at Princess Margaret. The Science Portal tackles common
+                            <span className="font-normal"> transparency </span> and
+                            <span className="font-normal"> reproducibility </span>issues faced in research by sharing
+                            diverse open science contributions and utilizing robust tools to track them.
+                        </p>
+                    </div>
+                </div>
             </div>
             <div className="flex flex-col gap-1 px-1 overflow-hidden">
                 <iframe
@@ -156,10 +168,11 @@ export const Functionality: React.FC<SectionProps> = ({ scrollTarget }) => {
                             FAIR{' '}
                         </a>{' '}
                         principles, and impact <span className="font-normal">(coming soon)</span>. Scientists are
-                        limited to only view their own statistics within the profile page. However, the profile page
-                        allows them to anonymously see how their staistics size up against others in the institution. A
-                        faculty member can access their profile page by logging into the platform using their
-                        institution credentials, then navigating to their profile page.
+                        limited to only view their own statistics within their profile page once they log in through the
+                        institution managed Keycloak. However, the profile page allows them to anonymously see how their
+                        staistics size up against others in the institution. A faculty member can access their profile
+                        page by logging into the platform using their institution credentials through an institution
+                        managed Keycloak, then navigating to their profile page.
                     </p>
                     <div className="flex flex-col items-center gap-4">
                         <Image
@@ -204,7 +217,7 @@ export const Functionality: React.FC<SectionProps> = ({ scrollTarget }) => {
                 </h3>
                 <div className="flex flex-col gap-4">
                     <p className="text-bodyLg font-light xs:text-bodyMd">
-                        The platform's data extraction/scraping methods are still in their infancies, so we've enabled
+                        The platform's data extraction/scraping methods are still in their infancies, so we have enabled
                         users to submit publication edits to the Science Portal team. This edit function is only
                         available to logged in users and is made for editing the resources part of a publication. You
                         have the option of both editing, deleting, or adding resources to the packaged publication.
@@ -236,7 +249,7 @@ export const Functionality: React.FC<SectionProps> = ({ scrollTarget }) => {
                         To complement the edit function, the Science Portal includes the ability for logged in users to
                         submit new publications to the platform. You can find the "submit a publication" button on left
                         of the profile page. There is only a single mandatory field needed for submitting a new
-                        publication to the platform and that's the <span className="font-normal">DOI</span> field. The
+                        publication to the platform and that is the <span className="font-normal">DOI</span> field. The
                         rest of the fields can be left blank and the data extraction tool will work to get all of the
                         necessary information for that publication and add it to the platform. If you want to enforce
                         any of the listed fields, feel free to fill them out and our data extraction API will consider
@@ -251,9 +264,16 @@ export const Functionality: React.FC<SectionProps> = ({ scrollTarget }) => {
                             indicatorIcon={<></>}
                         />
                     </div>
+                </div>
+            </div>
+            <div className="flex flex-col gap-2">
+                <h3 className="text-headingLg xs:text-headingMd font-semibold text-black-900 scroll-mt-20" id="notify">
+                    Notify Director{' '}
+                </h3>
+                <div className="flex flex-col gap-4">
                     <p className="text-bodyLg font-light xs:text-bodyMd">
                         Another useful feature of the submit publication tool is the ability to notify the scientific
-                        director of the institution with the publication you're submitting. If you press the 'Notify
+                        director of the institution with the publication you are submitting. If you press the 'Notify
                         director' checkbox before submitting your publication the results of the data extraction will be
                         passed to admins and scientific director. They will then make a decision on if this publication
                         should be considered for a circulation to the institution via email.
@@ -365,7 +385,7 @@ export const Data: React.FC<SectionProps> = ({ scrollTarget }) => {
                         Crossref
                     </a>{' '}
                     and cannot be fully relied on for an accurate citation count, but rather a good estimate. Crossref
-                    tends to be slightly more liberal with what is considered a citation but it's still useful for
+                    tends to be slightly more liberal with what is considered a citation but it is still useful for
                     getting a good idea of where a publication stands in that regard. All citations updates happen once
                     a month, within the first week.
                 </p>
@@ -392,7 +412,7 @@ export const Future: React.FC<SectionProps> = ({ scrollTarget }) => {
                     <p className="text-bodyLg font-light xs:text-bodyMd">
                         For scientists and clinicians the science Portal is a great way to track how frequently you
                         share supplementary data (research outputs) in your publication's. The platform also gives
-                        insights into how adherent you are to open science principles and let's you anonymously compare
+                        insights into how adherent you are to open science principles and lets you anonymously compare
                         your contributions to others in the insitution. The Science Portal empowers researchers to forge
                         impactful collaborations by leveraging a diverse array of platform filters. This system connects
                         users with scientists, clinicians, and academics engaged in research that aligns with their
@@ -409,9 +429,9 @@ export const Future: React.FC<SectionProps> = ({ scrollTarget }) => {
                         community it strives to serve. If you are an academic from the institution please consider
                         reviewing publications that come from you or your team to verify resource accuracy and add new
                         resources that may have been missed. Also, notify us of any other useful statistics, analytics,
-                        or features you'd like to see come to the platform. To request new functionality to the platform
-                        please email <a href="mailto:admin@pmscience.ca">admin@pmscience.ca</a> or use the feedback
-                        ticketing system on the profile page.
+                        or features you would like to see come to the platform. To request new functionality to the
+                        platform please email <a href="mailto:admin@pmscience.ca">admin@pmscience.ca</a> or use the
+                        feedback ticketing system on the profile page.
                     </p>
                 </div>
             </div>

@@ -263,7 +263,9 @@ const Home: React.FC = () => {
                     className={`rounded border-1 border-gray-300 w-72 md:w-40 text-black-900 ${visible ? 'mmd:invisible' : ''}`}
                 />
             </div>
-            <div className={`transform ${visible ? 'ml-[320px]' : 'ml-0'} duration-300 ease-in-out`}>
+            <div
+                className={`transform ${visible ? 'ml-[320px]' : 'ml-0'} duration-300 ease-in-out ${!loaded ? '!mb-32' : ''}`}
+            >
                 <Sidebar
                     visible={visible}
                     position="left"
@@ -381,15 +383,29 @@ const Home: React.FC = () => {
                             </>
                         )
                     ) : (
-                        <div className="flex justify-content-center items-center">
+                        <div className="flex flex-col justify-center items-center">
                             <ProgressSpinner
-                                style={{ width: '200px', height: '200px' }}
-                                strokeWidth="4"
+                                style={{ width: '250px', height: '250px' }}
+                                strokeWidth="3"
                                 fill="var(--surface-ground)"
-                                animationDuration="1s"
+                                animationDuration="1.5s"
                             />
                         </div>
                     )}
+                    <div
+                        className={`flex flex-row flex-wrap justify-center items-center gap-6 mmd:gap-2 mb-1 ${!loaded ? 'sticky bottom-1' : ''}`}
+                    >
+                        <img src="/images/team-logos/pmcc.png" alt="pmcc logo" className="max-w-44" />
+                        <img
+                            src="/images/team-logos/research-analytics.png"
+                            alt="research analytics logo"
+                            className="max-w-40"
+                        />
+                        <img src="/images/team-logos/cdi.svg" alt="cdi logo" className="max-w-36" />
+
+                        <img src="/images/team-logos/bhk.png" alt="bhk lab logo" className="max-w-32" />
+                        <img src="/images/team-logos/lupien.png" alt="lupien logo" className="max-w-40" />
+                    </div>
                 </div>
             </div>
         </>
