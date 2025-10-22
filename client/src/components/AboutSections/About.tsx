@@ -20,7 +20,7 @@ export const Overview: React.FC<SectionProps> = ({ scrollTarget }) => {
                 <div className="flex flex-col gap-2">
                     <h3
                         className="text-headingLg xs:text-headingMd font-semibold text-black-900 scroll-mt-20 "
-                        id="search"
+                        id="open"
                     >
                         Open Science
                     </h3>

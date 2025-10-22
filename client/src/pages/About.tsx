@@ -13,11 +13,7 @@ const About: React.FC = () => {
             {
                 id: 'Overview',
                 component: Overview,
-                subsections: [
-                    { id: 'what', value: 'What is the Science Portal' },
-                    { id: 'problems', value: 'Open Science Issues' },
-                    { id: 'solution', value: 'Open Science Solution' }
-                ]
+                subsections: [{ id: 'open', value: 'Open Science' }]
             },
             {
                 id: 'Functionalities',
