@@ -287,6 +287,9 @@ const Home: React.FC = () => {
                                     className="rounded border-1 border-gray-300 w-64 text-black-900"
                                     onChange={e => {
                                         e.originalEvent?.stopPropagation();
+                                        if (!selectedAuthor && !sort) {
+                                            setSort({ name: 'Most Recent' });
+                                        }
                                         setSelectedAuthor(e.value);
                                     }}
                                     filter
