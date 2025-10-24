@@ -177,10 +177,18 @@ const SubmitPublication: React.FC = () => {
     };
 
     return (
-        <div className="px-60 py-[85px] bg-white">
+        <div className="px-60 py-[90px] bg-white">
             {/* Header / Submit Button */}
             <div className="flex flex-row justify-between items-center pb-5">
-                <h1 className="w-full text-heading2Xl font-semibold">Submit a Publication</h1>
+                <div className="flex flex-col gap-1 w-full">
+                    <h1 className="text-heading2Xl font-semibold text-black-900">Submit a Publication</h1>
+                    <p className="text-bodySm">
+                        <span className="text-bodyXs">*</span> Please wait at least 24 hours after a publication has
+                        been published before submitting it to the platform so we can ensure our reference databases
+                        have been populated
+                    </p>
+                </div>
+
                 <div className="flex flex-row justify-center items-center gap-2">
                     <div className="flex flex-row justify-center items-center gap-2">
                         <input
@@ -194,7 +202,7 @@ const SubmitPublication: React.FC = () => {
                     <button
                         disabled={newPub.doi ? false : true}
                         className={`flex flex-row justify-center items-center px-5 py-2 ${
-                            newPub.doi ? 'bg-blue-1000' : 'bg-gray-400'
+                            newPub.doi ? 'bg-sp_dark_green' : 'bg-gray-400'
                         } text-white shadow-button rounded-md`}
                         onClick={submitPublication}
                     >
