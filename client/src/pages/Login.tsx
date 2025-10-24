@@ -32,7 +32,14 @@ const Login: React.FC = () => {
                 // Remove error message
                 setErrorMessage(null);
 
-                const redirectPath = location?.state?.from?.pathname || '/';
+                // Navigate to profile upon successful login, unless coming from certain pages
+                let redirectPath = '/profile';
+                if (
+                    location?.state?.from?.pathname === '/admin' ||
+                    location?.state?.from?.pathname === '/submit-publication'
+                ) {
+                    redirectPath = location?.state?.from?.pathname || '/';
+                }
                 navigate(redirectPath, { replace: true });
             }
         } catch (error) {
