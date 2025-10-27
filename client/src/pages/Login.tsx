@@ -36,7 +36,8 @@ const Login: React.FC = () => {
                 let redirectPath = '/profile';
                 if (
                     location?.state?.from?.pathname === '/admin' ||
-                    location?.state?.from?.pathname === '/submit-publication'
+                    location?.state?.from?.pathname === '/submit-publication' ||
+                    location?.state?.from?.pathname.includes('/publication')
                 ) {
                     redirectPath = location?.state?.from?.pathname || '/';
                 }

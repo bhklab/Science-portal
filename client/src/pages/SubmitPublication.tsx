@@ -180,9 +180,9 @@ const SubmitPublication: React.FC = () => {
         <div className="px-60 py-[90px] bg-white">
             {/* Header / Submit Button */}
             <div className="flex flex-row justify-between items-center pb-5">
-                <div className="flex flex-col gap-1 w-full">
+                <div className="flex flex-col gap-1 w-3/5">
                     <h1 className="text-heading2Xl font-semibold text-black-900">Submit a Publication</h1>
-                    <p className="text-bodySm">
+                    <p className="text-bodyXs">
                         <span className="text-bodyXs">*</span> Please wait at least 24 hours after a publication has
                         been published before submitting it to the platform so we can ensure our reference databases
                         have been populated
