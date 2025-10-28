@@ -8,6 +8,7 @@ import { Calendar } from 'primereact/calendar';
 import { NewPub, createDefaultNewPub } from '../interfaces/NewPub';
 import { LINK_CATEGORIES } from '../interfaces/Links';
 import { AuthContext } from '../hooks/AuthContext';
+import Author from 'interfaces/Author';
 
 interface Option {
     name: String;
@@ -43,11 +44,24 @@ const SubmitPublication: React.FC = () => {
     // Scraping progress
     const [submitInprogress, setSubmitInprogress] = useState<boolean>(false);
 
+    // State for scientists in db
+    const [scientists, setScientists] = useState<Author[]>([]);
+    const [scientistEmails, setScientistsEmails] = useState<String[]>([]);
+
     const toast = useRef<Toast>(null);
 
-    // useEffect(() => {
-    //     console.log(newPub);
-    // }, [newPub]);
+    useEffect(() => {
+        const getScientists = async () => {
+            try {
+                const res = await axios.get(`/api/authors/all`);
+                const emails = res.data.map(scientist => scientist.email.trim());
+                setScientistsEmails(emails);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        getScientists();
+    }, []);
 
     // For all subcategories that store an array of strings
     const addNewLink = (category: string) => {
@@ -190,15 +204,18 @@ const SubmitPublication: React.FC = () => {
                 </div>
 
                 <div className="flex flex-row justify-center items-center gap-2">
-                    <div className="flex flex-row justify-center items-center gap-2">
-                        <input
-                            type="checkbox"
-                            checked={sendDirector}
-                            onChange={e => setSendDirector(!sendDirector)}
-                            className="rounded-sm text-blue-600"
-                        />
-                        <p className="text-bodySm">Notify director of new publication</p>
-                    </div>
+                    {scientistEmails.includes(authContext?.user?.email) ? (
+                        <div className="flex flex-row justify-center items-center gap-2">
+                            <input
+                                type="checkbox"
+                                checked={sendDirector}
+                                onChange={e => setSendDirector(!sendDirector)}
+                                className="rounded-sm text-blue-600"
+                            />
+                            <p className="text-bodySm">Notify director of new publication</p>
+                        </div>
+                    ) : null}
+
                     <button
                         disabled={newPub.doi ? false : true}
                         className={`flex flex-row justify-center items-center px-5 py-2 ${
