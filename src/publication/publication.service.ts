@@ -148,8 +148,8 @@ export class PublicationService {
 
     async createPublication(newPub: PublicationDocumentNew): Promise<any> {
 
+		newPub.doi = newPub.doi.trim() //Clear off any spaces
 		const publication = await this.publicationModel.findOne({ doi: newPub.doi }).exec();
-		console.log(publication)
 		if (publication) {
 			return "DOI exists in database already";
 		}
