@@ -36,7 +36,12 @@ export class EmailService {
 	async sendFanout(pub: PublicationDocument, verdict: boolean) {
         try {
 			if (verdict) {
-				const response = axios.post(`${process.env.SCRAPING_API}/email/fanout`, pub)
+				try {
+					const response = axios.post(`${process.env.SCRAPING_API}/email/fanout`, pub)
+				} catch (error) {
+					console.log(error)
+					return `Error sending fanout email. Try again or contact an admin ${error}`
+				}
 				try {
 					await this.publicationModel.updateOne(
 						{ doi: pub.doi },
