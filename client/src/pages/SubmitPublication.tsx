@@ -152,7 +152,7 @@ const SubmitPublication: React.FC = () => {
                                 </a>
                             </div>
                         ),
-                        life: 10000
+                        life: 20000
                     });
                     setNewPub(createDefaultNewPub());
                 } else if (response.data === 'DOI exists in database already') {
@@ -160,14 +160,14 @@ const SubmitPublication: React.FC = () => {
                         severity: 'error',
                         summary: 'Unexpected error occured.',
                         detail: response.data,
-                        life: 8000
+                        life: 20000
                     });
                 } else {
                     toast.current?.show({
                         severity: 'error',
                         summary: 'Unexpected error occured.',
                         detail: response.data,
-                        life: 8000
+                        life: 20000
                     });
                 }
             } else {
@@ -175,7 +175,7 @@ const SubmitPublication: React.FC = () => {
                     severity: 'error',
                     summary: 'Unexpected error occured.',
                     detail: response.data,
-                    life: 8000
+                    life: 20000
                 });
             }
         } catch (error) {
@@ -183,7 +183,7 @@ const SubmitPublication: React.FC = () => {
                 severity: 'error',
                 summary: 'Publication Not Submitted',
                 detail: `The publication has not been submitted due to an internal error. Please try again later. ${error}`,
-                life: 8000
+                life: 20000
             });
             console.error('Error submitting new publication:', error);
         }
