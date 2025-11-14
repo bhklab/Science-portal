@@ -145,8 +145,39 @@ export class PublicationService {
         const newChange = new this.publicationChangesModel({...pub, merged: false});
         return await newChange.save();
     }
+    async fetchPublication(newPub: PublicationDocumentNew): Promise<any> {
 
-    async createPublication(newPub: PublicationDocumentNew): Promise<any> {
+		newPub.doi = newPub.doi.trim() //Clear off any spaces
+		const publication = await this.publicationModel.findOne({ doi: newPub.doi }).exec();
+		if (publication) {
+			return "DOI exists in database already";
+		}
+
+		if (newPub.date === null){
+			newPub.date = new Date().toISOString();
+		}
+
+		newPub.date = newPub.date.toString().substring(0, 10);
+		let scrapedPublication = null;
+
+		const retry_max = 3;
+		let retry_count = 0;
+
+		// If not being sent to director, scrape crossref and supplementary data, place results object in preliminary database
+		while (retry_count < retry_max) {
+			try {
+				scrapedPublication = (await axios.post(`${process.env.SCRAPING_API}/scrape/publication/one`, newPub)).data
+				break
+			} catch (error) {
+				console.dir(error, { depth: null, color: true })
+				if (retry_count >= 2) return `Scraping error occured. Please try again later. ${error}`
+			}
+			retry_count += 1
+		}
+		return scrapedPublication
+    }
+	
+	async createPublication(newPub: PublicationDocumentNew): Promise<any> {
 
 		newPub.doi = newPub.doi.trim() //Clear off any spaces
 		const publication = await this.publicationModel.findOne({ doi: newPub.doi }).exec();
@@ -217,5 +248,5 @@ export class PublicationService {
 		}
 		return `${process.env.DOMAIN}/publication/${encodeURIComponent(newPub.doi)}`
 
-    }    
+    }
 }

@@ -67,6 +67,18 @@ export class PublicationController {
 		}
 	}
 
+	@Post('fetch')
+	async fetchPublication(@Body() newPub: PublicationDocumentNew) {
+		try {
+			const createdPublication = await this.publicationService.fetchPublication(newPub);
+			console.log(createdPublication)
+			return createdPublication
+		} catch (error) {
+			throw new HttpException(`Error creating publication: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+	}
+
 
 	@Post('new')
 	async createPublication(@Body() newPub: PublicationDocumentNew) {
