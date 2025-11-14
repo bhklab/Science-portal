@@ -256,12 +256,23 @@ const SubmitPublication: React.FC = () => {
                                 <p className="text-bodyMd">
                                     DOI <span className="text-red-600"> *</span>
                                 </p>
-                                <InputText
-                                    value={newPub.doi}
-                                    className={`${newPub.doi === '' && clickedDoi ? 'invalid-box' : ''} w-full`}
-                                    onChange={e => setNewPub({ ...newPub, doi: e.target.value })}
-                                    onClick={() => setClickedDoi(true)}
-                                />
+                                <div className="flex flex-row gap-4">
+                                    <InputText
+                                        value={newPub.doi}
+                                        className={`${newPub.doi === '' && clickedDoi ? 'invalid-box' : ''} w-full`}
+                                        onChange={e => setNewPub({ ...newPub, doi: e.target.value })}
+                                        onClick={() => setClickedDoi(true)}
+                                    />
+                                    <button
+                                        disabled={newPub.doi ? false : true}
+                                        className={`flex flex-row justify-center items-center ${
+                                            newPub.doi ? 'bg-sp_dark_green' : 'bg-gray-400'
+                                        } text-white shadow-button rounded-md min-w-28`}
+                                    >
+                                        Fetch Data
+                                    </button>
+                                </div>
+
                                 {newPub.doi === '' && clickedDoi && (
                                     <div className="flex flex-row gap-1">
                                         <img src="/images/assets/required-icon.svg" alt="" />
