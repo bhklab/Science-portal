@@ -45,7 +45,7 @@ const SubmitPublication: React.FC = () => {
     const [submitInprogress, setSubmitInprogress] = useState<boolean>(false);
 
     // State for scientists in db
-    const [scientists, setScientists] = useState<Author[]>([]);
+    // const [scientists, setScientists] = useState<Author[]>([]);
     const [scientistEmails, setScientistsEmails] = useState<String[]>([]);
 
     const toast = useRef<Toast>(null);
@@ -280,6 +280,18 @@ const SubmitPublication: React.FC = () => {
                                     </div>
                                 )}
                             </div>
+                            <div className="flex flex-col gap-2">
+                                <p className="text-bodyMd">Publication Summary</p>
+                                <InputText
+                                    value={newPub.name}
+                                    className="w-full"
+                                    onChange={e => setNewPub({ ...newPub, name: e.target.value })}
+                                    disabled={true}
+                                />
+                                <p className="text-bodySm text-gray-700">
+                                    Give a brief description of the publication (max: 2 sentences).
+                                </p>
+                            </div>
 
                             {/* Title */}
                             <div className="flex flex-col gap-1">
@@ -288,6 +300,7 @@ const SubmitPublication: React.FC = () => {
                                     value={newPub.name}
                                     className="w-full"
                                     onChange={e => setNewPub({ ...newPub, name: e.target.value })}
+                                    disabled={true}
                                 />
                             </div>
 
@@ -298,6 +311,7 @@ const SubmitPublication: React.FC = () => {
                                     value={newPub.journal}
                                     className="w-full"
                                     onChange={e => setNewPub({ ...newPub, journal: e.target.value })}
+                                    disabled={true}
                                 />
                             </div>
 
@@ -308,10 +322,11 @@ const SubmitPublication: React.FC = () => {
                                     value={newPub.type}
                                     className="w-full"
                                     onChange={e => setNewPub({ ...newPub, type: e.target.value })}
+                                    disabled={true}
                                 />
-                                <p className="text-bodySm text-gray-700">
+                                {/* <p className="text-bodySm text-gray-700">
                                     Tell us what type of publication this is. An article, review, etc.
-                                </p>
+                                </p> */}
                             </div>
 
                             {/* Authors */}
@@ -321,12 +336,13 @@ const SubmitPublication: React.FC = () => {
                                     value={newPub.authors}
                                     className="w-full"
                                     onChange={e => setNewPub({ ...newPub, authors: e.target.value })}
+                                    disabled={true}
                                 />
-                                <p className="text-bodySm text-gray-700">
+                                {/* <p className="text-bodySm text-gray-700">
                                     List co-authors in this format: LastName, FirstName with a semi-colon separating
                                     each individual author. Authors tagged here will be able to see the data shared in
                                     the publication stats on their personal statistics page.
-                                </p>
+                                </p> */}
                             </div>
 
                             {/* Affiliations */}
@@ -347,8 +363,9 @@ const SubmitPublication: React.FC = () => {
                                                     )
                                                 })
                                             }
+                                            disabled={true}
                                         />
-                                        <div className="flex justify-end">
+                                        {/* <div className="flex justify-end">
                                             <img
                                                 src="/images/assets/trashcan-icon.svg"
                                                 alt="Delete"
@@ -360,10 +377,10 @@ const SubmitPublication: React.FC = () => {
                                                 }
                                                 className="cursor-pointer"
                                             />
-                                        </div>
+                                        </div> */}
                                     </div>
                                 ))}
-                                <div className="flex justify-between items-center">
+                                {/* <div className="flex justify-between items-center">
                                     <p className="text-bodySm text-gray-700">
                                         List all affiliations in this publication.
                                     </p>
@@ -382,7 +399,7 @@ const SubmitPublication: React.FC = () => {
                                             })
                                         }
                                     />
-                                </div>
+                                </div> */}
                             </div>
 
                             {/* Publisher */}
@@ -392,6 +409,7 @@ const SubmitPublication: React.FC = () => {
                                     value={newPub.publisher}
                                     className="w-full"
                                     onChange={e => setNewPub({ ...newPub, publisher: e.target.value })}
+                                    disabled={true}
                                 />
                             </div>
 
@@ -404,6 +422,7 @@ const SubmitPublication: React.FC = () => {
                                         onChange={e => setNewPub({ ...newPub, date: e.value })}
                                         style={{ borderRadius: '20px' }}
                                         className="rounded-lg"
+                                        disabled={true}
                                     />
                                 </div>
                             </div>
