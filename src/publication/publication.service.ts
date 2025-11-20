@@ -147,20 +147,15 @@ export class PublicationService {
     }
     async fetchPublication(newPub: PublicationDocumentNew): Promise<any> {
 
-		newPub.doi = newPub.doi.trim() //Clear off any spaces
+		newPub.doi = newPub.doi.trim() //Clear off white space
 		const publication = await this.publicationModel.findOne({ doi: newPub.doi }).exec();
 		if (publication) {
 			return "DOI exists in database already";
 		}
 
-		if (newPub.date === null){
-			newPub.date = new Date().toISOString();
-		}
-
-		newPub.date = newPub.date.toString().substring(0, 10);
 		let scrapedPublication = null;
 
-		const retry_max = 3;
+		const retry_max = 5;
 		let retry_count = 0;
 
 		// If not being sent to director, scrape crossref and supplementary data, place results object in preliminary database
@@ -169,8 +164,9 @@ export class PublicationService {
 				scrapedPublication = (await axios.post(`${process.env.SCRAPING_API}/scrape/publication/one`, newPub)).data
 				break
 			} catch (error) {
-				console.dir(error, { depth: null, color: true })
-				if (retry_count >= 2) return `Scraping error occured. Please try again later. ${error}`
+				console.log(error)
+				// console.dir(error, { depth: null, color: true })
+				if (retry_count >= 4) return `Scraping error occured. Please try again later. ${error}`
 			}
 			retry_count += 1
 		}
