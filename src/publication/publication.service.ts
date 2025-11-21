@@ -158,7 +158,6 @@ export class PublicationService {
 		const retry_max = 5;
 		let retry_count = 0;
 
-		// If not being sent to director, scrape crossref and supplementary data, place results object in preliminary database
 		while (retry_count < retry_max) {
 			try {
 				scrapedPublication = (await axios.post(`${process.env.SCRAPING_API}/scrape/publication/one`, newPub)).data

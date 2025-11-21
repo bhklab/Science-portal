@@ -3,12 +3,12 @@ import axios from 'axios';
 import { Toast } from 'primereact/toast';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { InputText } from 'primereact/inputtext';
+import { InputTextarea } from 'primereact/inputtextarea';
 import { Dropdown } from 'primereact/dropdown';
 import { Calendar } from 'primereact/calendar';
 import { NewPub, createDefaultNewPub } from '../interfaces/NewPub';
 import { LINK_CATEGORIES } from '../interfaces/Links';
 import { AuthContext } from '../hooks/AuthContext';
-import Author from 'interfaces/Author';
 
 interface Option {
     name: String;
@@ -30,7 +30,7 @@ const SubmitPublication: React.FC = () => {
     const [newPub, setNewPub] = useState<NewPub>(createDefaultNewPub());
 
     // State for supplementary resources
-    const [links, setLinks] = useState<{ [key: string]: string[] }>(initializeLinks({}));
+    const [links, setLinks] = useState<NewPub['supplementary']>(createDefaultNewPub().supplementary);
 
     // State for the "otherLinks" array (objects with name/description/link)
     const [otherLinks, setOtherLinks] = useState<NewPub['otherLinks']>([]);
@@ -42,10 +42,9 @@ const SubmitPublication: React.FC = () => {
     const [sendDirector, setSendDirector] = useState<boolean>(false);
 
     // Scraping progress
-    const [submitInprogress, setSubmitInprogress] = useState<boolean>(false);
+    const [Inprogress, setInprogress] = useState<boolean>(false);
 
     // State for scientists in db
-    // const [scientists, setScientists] = useState<Author[]>([]);
     const [scientistEmails, setScientistsEmails] = useState<String[]>([]);
 
     const toast = useRef<Toast>(null);
@@ -64,26 +63,40 @@ const SubmitPublication: React.FC = () => {
     }, []);
 
     // For all subcategories that store an array of strings
-    const addNewLink = (category: string) => {
-        setLinks(prevLinks => ({
-            ...prevLinks,
-            [category]: [...(prevLinks[category] || []), '']
+    const addNewLink = (categoryGroup: string, key: string) => {
+        setLinks(prev => ({
+            ...prev,
+            [categoryGroup]: {
+                ...(prev[categoryGroup] || {}),
+                [key]: [...(prev[categoryGroup]?.[key] ?? []), '']
+            }
         }));
     };
 
-    const handleLinkChange = (category: string, index: number, value: string) => {
-        setLinks(prevLinks => {
-            const updated = { ...prevLinks };
-            updated[category][index] = value;
-            return updated;
+    const handleLinkChange = (categoryGroup: string, key: string, index: number, value: string) => {
+        setLinks(prev => {
+            const arr = [...(prev[categoryGroup]?.[key] ?? [])];
+            arr[index] = value;
+            return {
+                ...prev,
+                [categoryGroup]: {
+                    ...(prev[categoryGroup] || {}),
+                    [key]: arr
+                }
+            };
         });
     };
 
-    const deleteLink = (category: string, index: number) => {
-        setLinks(prevLinks => {
-            const updated = { ...prevLinks };
-            updated[category] = updated[category].filter((_, idx) => idx !== index);
-            return updated;
+    const deleteLink = (categoryGroup: string, key: string, index: number) => {
+        setLinks(prev => {
+            const arr = (prev[categoryGroup]?.[key] ?? []).filter((_, i) => i !== index);
+            return {
+                ...prev,
+                [categoryGroup]: {
+                    ...(prev[categoryGroup] || {}),
+                    [key]: arr
+                }
+            };
         });
     };
 
@@ -112,9 +125,7 @@ const SubmitPublication: React.FC = () => {
 
     const submitPublication = async () => {
         // Build the nested supplementary object from `links`:
-        const updatedSupplementary = convertLinksToSupplementary(links);
-
-        setSubmitInprogress(true);
+        setInprogress(true);
 
         try {
             // Construct the final object to send
@@ -126,14 +137,14 @@ const SubmitPublication: React.FC = () => {
                     completed: false,
                     verdict: null
                 },
-                supplementary: updatedSupplementary,
+                supplementary: links,
                 otherLinks,
                 submitter: authContext?.user?.email
             };
 
-            const response = await axios.post('/api/publications/new', updatedPub);
-            if (typeof response.data === 'string') {
-                if (response.data.includes('http')) {
+            const res = await axios.post('/api/publications/new', updatedPub);
+            if (typeof res.data === 'string') {
+                if (res.data.includes('http')) {
                     toast.current?.show({
                         severity: 'success',
                         summary: 'Successful Publication Submission',
@@ -143,30 +154,30 @@ const SubmitPublication: React.FC = () => {
                                     Your newly submitted publication can be found in the platform at:
                                 </p>
                                 <a
-                                    href={response.data}
+                                    href={res.data}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="underline text-bodyLg"
                                 >
-                                    {response.data}
+                                    {res.data}
                                 </a>
                             </div>
                         ),
                         life: 20000
                     });
                     setNewPub(createDefaultNewPub());
-                } else if (response.data === 'DOI exists in database already') {
+                } else if (res.data === 'DOI exists in database already') {
                     toast.current?.show({
                         severity: 'error',
                         summary: 'Unexpected error occured.',
-                        detail: response.data,
+                        detail: res.data,
                         life: 20000
                     });
                 } else {
                     toast.current?.show({
                         severity: 'error',
                         summary: 'Unexpected error occured.',
-                        detail: response.data,
+                        detail: res.data,
                         life: 20000
                     });
                 }
@@ -174,7 +185,7 @@ const SubmitPublication: React.FC = () => {
                 toast.current?.show({
                     severity: 'error',
                     summary: 'Unexpected error occured.',
-                    detail: response.data,
+                    detail: res.data,
                     life: 20000
                 });
             }
@@ -187,9 +198,51 @@ const SubmitPublication: React.FC = () => {
             });
             console.error('Error submitting new publication:', error);
         }
-        setSubmitInprogress(false);
+        setInprogress(false);
     };
 
+    const fetchPublication = async () => {
+        setInprogress(true);
+        const updatedPub: NewPub = {
+            ...newPub,
+            scraped: false,
+            fanout: {
+                request: sendDirector,
+                completed: false,
+                verdict: null
+            },
+            supplementary: links,
+            otherLinks,
+            submitter: authContext?.user?.email
+        };
+        try {
+            const res = await axios.post(`/api/publications/scrape`, updatedPub);
+            if (typeof res.data !== 'string') {
+                setNewPub(res.data);
+                setLinks(res.data.supplementary);
+                console.log(res.data);
+            } else {
+                if (res.data === 'DOI exists in database already') {
+                    toast.current?.show({
+                        severity: 'error',
+                        summary: 'Unexpected error occured.',
+                        detail: res.data,
+                        life: 20000
+                    });
+                } else {
+                    toast.current?.show({
+                        severity: 'error',
+                        summary: 'Unexpected error occured.',
+                        detail: res.data,
+                        life: 20000
+                    });
+                }
+            }
+        } catch (error) {
+            console.log(error);
+        }
+        setInprogress(false);
+    };
     return (
         <div className="px-60 py-[90px] bg-white">
             {/* Header / Submit Button */}
@@ -228,7 +281,7 @@ const SubmitPublication: React.FC = () => {
                 </div>
             </div>
 
-            {submitInprogress ? (
+            {Inprogress ? (
                 <div className="flex flex-col gap-2 justify-center items-center min-h-screen">
                     <ProgressSpinner
                         style={{ width: '300px', height: '300px' }}
@@ -268,6 +321,7 @@ const SubmitPublication: React.FC = () => {
                                         className={`flex flex-row justify-center items-center ${
                                             newPub.doi ? 'bg-sp_dark_green' : 'bg-gray-400'
                                         } text-white shadow-button rounded-md min-w-28`}
+                                        onClick={() => fetchPublication()}
                                     >
                                         Fetch Data
                                     </button>
@@ -280,43 +334,50 @@ const SubmitPublication: React.FC = () => {
                                     </div>
                                 )}
                             </div>
-                            <div className="flex flex-col gap-2">
-                                <p className="text-bodyMd">Publication Summary</p>
-                                <InputText
-                                    value={newPub.name}
-                                    className="w-full"
-                                    onChange={e => setNewPub({ ...newPub, name: e.target.value })}
-                                    disabled={true}
-                                />
-                                <p className="text-bodySm text-gray-700">
-                                    Give a brief description of the publication (max: 2 sentences).
-                                </p>
-                            </div>
+                            {sendDirector && (
+                                <div className="flex flex-col gap-2">
+                                    <p className="text-bodyMd">Publication Summary</p>
+                                    <InputTextarea
+                                        value={newPub.summary}
+                                        className="w-full h-full"
+                                        onChange={e => setNewPub({ ...newPub, summary: e.target.value })}
+                                        autoResize
+                                    />
+                                    <p className="text-bodySm text-gray-700">
+                                        Give a brief description of the publication for the scientific director's
+                                        reference (max: 2 sentences).
+                                    </p>
+                                </div>
+                            )}
 
                             {/* Title */}
-                            <div className="flex flex-col gap-1">
-                                <p className="text-bodyMd">Publication Title</p>
-                                <InputText
-                                    value={newPub.name}
-                                    className="w-full"
-                                    onChange={e => setNewPub({ ...newPub, name: e.target.value })}
-                                    disabled={true}
-                                />
-                            </div>
+                            {newPub.name && (
+                                <div className="flex flex-col gap-1">
+                                    <p className="text-bodyMd">Publication Title</p>
+                                    <InputText
+                                        value={newPub.name}
+                                        className="w-full"
+                                        onChange={e => setNewPub({ ...newPub, name: e.target.value })}
+                                        disabled={true}
+                                    />
+                                </div>
+                            )}
 
                             {/* Journal */}
-                            <div className="flex flex-col gap-1">
-                                <p className="text-bodyMd">Journal</p>
-                                <InputText
-                                    value={newPub.journal}
-                                    className="w-full"
-                                    onChange={e => setNewPub({ ...newPub, journal: e.target.value })}
-                                    disabled={true}
-                                />
-                            </div>
+                            {newPub.journal && (
+                                <div className="flex flex-col gap-1">
+                                    <p className="text-bodyMd">Journal</p>
+                                    <InputText
+                                        value={newPub.journal}
+                                        className="w-full"
+                                        onChange={e => setNewPub({ ...newPub, journal: e.target.value })}
+                                        disabled={true}
+                                    />
+                                </div>
+                            )}
 
                             {/* Type */}
-                            <div className="flex flex-col gap-1">
+                            {/* <div className="flex flex-col gap-1">
                                 <p className="text-bodyMd">Type</p>
                                 <InputText
                                     value={newPub.type}
@@ -324,48 +385,51 @@ const SubmitPublication: React.FC = () => {
                                     onChange={e => setNewPub({ ...newPub, type: e.target.value })}
                                     disabled={true}
                                 />
-                                {/* <p className="text-bodySm text-gray-700">
+                                <p className="text-bodySm text-gray-700">
                                     Tell us what type of publication this is. An article, review, etc.
-                                </p> */}
-                            </div>
+                                </p>
+                            </div> */}
 
                             {/* Authors */}
-                            <div className="flex flex-col gap-1">
-                                <p className="text-bodyMd">Authors</p>
-                                <InputText
-                                    value={newPub.authors}
-                                    className="w-full"
-                                    onChange={e => setNewPub({ ...newPub, authors: e.target.value })}
-                                    disabled={true}
-                                />
-                                {/* <p className="text-bodySm text-gray-700">
+                            {newPub.authors && (
+                                <div className="flex flex-col gap-1">
+                                    <p className="text-bodyMd">Authors</p>
+                                    <InputText
+                                        value={newPub.authors}
+                                        className="w-full"
+                                        onChange={e => setNewPub({ ...newPub, authors: e.target.value })}
+                                        disabled={true}
+                                    />
+                                    {/* <p className="text-bodySm text-gray-700">
                                     List co-authors in this format: LastName, FirstName with a semi-colon separating
                                     each individual author. Authors tagged here will be able to see the data shared in
                                     the publication stats on their personal statistics page.
                                 </p> */}
-                            </div>
+                                </div>
+                            )}
 
                             {/* Affiliations */}
-                            <div className="flex flex-col gap-1">
-                                <p className="text-bodyMd">Affiliations</p>
-                                {newPub.affiliations.map((affil, index) => (
-                                    <div className="flex flex-row gap-2" key={index}>
-                                        <InputText
-                                            className="w-full"
-                                            value={affil}
-                                            onChange={e =>
-                                                setNewPub({
-                                                    ...newPub,
-                                                    affiliations: newPub.affiliations.toSpliced(
-                                                        index,
-                                                        1,
-                                                        e.target.value
-                                                    )
-                                                })
-                                            }
-                                            disabled={true}
-                                        />
-                                        {/* <div className="flex justify-end">
+                            {newPub.affiliations.length !== 0 && (
+                                <div className="flex flex-col gap-1">
+                                    <p className="text-bodyMd">Affiliations</p>
+                                    {newPub.affiliations.map((affil, index) => (
+                                        <div className="flex flex-row gap-2" key={index}>
+                                            <InputText
+                                                className="w-full"
+                                                value={affil}
+                                                onChange={e =>
+                                                    setNewPub({
+                                                        ...newPub,
+                                                        affiliations: newPub.affiliations.toSpliced(
+                                                            index,
+                                                            1,
+                                                            e.target.value
+                                                        )
+                                                    })
+                                                }
+                                                disabled={true}
+                                            />
+                                            {/* <div className="flex justify-end">
                                             <img
                                                 src="/images/assets/trashcan-icon.svg"
                                                 alt="Delete"
@@ -378,9 +442,9 @@ const SubmitPublication: React.FC = () => {
                                                 className="cursor-pointer"
                                             />
                                         </div> */}
-                                    </div>
-                                ))}
-                                {/* <div className="flex justify-between items-center">
+                                        </div>
+                                    ))}
+                                    {/* <div className="flex justify-between items-center">
                                     <p className="text-bodySm text-gray-700">
                                         List all affiliations in this publication.
                                     </p>
@@ -400,32 +464,38 @@ const SubmitPublication: React.FC = () => {
                                         }
                                     />
                                 </div> */}
-                            </div>
+                                </div>
+                            )}
 
                             {/* Publisher */}
-                            <div className="flex flex-col gap-1">
-                                <p className="text-bodyMd">Publisher</p>
-                                <InputText
-                                    value={newPub.publisher}
-                                    className="w-full"
-                                    onChange={e => setNewPub({ ...newPub, publisher: e.target.value })}
-                                    disabled={true}
-                                />
-                            </div>
-
-                            {/* Publish Date */}
-                            <div className="flex flex-col gap-1">
-                                <p className="text-bodyMd">Publish Date</p>
-                                <div className="card flex justify-content-center rounded-lg">
-                                    <Calendar
-                                        value={newPub.date}
-                                        onChange={e => setNewPub({ ...newPub, date: e.value })}
-                                        style={{ borderRadius: '20px' }}
-                                        className="rounded-lg"
+                            {newPub.publisher && (
+                                <div className="flex flex-col gap-1">
+                                    <p className="text-bodyMd">Publisher</p>
+                                    <InputText
+                                        value={newPub.publisher}
+                                        className="w-full"
+                                        onChange={e => setNewPub({ ...newPub, publisher: e.target.value })}
                                         disabled={true}
                                     />
                                 </div>
-                            </div>
+                            )}
+
+                            {/* Publish Date */}
+                            {newPub.date && (
+                                <div className="flex flex-col gap-1">
+                                    <p className="text-bodyMd">Publish Date</p>
+                                    <div className="card flex justify-content-center rounded-lg">
+                                        <Calendar
+                                            value={new Date(newPub.date)}
+                                            onChange={e => setNewPub({ ...newPub, date: e.value })}
+                                            style={{ borderRadius: '20px' }}
+                                            className="rounded-lg"
+                                            disabled={true}
+                                            dateFormat="yy-mm-dd"
+                                        />
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -444,7 +514,6 @@ const SubmitPublication: React.FC = () => {
                                         <p className="text-headingSm font-medium text-gray-700">
                                             Add all relevant resource types
                                         </p>
-
                                         <div className="flex flex-col gap-5">
                                             {/* Pills for adding new links */}
                                             <div className="flex flex-col gap-4">
@@ -477,11 +546,13 @@ const SubmitPublication: React.FC = () => {
                                                         }
 
                                                         // Otherwise, it's a normal subcategory
-                                                        const isExisting = Boolean(links[key.name]?.length);
+                                                        const isExisting = Boolean(
+                                                            links[categoryGroup]?.[key.name]?.length
+                                                        );
                                                         return (
                                                             <button
                                                                 key={key.name}
-                                                                onClick={() => addNewLink(key.name)}
+                                                                onClick={() => addNewLink(categoryGroup, key.name)}
                                                                 className={`flex flex-row gap-1 justify-center items-center p-3 text-headingMd rounded-full font-medium bg-gray-50 border-gray-200 hover:bg-gray-100 
 																${isExisting ? 'text-black-900' : 'text-gray-700'}`}
                                                             >
@@ -614,8 +685,8 @@ const SubmitPublication: React.FC = () => {
                                                     );
                                                 } else {
                                                     // For normal subcategories
-                                                    const categoryLinks = links[key.name];
-                                                    if (!categoryLinks || categoryLinks.length === 0) {
+                                                    const categoryLinks = links[categoryGroup]?.[key.name] ?? [];
+                                                    if (categoryLinks.length === 0) {
                                                         return null;
                                                     }
                                                     return (
@@ -629,7 +700,7 @@ const SubmitPublication: React.FC = () => {
                                                                     src="/images/assets/plus-icon.svg"
                                                                     alt="Add Link"
                                                                     className="cursor-pointer"
-                                                                    onClick={() => addNewLink(key.name)}
+                                                                    onClick={() => addNewLink(categoryGroup, key.name)}
                                                                 />
                                                             </div>
                                                             <div className="flex flex-col gap-3">
@@ -647,6 +718,7 @@ const SubmitPublication: React.FC = () => {
                                                                             value={link}
                                                                             onChange={e =>
                                                                                 handleLinkChange(
+                                                                                    categoryGroup,
                                                                                     key.name,
                                                                                     index,
                                                                                     e.target.value
@@ -657,7 +729,13 @@ const SubmitPublication: React.FC = () => {
                                                                         <img
                                                                             src="/images/assets/trashcan-icon.svg"
                                                                             alt="Delete"
-                                                                            onClick={() => deleteLink(key.name, index)}
+                                                                            onClick={() =>
+                                                                                deleteLink(
+                                                                                    categoryGroup,
+                                                                                    key.name,
+                                                                                    index
+                                                                                )
+                                                                            }
                                                                             className="cursor-pointer"
                                                                         />
                                                                     </div>
@@ -680,80 +758,6 @@ const SubmitPublication: React.FC = () => {
             <Toast ref={toast} baseZIndex={1000} position="bottom-right" />
         </div>
     );
-};
-
-/**
- * Convert the flat dictionary of arrays (key => string[]) into the nested
- * structure required by `newPub.supplementary`.
- */
-function convertLinksToSupplementary(links: { [key: string]: string[] }) {
-    return {
-        code: {
-            github: links['github'] ?? [],
-            gitlab: links['gitlab'] ?? []
-        },
-        data: {
-            geo: links['geo'] ?? [],
-            dbGap: links['dbGap'] ?? [],
-            kaggle: links['kaggle'] ?? [],
-            dryad: links['dryad'] ?? [],
-            empiar: links['empiar'] ?? [],
-            gigaDb: links['gigaDb'] ?? [],
-            zenodo: links['zenodo'] ?? [],
-            ega: links['ega'] ?? [],
-            xlsx: links['xlsx'] ?? [],
-            csv: links['csv'] ?? [],
-            proteinDataBank: links['proteinDataBank'] ?? [],
-            dataverse: links['dataverse'] ?? [],
-            openScienceFramework: links['openScienceFramework'] ?? [],
-            finngenGitbook: links['finngenGitbook'] ?? [],
-            gtexPortal: links['gtexPortal'] ?? [],
-            ebiAcUk: links['ebiAcUk'] ?? [],
-            mendeley: links['mendeley'] ?? [],
-            R: links['R'] ?? []
-        },
-        containers: {
-            codeOcean: links['codeOcean'] ?? [],
-            colab: links['colab'] ?? []
-        },
-        results: {
-            gsea: links['gsea'] ?? [],
-            figshare: links['figshare'] ?? []
-        },
-        trials: {
-            clinicalTrial: links['clinicalTrial'] ?? [],
-            euCTR: links['euCTR'] ?? [],
-            vivli: links['vivli'] ?? [],
-            yoda: links['yoday'] ?? []
-        },
-        protocols: {
-            protocolsIO: links['protocolsIO'] ?? [],
-            bioProtocol: links['bioProtocol'] ?? [],
-            benchling: links['benchling'] ?? [],
-            labArchives: links['labArchives'] ?? []
-        },
-        packages: {
-            bioconductor: links['bioconductor'] ?? [],
-            pypi: links['pypi'] ?? [],
-            CRAN: links['CRAN'] ?? []
-        },
-        miscellaneous: {
-            IEEE: links['IEEE'] ?? [],
-            pdf: links['pdf'] ?? [],
-            docx: links['docx'] ?? [],
-            zip: links['zip'] ?? []
-        }
-    };
-}
-
-const initializeLinks = (supplementary: { [key: string]: string[] }) => {
-    const links: { [key: string]: string[] } = {};
-    Object.values(LINK_CATEGORIES).forEach(subCategories => {
-        subCategories.forEach(({ name }) => {
-            links[name] = supplementary[name] ?? [];
-        });
-    });
-    return links;
 };
 
 const capitalizeFirst = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
