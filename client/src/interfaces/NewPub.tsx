@@ -1,6 +1,7 @@
 export interface NewPub {
     doi: string;
     name: string;
+    summary: string;
     journal: string;
     type: string;
     authors: string;
@@ -9,8 +10,8 @@ export interface NewPub {
     citations: number;
     status: string;
     publisher: string;
-    date: any;
-    dateAdded: Date;
+    date: Date | null;
+    dateAdded: Date | null;
     scraped: boolean;
     fanout: {
         request: boolean;
@@ -40,15 +41,16 @@ export function createDefaultNewPub(): NewPub {
     return {
         doi: '',
         name: '',
+        summary: '',
         journal: '',
         type: '',
         authors: '',
         filteredAuthors: '',
-        affiliations: [''],
+        affiliations: [],
         citations: 0,
         status: 'Published',
         publisher: '',
-        date: new Date(),
+        date: null,
         dateAdded: new Date(),
         scraped: false,
         fanout: {

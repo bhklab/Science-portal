@@ -3,6 +3,7 @@ import { Schema } from 'mongoose';
 export const PublicationsNewSchema = new Schema({
 	PMID: Number,
 	doi: { type: String, required: true },
+	summary: { type: String},
 	date: String,
 	name: { type: String, required: true },
 	journal: String,

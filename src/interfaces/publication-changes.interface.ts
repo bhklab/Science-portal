@@ -3,6 +3,7 @@ import { Document } from 'mongoose';
 export interface PublicationChangesDocument extends Document {
 	PMID: number;
 	doi: string;
+	summary: string;
 	date: string;
 	name: string;
 	journal: string;
