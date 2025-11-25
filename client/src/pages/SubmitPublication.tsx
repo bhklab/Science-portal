@@ -37,6 +37,7 @@ const SubmitPublication: React.FC = () => {
 
     // Manage when to show 'Required Field' popup
     const [clickedDoi, setClickedDoi] = useState<boolean>(false);
+    const [clickedFetch, setClickedFetch] = useState<boolean>(false);
 
     // State for sending to director checkbox
     const [sendDirector, setSendDirector] = useState<boolean>(false);
@@ -268,11 +269,18 @@ const SubmitPublication: React.FC = () => {
                             <p className="text-bodySm">Notify director of new publication</p>
                         </div>
                     ) : null}
-
                     <button
-                        disabled={newPub.doi ? false : true}
+                        disabled={
+                            (newPub.doi ? false : true) ||
+                            (sendDirector ? (newPub.summary ? false : true) : true) ||
+                            (clickedFetch ? false : true)
+                        }
                         className={`flex flex-row justify-center items-center px-5 py-2 ${
-                            newPub.doi ? 'bg-sp_dark_green' : 'bg-gray-400'
+                            (newPub.doi ? false : true) ||
+                            (sendDirector ? (newPub.summary ? false : true) : true) ||
+                            (clickedFetch ? false : true)
+                                ? 'bg-gray-400'
+                                : 'bg-sp_dark_green'
                         } text-white shadow-button rounded-md`}
                         onClick={submitPublication}
                     >
@@ -321,7 +329,10 @@ const SubmitPublication: React.FC = () => {
                                         className={`flex flex-row justify-center items-center ${
                                             newPub.doi ? 'bg-sp_dark_green' : 'bg-gray-400'
                                         } text-white shadow-button rounded-md min-w-28`}
-                                        onClick={() => fetchPublication()}
+                                        onClick={() => {
+                                            fetchPublication();
+                                            setClickedFetch(true);
+                                        }}
                                     >
                                         Fetch Data
                                     </button>
@@ -336,10 +347,12 @@ const SubmitPublication: React.FC = () => {
                             </div>
                             {sendDirector && (
                                 <div className="flex flex-col gap-2">
-                                    <p className="text-bodyMd">Publication Summary</p>
+                                    <p className="text-bodyMd">
+                                        Publication Summary <span className="text-red-600"> *</span>
+                                    </p>
                                     <InputTextarea
                                         value={newPub.summary}
-                                        className="w-full h-full"
+                                        className={`${newPub.summary === '' && clickedDoi ? 'invalid-box' : ''} w-full`}
                                         onChange={e => setNewPub({ ...newPub, summary: e.target.value })}
                                         autoResize
                                     />
@@ -347,6 +360,12 @@ const SubmitPublication: React.FC = () => {
                                         Give a brief description of the publication for the scientific director's
                                         reference (max: 2 sentences).
                                     </p>
+                                    {newPub.summary === '' && clickedDoi && (
+                                        <div className="flex flex-row gap-1">
+                                            <img src="/images/assets/required-icon.svg" alt="" />
+                                            <p className="text-bodySm text-red-1000">Required Field</p>
+                                        </div>
+                                    )}
                                 </div>
                             )}
 

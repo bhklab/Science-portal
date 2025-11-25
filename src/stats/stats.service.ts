@@ -272,7 +272,7 @@ export class StatsService {
 				}
 
 				const pubsOfTarget = publicationsByAuthor[enidNumber] || [];
-				const totalPubsForAuthor = pubsOfTarget.length || 1;
+				const totalPubsForAuthor = pubsOfTarget.length || 0;
 
 				const categoryStats = supplementary.reduce((acc, { type }) => {
 					const arr = categoryRankings[type];
