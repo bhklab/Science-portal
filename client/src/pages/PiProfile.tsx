@@ -563,16 +563,19 @@ const PiProfile: React.FC = () => {
                                                     {categoryStats[item.statIndex].authorContributions} publications
                                                     with {item.description}
                                                 </h3>
-                                                <p className="text-bodySm xs:text-bodyXs">
-                                                    You are in the{' '}
-                                                    <span className="font-bold">
-                                                        {categoryStats[item.statIndex].percentage < 50
-                                                            ? 'top'
-                                                            : 'bottom'}{' '}
-                                                        {categoryStats[item.statIndex].percentage}%
-                                                    </span>{' '}
-                                                    of {item.sentence} sharing within publications at Princess Margaret.
-                                                </p>
+                                                {categoryStats[item.statIndex].authorContributions > 1 && (
+                                                    <p className="text-bodySm xs:text-bodyXs">
+                                                        You are in the{' '}
+                                                        <span className="font-bold">
+                                                            {categoryStats[item.statIndex].percentage < 50
+                                                                ? 'top'
+                                                                : 'bottom'}{' '}
+                                                            {categoryStats[item.statIndex].percentage}%
+                                                        </span>{' '}
+                                                        of {item.sentence} sharing within publications at Princess
+                                                        Margaret.
+                                                    </p>
+                                                )}
                                             </div>
                                             <div className="relative h-[100px] w-[100px] flex-shrink-0 overflow-visible">
                                                 <img
@@ -585,13 +588,12 @@ const PiProfile: React.FC = () => {
                                                 />
                                             </div>
                                         </div>
-
                                         {toggleDetailed && (
                                             <div className="flex flex-col gap-2 animate-show">
                                                 <p className="text-bodySm xs:text-bodyXs">
                                                     <span className="font-bold">
                                                         {categoryStats[item.statIndex].openSciencePercentage
-                                                            ? categoryStats[item.statIndex]
+                                                            ? categoryStats[item.statIndex].openSciencePercentage
                                                             : '0'}
                                                         % of your publications
                                                     </span>{' '}

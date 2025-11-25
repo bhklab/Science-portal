@@ -221,7 +221,7 @@ export class StatsService {
 
 					// Initialize counters for each type
 					supplementary.forEach(({ type }) => {
-					statsObj.categoryContributions[type] = 0;
+						statsObj.categoryContributions[type] = 0;
 					});
 
 					pubs.forEach((pub) => {
@@ -230,16 +230,15 @@ export class StatsService {
 						const countedCategories = new Map();
 					
 						supplementary.forEach(({ category, type }) => {
-						if (!countedCategories.has(type)) countedCategories.set(type, false);
-					
-						// Check if at least one subcategory has data and count only once per category
-						Object.values(pub.supplementary?.[category] || {}).forEach((linkArray) => {
-							if (Array.isArray(linkArray) && linkArray.length > 0 && !countedCategories.get(type)) {
-								statsObj.categoryContributions[type] += 1;
-								totalCategoryContributions[type] += 1;
-								countedCategories.set(type, true);
-							}
-						});
+							if (!countedCategories.has(type)) countedCategories.set(type, false);
+							// Check if at least one subcategory has data and count only once per category
+							Object.values(pub.supplementary?.[category] || {}).forEach((linkArray) => {
+								if (Array.isArray(linkArray) && linkArray.length > 0 && !countedCategories.get(type)) {
+									statsObj.categoryContributions[type] += 1;
+									totalCategoryContributions[type] += 1;
+									countedCategories.set(type, true);
+								}
+							});
 						});
 					});
 					
@@ -325,6 +324,18 @@ export class StatsService {
 					const pointRadii = categoryRankings[type].map(entry =>
 						entry.enid === enidNumber ? 10 : 5
 					);
+
+					console.log(
+						{
+							label: type,
+							data: points,
+							backgroundColor: barColour,
+							borderColour,
+							pointBackgroundColor: pointBackgroundcolours,
+							pointBorderColor: pointBordercolours,
+							pointRadius: pointRadii
+						}
+					)
 				
 					return {
 						label: type,
@@ -420,7 +431,7 @@ export class StatsService {
 				
 				// Find min and max contributions
 				const maxContribution = Math.max(...authorContributions);
-				const targetAuthorContribution = authorContributionsMap[type][enidNumber] || 0;
+				const targetAuthorContribution = authorContributionsMap[type][enidNumber] || 1;
 				
 				// Create 10 bins or less if maxContribution is small
 				const binCount = Math.min(10, maxContribution + 1);
