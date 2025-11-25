@@ -37,6 +37,7 @@ const SubmitPublication: React.FC = () => {
 
     // Manage when to show 'Required Field' popup
     const [clickedDoi, setClickedDoi] = useState<boolean>(false);
+    const [clickedFetch, setClickedFetch] = useState<boolean>(false);
 
     // State for sending to director checkbox
     const [sendDirector, setSendDirector] = useState<boolean>(false);
@@ -243,16 +244,6 @@ const SubmitPublication: React.FC = () => {
         }
         setInprogress(false);
     };
-    useEffect(() => {
-        console.log('Director message');
-        console.log(sendDirector);
-        console.log('newPub doi');
-        console.log(newPub.doi ? false : true);
-        console.log('newPub Summary');
-        console.log(sendDirector ? (newPub.summary ? false : true) : true);
-        console.log('line total');
-        console.log((newPub.doi ? false : true) || (sendDirector ? (newPub.summary ? false : true) : true));
-    }, [sendDirector, newPub]);
     return (
         <div className="px-60 py-[90px] bg-white">
             {/* Header / Submit Button */}
@@ -280,10 +271,14 @@ const SubmitPublication: React.FC = () => {
                     ) : null}
                     <button
                         disabled={
-                            (newPub.doi ? false : true) || (sendDirector ? (newPub.summary ? false : true) : true)
+                            (newPub.doi ? false : true) ||
+                            (sendDirector ? (newPub.summary ? false : true) : true) ||
+                            (clickedFetch ? false : true)
                         }
                         className={`flex flex-row justify-center items-center px-5 py-2 ${
-                            (newPub.doi ? false : true) || (sendDirector ? (newPub.summary ? false : true) : true)
+                            (newPub.doi ? false : true) ||
+                            (sendDirector ? (newPub.summary ? false : true) : true) ||
+                            (clickedFetch ? false : true)
                                 ? 'bg-gray-400'
                                 : 'bg-sp_dark_green'
                         } text-white shadow-button rounded-md`}
@@ -334,7 +329,10 @@ const SubmitPublication: React.FC = () => {
                                         className={`flex flex-row justify-center items-center ${
                                             newPub.doi ? 'bg-sp_dark_green' : 'bg-gray-400'
                                         } text-white shadow-button rounded-md min-w-28`}
-                                        onClick={() => fetchPublication()}
+                                        onClick={() => {
+                                            fetchPublication();
+                                            setClickedFetch(true);
+                                        }}
                                     >
                                         Fetch Data
                                     </button>
