@@ -45,10 +45,28 @@ const SubmitPublication: React.FC = () => {
     // Scraping progress
     const [Inprogress, setInprogress] = useState<boolean>(false);
 
+    // State for scraping progress
+    const [progressTextIndex, setProgressTextIndex] = useState<number>(0);
+    const progressText = [
+        'Fetching publication metadata',
+        'Retrieving publication resources',
+        'Compiling publication summary',
+        'Almost Complete!'
+    ];
+
     // State for scientists in db
     const [scientistEmails, setScientistsEmails] = useState<String[]>([]);
 
     const toast = useRef<Toast>(null);
+
+    const progressTextTrigger = () => {
+        const intervalId = setInterval(() => {
+            setProgressTextIndex(prevIndex => (prevIndex + 1) % progressText.length);
+        }, 3000);
+
+        if (Inprogress === true) return () => clearInterval(intervalId);
+        else return;
+    };
 
     useEffect(() => {
         const getScientists = async () => {
@@ -221,7 +239,6 @@ const SubmitPublication: React.FC = () => {
             if (typeof res.data !== 'string') {
                 setNewPub(res.data);
                 setLinks(res.data.supplementary);
-                console.log(res.data);
             } else {
                 if (res.data === 'DOI exists in database already') {
                     toast.current?.show({
@@ -290,13 +307,14 @@ const SubmitPublication: React.FC = () => {
             </div>
 
             {Inprogress ? (
-                <div className="flex flex-col gap-2 justify-center items-center min-h-screen">
+                <div className="flex flex-col gap-10 justify-center items-center min-h-screen">
                     <ProgressSpinner
                         style={{ width: '300px', height: '300px' }}
                         strokeWidth="3"
                         fill="var(--surface-ground)"
                         animationDuration="3s"
                     />
+                    <h2 className="text-headingXl">{progressText[progressTextIndex]}</h2>
                 </div>
             ) : (
                 <div className="flex flex-col gap-10 text-black-900">
@@ -332,6 +350,7 @@ const SubmitPublication: React.FC = () => {
                                         onClick={() => {
                                             fetchPublication();
                                             setClickedFetch(true);
+                                            progressTextTrigger();
                                         }}
                                     >
                                         Fetch Data
