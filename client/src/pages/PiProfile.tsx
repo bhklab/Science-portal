@@ -590,8 +590,10 @@ const PiProfile: React.FC = () => {
                                             <div className="flex flex-col gap-2 animate-show">
                                                 <p className="text-bodySm xs:text-bodyXs">
                                                     <span className="font-bold">
-                                                        {categoryStats[item.statIndex].openSciencePercentage}% of your
-                                                        publications
+                                                        {categoryStats[item.statIndex].openSciencePercentage
+                                                            ? categoryStats[item.statIndex]
+                                                            : '0'}
+                                                        % of your publications
                                                     </span>{' '}
                                                     share {item.name.toLowerCase()} with your community!
                                                 </p>
