@@ -419,7 +419,7 @@ export class StatsService {
 				
 				// Find min and max contributions
 				const maxContribution = Math.max(...authorContributions);
-				const targetAuthorContribution = authorContributionsMap[type][enidNumber] || 1;
+				const targetAuthorContribution = authorContributionsMap[type][enidNumber] || 0;
 				
 				// Create 10 bins or less if maxContribution is small
 				const binCount = Math.min(10, maxContribution + 1);
