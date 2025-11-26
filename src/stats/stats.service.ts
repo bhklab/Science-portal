@@ -324,18 +324,6 @@ export class StatsService {
 					const pointRadii = categoryRankings[type].map(entry =>
 						entry.enid === enidNumber ? 10 : 5
 					);
-
-					console.log(
-						{
-							label: type,
-							data: points,
-							backgroundColor: barColour,
-							borderColour,
-							pointBackgroundColor: pointBackgroundcolours,
-							pointBorderColor: pointBordercolours,
-							pointRadius: pointRadii
-						}
-					)
 				
 					return {
 						label: type,
