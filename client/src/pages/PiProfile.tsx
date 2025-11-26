@@ -568,9 +568,9 @@ const PiProfile: React.FC = () => {
                                                         You are in the{' '}
                                                         <span className="font-bold">
                                                             {categoryStats[item.statIndex].percentage < 50
-                                                                ? 'top'
-                                                                : 'bottom'}{' '}
-                                                            {categoryStats[item.statIndex].percentage}%
+                                                                ? `top ${categoryStats[item.statIndex].percentage}`
+                                                                : `bottom ${100 - categoryStats[item.statIndex].percentage}`}{' '}
+                                                            %
                                                         </span>{' '}
                                                         of {item.sentence} sharing within publications at Princess
                                                         Margaret.
