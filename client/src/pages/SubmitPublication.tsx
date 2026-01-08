@@ -270,50 +270,60 @@ const SubmitPublication: React.FC = () => {
         <div className="px-60 py-[90px] bg-white">
             {/* Header / Submit Button */}
             <div className="flex flex-row justify-between items-center pb-5">
-                <div className="flex flex-col gap-1 w-3/5">
-                    <h1 className="text-heading2Xl font-semibold text-black-900">Submit a Publication</h1>
-                    <p className="text-bodyXs text-red-600">
-                        <span className="text-bodyXs text-red-600">*</span> Please wait at least 24 hours after a
-                        publication has been published before submitting it to the platform so we can ensure our
-                        reference databases have been populated
-                    </p>
-                </div>
-
-                <div className="flex flex-row justify-center items-center gap-2">
+                <div className="flex flex-row justify-center items-center gap-2 w-full">
                     {scientistEmails.includes(authContext?.user?.email) ? (
-                        <div className="flex flex-row justify-center items-center gap-2">
-                            <input
-                                type="checkbox"
-                                checked={sendDirector}
-                                onChange={e => setSendDirector(!sendDirector)}
-                                className="rounded-sm text-blue-600"
-                            />
-                            <p className="text-bodySm">Notify director of new publication</p>
+                        <>
+                            <div className="flex flex-col gap-1 w-3/5">
+                                <h1 className="text-heading2Xl font-semibold text-black-900">Submit a Publication</h1>
+                                <p className="text-bodyXs text-red-600">
+                                    <span className="text-bodyXs text-red-600">*</span> Please wait at least 24 hours
+                                    after a publication has been published before submitting it to the platform so we
+                                    can ensure our reference databases have been populated
+                                </p>
+                            </div>
+                            <div className="flex flex-row justify-center items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    checked={sendDirector}
+                                    onChange={e => setSendDirector(!sendDirector)}
+                                    className="rounded-sm text-blue-600"
+                                />
+                                <p className="text-bodySm">Notify director of new publication</p>
+                            </div>
+                            <button
+                                disabled={
+                                    (newPub.doi ? false : true) ||
+                                    (sendDirector ? (newPub.summary ? false : true) : false) ||
+                                    (clickedFetch ? false : true)
+                                }
+                                className={`flex flex-row justify-center items-center px-5 py-2 ${
+                                    (newPub.doi ? false : true) ||
+                                    (sendDirector
+                                        ? newPub.summary
+                                            ? newPub.summary.split('.').length - 1 < 4
+                                                ? false
+                                                : true
+                                            : true
+                                        : true) ||
+                                    (clickedFetch ? false : true)
+                                        ? 'bg-gray-400'
+                                        : 'bg-sp_dark_green'
+                                } text-white shadow-button rounded-md`}
+                                onClick={submitPublication}
+                            >
+                                Submit
+                            </button>
+                        </>
+                    ) : (
+                        <div className="flex items-center justify-center gap-2 bg-red-300/50 p-2 rounded drop-shadow-md border-gray-300 border-1">
+                            <img src="/images/assets/warning.svg" className="w-16" />
+                            <span className="font-semibold">
+                                You are not being detected as an institution scientist, therefore your publication
+                                submissions have been disabled. You still may scrape publication details for personal
+                                use! If this is a mistake, please submit a ticket from the profile page.
+                            </span>
                         </div>
-                    ) : null}
-                    <button
-                        disabled={
-                            (newPub.doi ? false : true) ||
-                            (sendDirector ? (newPub.summary ? false : true) : true) ||
-                            (clickedFetch ? false : true)
-                        }
-                        className={`flex flex-row justify-center items-center px-5 py-2 ${
-                            (newPub.doi ? false : true) ||
-                            (sendDirector
-                                ? newPub.summary
-                                    ? newPub.summary.split('.').length - 1 < 4
-                                        ? false
-                                        : true
-                                    : true
-                                : true) ||
-                            (clickedFetch ? false : true)
-                                ? 'bg-gray-400'
-                                : 'bg-sp_dark_green'
-                        } text-white shadow-button rounded-md`}
-                        onClick={submitPublication}
-                    >
-                        Submit
-                    </button>
+                    )}
                 </div>
             </div>
 
