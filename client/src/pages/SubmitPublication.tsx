@@ -51,6 +51,9 @@ const SubmitPublication: React.FC = () => {
         'Fetching publication metadata',
         'Retrieving publication resources',
         'Compiling publication summary',
+        'Tidying up entry',
+        'Almost Complete!',
+        'Almost Complete!',
         'Almost Complete!'
     ];
 
@@ -63,8 +66,9 @@ const SubmitPublication: React.FC = () => {
         const intervalId = setInterval(() => {
             setProgressTextIndex(prevIndex => (prevIndex + 1) % progressText.length);
         }, 3000);
+        console.log(intervalId);
 
-        if (Inprogress === true) return () => clearInterval(intervalId);
+        if (Inprogress !== true) return () => clearInterval(intervalId);
         else return;
     };
 
@@ -261,16 +265,17 @@ const SubmitPublication: React.FC = () => {
         }
         setInprogress(false);
     };
+
     return (
         <div className="px-60 py-[90px] bg-white">
             {/* Header / Submit Button */}
             <div className="flex flex-row justify-between items-center pb-5">
                 <div className="flex flex-col gap-1 w-3/5">
                     <h1 className="text-heading2Xl font-semibold text-black-900">Submit a Publication</h1>
-                    <p className="text-bodyXs">
-                        <span className="text-bodyXs">*</span> Please wait at least 24 hours after a publication has
-                        been published before submitting it to the platform so we can ensure our reference databases
-                        have been populated
+                    <p className="text-bodyXs text-red-600">
+                        <span className="text-bodyXs text-red-600">*</span> Please wait at least 24 hours after a
+                        publication has been published before submitting it to the platform so we can ensure our
+                        reference databases have been populated
                     </p>
                 </div>
 
@@ -294,7 +299,13 @@ const SubmitPublication: React.FC = () => {
                         }
                         className={`flex flex-row justify-center items-center px-5 py-2 ${
                             (newPub.doi ? false : true) ||
-                            (sendDirector ? (newPub.summary ? false : true) : true) ||
+                            (sendDirector
+                                ? newPub.summary
+                                    ? newPub.summary.split('.').length - 1 < 4
+                                        ? false
+                                        : true
+                                    : true
+                                : true) ||
                             (clickedFetch ? false : true)
                                 ? 'bg-gray-400'
                                 : 'bg-sp_dark_green'
@@ -377,7 +388,7 @@ const SubmitPublication: React.FC = () => {
                                     />
                                     <p className="text-bodySm text-gray-700">
                                         Give a brief description of the publication for the scientific director's
-                                        reference (max: 2 sentences).
+                                        reference <span className="font-bold">(max: 2 sentences)</span>.
                                     </p>
                                     {newPub.summary === '' && clickedDoi && (
                                         <div className="flex flex-row gap-1">
