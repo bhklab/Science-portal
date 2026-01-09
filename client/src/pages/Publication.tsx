@@ -69,34 +69,34 @@ const Publication: React.FC = () => {
         getScientists();
     }, []);
 
-    const fanoutApproval = async (verdict: boolean) => {
-        //Ensure the publication isn't null before assignment
-        if (pub) {
-            setPub({ ...pub, fanout: { request: true, completed: true, verdict: true } });
-        }
-        const response = await axios.post('/api/emails/fanout/send', { pub: pub, verdict: verdict });
-        const data = response.data;
+    // const fanoutApproval = async (verdict: boolean) => {
+    //     //Ensure the publication isn't null before assignment
+    //     if (pub) {
+    //         setPub({ ...pub, fanout: { request: true, completed: true, verdict: true } });
+    //     }
+    //     const response = await axios.post('/api/emails/fanout/send', { pub: pub, verdict: verdict });
+    //     const data = response.data;
 
-        if (data.status === 200) {
-            toast.current?.show({
-                severity: 'success',
-                summary: 'Successful Email Fanout Approval',
-                detail: data.message,
-                life: 8000
-            });
-        } else {
-            toast.current?.show({
-                severity: 'error',
-                summary: 'Email Fanout Approval Error',
-                detail: data.message,
-                life: 8000
-            });
-        }
-    };
+    //     if (data.status === 200) {
+    //         toast.current?.show({
+    //             severity: 'success',
+    //             summary: 'Successful Email Fanout Approval',
+    //             detail: data.message,
+    //             life: 8000
+    //         });
+    //     } else {
+    //         toast.current?.show({
+    //             severity: 'error',
+    //             summary: 'Email Fanout Approval Error',
+    //             detail: data.message,
+    //             life: 8000
+    //         });
+    //     }
+    // };
 
     return (
         <div className="bg-white">
-            {pub?.fanout?.request && !pub?.fanout?.completed && !authContext?.user && (
+            {/* {pub?.fanout?.request && !pub?.fanout?.completed && !authContext?.user && (
                 <div className="flex justify-center items-center gap-2 sticky top-16 w-full py-5 bg-gray-100 border-b-1 ">
                     <h2 className="text-bodyXl font-semibold">
                         To approve this publication as an admin, please login{' '}
@@ -126,7 +126,7 @@ const Publication: React.FC = () => {
                         </button>
                     </div>
                 </div>
-            )}
+            )} */}
 
             <div className="pt-28 md:px-0 px-[120px] bg-white min-h-screen">
                 {pub && (
