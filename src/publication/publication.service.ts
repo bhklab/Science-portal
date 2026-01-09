@@ -165,7 +165,15 @@ export class PublicationService {
 			} catch (error) {
 				console.log(error)
 				// console.dir(error, { depth: null, color: true })
-				if (retry_count >= 4) return `Scraping error occured. Please try again later. ${error}`
+				if (retry_count >= 4){
+					if (axios.isAxiosError(error) && error.response?.data?.detail === "Crossref Error: 404: Not Found"){
+						return `${error.status}: DOI not recognizable`
+					}
+					else {
+						return `Scraping error occured. Please try again later. ${error}`
+					}
+				}
+				
 			}
 			retry_count += 1
 		}
