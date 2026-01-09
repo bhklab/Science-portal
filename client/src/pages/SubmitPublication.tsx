@@ -6,6 +6,7 @@ import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Dropdown } from 'primereact/dropdown';
 import { Calendar } from 'primereact/calendar';
+import { Tooltip } from 'primereact/tooltip';
 import { NewPub, createDefaultNewPub } from '../interfaces/NewPub';
 import { LINK_CATEGORIES } from '../interfaces/Links';
 import { AuthContext } from '../hooks/AuthContext';
@@ -212,6 +213,8 @@ const SubmitPublication: React.FC = () => {
                     life: 20000
                 });
             }
+
+            setClickedFetch(false);
         } catch (error) {
             toast.current?.show({
                 severity: 'error',
@@ -268,11 +271,12 @@ const SubmitPublication: React.FC = () => {
 
     return (
         <div className="px-60 py-[90px] bg-white">
+            <Tooltip target=".select-pdf" />
             {/* Header / Submit Button */}
             <div className="flex flex-row justify-between items-center pb-5">
-                <div className="flex flex-row justify-center items-center gap-2 w-full">
+                <div className="w-full">
                     {scientistEmails.includes(authContext?.user?.email) ? (
-                        <>
+                        <div className="flex flex-row justify-between items-center gap-2 w-full">
                             <div className="flex flex-col gap-1 w-3/5">
                                 <h1 className="text-heading2Xl font-semibold text-black-900">Submit a Publication</h1>
                                 <p className="text-bodyXs text-red-600">
@@ -281,39 +285,55 @@ const SubmitPublication: React.FC = () => {
                                     can ensure our reference databases have been populated
                                 </p>
                             </div>
-                            <div className="flex flex-row justify-center items-center gap-2">
-                                <input
-                                    type="checkbox"
-                                    checked={sendDirector}
-                                    onChange={e => setSendDirector(!sendDirector)}
-                                    className="rounded-sm text-blue-600"
-                                />
-                                <p className="text-bodySm">Notify director of new publication</p>
-                            </div>
-                            <button
-                                disabled={
-                                    (newPub.doi ? false : true) ||
-                                    (sendDirector ? (newPub.summary ? false : true) : false) ||
-                                    (clickedFetch ? false : true)
-                                }
-                                className={`flex flex-row justify-center items-center px-5 py-2 ${
-                                    (newPub.doi ? false : true) ||
-                                    (sendDirector
-                                        ? newPub.summary
-                                            ? newPub.summary.split('.').length - 1 < 4
-                                                ? false
+                            <div className="flex justify-center gap-2">
+                                <div className="flex flex-row justify-center items-center gap-2">
+                                    <input
+                                        type="checkbox"
+                                        checked={sendDirector}
+                                        onChange={e => setSendDirector(!sendDirector)}
+                                        className="rounded-sm text-blue-600"
+                                    />
+                                    <p className="text-bodySm">Notify director of new publication</p>
+                                </div>
+                                <button
+                                    disabled={
+                                        (newPub.doi ? false : true) ||
+                                        (sendDirector ? (newPub.summary ? false : true) : false) ||
+                                        (clickedFetch ? false : true)
+                                    }
+                                    className={`flex flex-row justify-center items-center gap-2 px-3 py-2 ${
+                                        (newPub.doi ? false : true) ||
+                                        (sendDirector
+                                            ? newPub.summary
+                                                ? newPub.summary.split('.').length - 1 < 4
+                                                    ? false
+                                                    : true
                                                 : true
-                                            : true
-                                        : true) ||
-                                    (clickedFetch ? false : true)
-                                        ? 'bg-gray-400'
-                                        : 'bg-sp_dark_green'
-                                } text-white shadow-button rounded-md`}
-                                onClick={submitPublication}
-                            >
-                                Submit
-                            </button>
-                        </>
+                                            : true) ||
+                                        (clickedFetch ? false : true)
+                                            ? 'bg-gray-400'
+                                            : 'bg-sp_dark_green'
+                                    } rounded-lg text-sm font-semibold text-white shadow-xs cursor-pointer`}
+                                    onClick={submitPublication}
+                                >
+                                    Submit
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        strokeWidth={3}
+                                        stroke="currentColor"
+                                        className="size-4"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
+                                        />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
                     ) : (
                         <div className="flex items-center justify-center gap-2 bg-red-300/50 p-2 rounded drop-shadow-md border-gray-300 border-1">
                             <img src="/images/assets/warning.svg" className="w-16" />
@@ -367,7 +387,7 @@ const SubmitPublication: React.FC = () => {
                                         disabled={newPub.doi ? false : true}
                                         className={`flex flex-row justify-center items-center ${
                                             newPub.doi ? 'bg-sp_dark_green' : 'bg-gray-400'
-                                        } text-white shadow-button rounded-md min-w-28`}
+                                        } rounded-lg text-sm font-semibold text-white shadow-xs cursor-pointer min-w-28`}
                                         onClick={() => {
                                             fetchPublication();
                                             setClickedFetch(true);
@@ -547,12 +567,48 @@ const SubmitPublication: React.FC = () => {
                                         <Calendar
                                             value={new Date(newPub.date)}
                                             onChange={e => setNewPub({ ...newPub, date: e.value })}
-                                            style={{ borderRadius: '20px' }}
+                                            style={{ borderRadius: '20px !important' }}
                                             className="rounded-lg"
                                             disabled={true}
                                             dateFormat="yy-mm-dd"
                                         />
                                     </div>
+                                </div>
+                            )}
+                            {clickedFetch && (
+                                <div className="flex">
+                                    <label
+                                        className="select-pdf flex items-center gap-1 rounded-lg bg-sp_dark_green px-3 py-2 text-sm font-semibold text-white shadow-xs cursor-pointer select-pdf"
+                                        htmlFor="img"
+                                        data-pr-tooltip="Attach the pdf corresponding to the publication (optional)"
+                                        data-pr-position="right"
+                                    >
+                                        {/* {file ? file.name : 'Select a pdf'} */}
+                                        Select a pdf
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={4}
+                                            stroke="currentColor"
+                                            className="size-3"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="m19.5 8.25-7.5 7.5-7.5-7.5"
+                                            />
+                                        </svg>
+                                    </label>
+                                    <input
+                                        type="file"
+                                        className="hidden"
+                                        accept="image/jpeg"
+                                        onChange={e => {
+                                            const f = e.target.files?.[0] ?? null;
+                                            // setFile(f);
+                                        }}
+                                    />
                                 </div>
                             )}
                         </div>
