@@ -214,7 +214,11 @@ const SubmitPublication: React.FC = () => {
                 });
             }
 
+            // After a successful submission, reset publication values
             setClickedFetch(false);
+            setNewPub(createDefaultNewPub());
+            setLinks(createDefaultNewPub().supplementary);
+            setOtherLinks([]);
         } catch (error) {
             toast.current?.show({
                 severity: 'error',
@@ -271,7 +275,7 @@ const SubmitPublication: React.FC = () => {
 
     return (
         <div className="px-60 py-[90px] bg-white">
-            <Tooltip target=".select-pdf" />
+            <Tooltip target=".button-tooltips" />
             {/* Header / Submit Button */}
             <div className="flex flex-row justify-between items-center pb-5">
                 <div className="w-full">
@@ -303,13 +307,7 @@ const SubmitPublication: React.FC = () => {
                                     }
                                     className={`flex flex-row justify-center items-center gap-2 px-3 py-2 ${
                                         (newPub.doi ? false : true) ||
-                                        (sendDirector
-                                            ? newPub.summary
-                                                ? newPub.summary.split('.').length - 1 < 4
-                                                    ? false
-                                                    : true
-                                                : true
-                                            : true) ||
+                                        (sendDirector ? (newPub.summary ? false : true) : false) ||
                                         (clickedFetch ? false : true)
                                             ? 'bg-gray-400'
                                             : 'bg-sp_dark_green'
@@ -386,8 +384,8 @@ const SubmitPublication: React.FC = () => {
                                     <button
                                         disabled={newPub.doi ? false : true}
                                         className={`flex flex-row justify-center items-center ${
-                                            newPub.doi ? 'bg-sp_dark_green' : 'bg-gray-400'
-                                        } rounded-lg text-sm font-semibold text-white shadow-xs cursor-pointer min-w-28`}
+                                            newPub.doi ? 'bg-sp_dark_green cursor-pointer' : 'bg-gray-400'
+                                        } rounded-lg text-sm font-semibold text-white shadow-xs min-w-28`}
                                         onClick={() => {
                                             fetchPublication();
                                             setClickedFetch(true);
@@ -405,7 +403,7 @@ const SubmitPublication: React.FC = () => {
                                     </div>
                                 )}
                             </div>
-                            {sendDirector && (
+                            {sendDirector && clickedFetch && (
                                 <div className="flex flex-col gap-2">
                                     <p className="text-bodyMd">
                                         Publication Summary <span className="text-red-600"> *</span>
@@ -578,13 +576,13 @@ const SubmitPublication: React.FC = () => {
                             {clickedFetch && (
                                 <div className="flex">
                                     <label
-                                        className="select-pdf flex items-center gap-1 rounded-lg bg-sp_dark_green px-3 py-2 text-sm font-semibold text-white shadow-xs cursor-pointer select-pdf"
+                                        className="button-tooltip flex items-center gap-1 rounded-lg bg-sp_dark_green px-3 py-2 text-sm font-semibold text-white shadow-xs cursor-pointer"
                                         htmlFor="img"
-                                        data-pr-tooltip="Attach the pdf corresponding to the publication (optional)"
-                                        data-pr-position="right"
+                                        data-pr-tooltip="Fetch the metadata corresponding to doi"
+                                        data-pr-position="bottom"
                                     >
-                                        {/* {file ? file.name : 'Select a pdf'} */}
-                                        Select a pdf
+                                        {/* {file ? file.name : 'Upload PDF'} */}
+                                        Upload PDF
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             fill="none"
