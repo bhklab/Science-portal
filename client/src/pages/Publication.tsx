@@ -3,7 +3,7 @@ import { useParams, Link, useLocation } from 'react-router-dom';
 import { Toast } from 'primereact/toast';
 import axios from 'axios';
 import Pub, { createDefaultPub } from '../interfaces/Pub';
-import PublicationModalContent from '../components/PublicationModal/PublicationModalContent';
+import PublicationModalContent from '../components/Modals/PublicationModalContent';
 import Author from 'interfaces/Author';
 import { AuthContext } from 'hooks/AuthContext';
 

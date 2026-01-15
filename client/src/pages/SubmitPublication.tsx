@@ -10,6 +10,7 @@ import { Tooltip } from 'primereact/tooltip';
 import { NewPub, createDefaultNewPub } from '../interfaces/NewPub';
 import { LINK_CATEGORIES } from '../interfaces/Links';
 import { AuthContext } from '../hooks/AuthContext';
+import SubmitModal from 'components/Modals/SubmitModal';
 
 interface Option {
     name: String;
@@ -60,6 +61,9 @@ const SubmitPublication: React.FC = () => {
 
     // State for scientists in db
     const [scientistEmails, setScientistsEmails] = useState<String[]>([]);
+
+    // Modal/Dialog state variables
+    const [isModalVisible, setIsModalVisible] = useState(false);
 
     const toast = useRef<Toast>(null);
 
@@ -228,6 +232,7 @@ const SubmitPublication: React.FC = () => {
             });
             console.error('Error submitting new publication:', error);
         }
+        setIsModalVisible(false);
         setInprogress(false);
     };
 
@@ -295,7 +300,7 @@ const SubmitPublication: React.FC = () => {
                                         type="checkbox"
                                         checked={sendDirector}
                                         onChange={e => setSendDirector(!sendDirector)}
-                                        className="rounded-sm text-blue-600"
+                                        className="rounded-full text-sp_dark_green border-red-1000"
                                     />
                                     <p className="text-bodySm">Notify director of new publication</p>
                                 </div>
@@ -310,9 +315,9 @@ const SubmitPublication: React.FC = () => {
                                         (sendDirector ? (newPub.summary ? false : true) : false) ||
                                         (clickedFetch ? false : true)
                                             ? 'bg-gray-400'
-                                            : 'bg-sp_dark_green'
-                                    } rounded-lg text-sm font-semibold text-white shadow-xs cursor-pointer`}
-                                    onClick={submitPublication}
+                                            : 'bg-sp_dark_green cursor-pointer'
+                                    } rounded-lg text-sm font-semibold text-white shadow-xs `}
+                                    onClick={() => setIsModalVisible(true)}
                                 >
                                     Submit
                                     <svg
@@ -867,6 +872,15 @@ const SubmitPublication: React.FC = () => {
                     </div>
                 </div>
             )}
+            <SubmitModal
+                isVisible={isModalVisible}
+                onHide={() => setIsModalVisible(false)}
+                submitPublication={submitPublication}
+                sendDirector={sendDirector}
+                setSendDirector={() => setSendDirector(!sendDirector)}
+                newPub={newPub}
+                setNewPub={setNewPub}
+            />
 
             <Toast ref={toast} baseZIndex={1000} position="bottom-right" />
         </div>
