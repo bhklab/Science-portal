@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { PublicationImage } from '../PublicationImage/PublicationImage';
 import Pub from '../../interfaces/Pub';
-import PublicationModal from '../PublicationModal/PublicationModal';
+import PublicationModal from '../Modals/PublicationModal';
 import { Tooltip } from 'primereact/tooltip';
 import { LINK_CATEGORIES } from '../../interfaces/Links';
 import Supplementary from '../../interfaces/Supplementary';
