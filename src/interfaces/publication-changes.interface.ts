@@ -8,6 +8,7 @@ export interface PublicationChangesDocument extends Document {
 	name: string;
 	journal: string;
 	type: string;
+	abstract: string;
 	authors: string;
 	filteredAuthors: string;
 	affiliations: string[];

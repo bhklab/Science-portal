@@ -3,6 +3,7 @@ export interface NewPub {
     name: string;
     summary: string;
     journal: string;
+    abstract: string;
     type: string;
     authors: string;
     filteredAuthors: string;

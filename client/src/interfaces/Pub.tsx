@@ -9,6 +9,7 @@ export default interface Pub {
     name: string;
     journal: string;
     type: string;
+    abstract: string;
     authors: string;
     filteredAuthors: string;
     affiliations: string[];
@@ -53,6 +54,7 @@ export function createDefaultPub(): Pub {
         name: '',
         journal: '',
         type: '',
+        abstract: '',
         authors: '',
         filteredAuthors: '',
         affiliations: [''],

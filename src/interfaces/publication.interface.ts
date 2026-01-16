@@ -8,6 +8,7 @@ export interface PublicationDocument extends Document {
 	name: string;
 	journal: string;
 	type: string;
+	abstract: string;
 	authors: string;
 	filteredAuthors: string;
 	affiliations: string[];
