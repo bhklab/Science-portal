@@ -8,6 +8,7 @@ export const PublicationsNewSchema = new Schema({
 	name: { type: String, required: true },
 	journal: String,
 	type: String,
+	abstract: { type: String },
 	authors: String,
 	filteredAuthors: String,
 	affiliations: [String],

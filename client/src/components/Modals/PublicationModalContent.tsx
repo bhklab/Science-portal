@@ -160,6 +160,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({
                     citations={pub.citations}
                     image={pub.image}
                     doi={pub.doi}
+                    abstract={pub.abstract}
                 />
 
                 {/* Render Link Categories */}
@@ -519,29 +520,49 @@ const HeaderSection: React.FC<{
     citations: number;
     image: string;
     doi: string;
-}> = ({ name, authors, scientists, journal, date, citations, image, doi }) => (
-    <div className="flex flex-col gap-5 pb-10 border-b-2 border-gray-200 mmd:justify-center mmd:items-center">
-        <div className="flex justify-between">
-            <div className="h-48 w-48 md:h-[120px] md:w-[120px] overflow-hidden border-2 border-gray-200 rounded-lg flex justify-center items-center bg-white">
-                <PublicationImage image={image} />
+    abstract: string;
+}> = ({ name, authors, scientists, journal, date, citations, image, doi, abstract }) => {
+    const [showFullAbstract, setShowFullAbstract] = useState(false);
+
+    return (
+        <div className="flex flex-col gap-5 pb-10 border-b-2 border-gray-200 mmd:justify-center mmd:items-center">
+            <div className="flex justify-between">
+                <div className="h-48 w-48 md:h-[120px] md:w-[120px] overflow-hidden border-2 border-gray-200 rounded-lg flex justify-center items-center bg-white">
+                    <PublicationImage image={image} />
+                </div>
             </div>
-        </div>
-        <div className="flex flex-col gap-2">
-            <h1 className="md:text-headingMd text-heading2Xl font-semibold text-cyan-900 mmd:text-center">{name}</h1>
-            <p className="md:text-bodySm mmd:text-center font-light">
-                <AuthorsList authors={authors} scientists={scientists} />
-            </p>
-            <div className="flex mmd:flex-col flex-row gap-2 mmd:gap-0 text-bodyMd md:text-bodySm text-gray-700 font-light mmd:text-center">
-                <p>{journal}</p>
-                <p className="mmd:hidden">•</p>
-                <p>{date}</p>
-                <p className="mmd:hidden">•</p>
-                <p>{citations} citations</p>
+            <div className="flex flex-col gap-2">
+                <h1 className="md:text-headingMd text-heading2Xl font-semibold text-cyan-900 mmd:text-center">
+                    {name}
+                </h1>
+                <p className="md:text-bodySm mmd:text-center font-light">
+                    <AuthorsList authors={authors} scientists={scientists} />
+                </p>
+                <div className="flex mmd:flex-col flex-row gap-2 mmd:gap-0 text-bodyMd md:text-bodySm text-gray-700 font-light mmd:text-center">
+                    <p>{journal}</p>
+                    <p className="mmd:hidden font-bold">•</p>
+                    <p>{date}</p>
+                    <p className="mmd:hidden font-bold">•</p>
+                    <p>{citations} citations</p>
+                </div>
+                <div className="flex flex-col items-start flex-row gap-1 mmd:gap-0 text-bodyMd md:text-bodySm text-gray-700 font-light mmd:text-center">
+                    <p
+                        className={`text-black-900 font-semibold text-bodyMd mmd:text-bodySm ${showFullAbstract ? '' : 'line-clamp-2'}`}
+                    >
+                        {abstract}
+                    </p>
+                    <button
+                        className="text-blue-700 font-semibold text-bodySm"
+                        onClick={() => setShowFullAbstract(!showFullAbstract)}
+                    >
+                        {showFullAbstract ? 'Show less' : 'Show full abstract'}
+                    </button>
+                </div>
             </div>
+            <DigitalObjectIdentifier doi={doi} />
         </div>
-        <DigitalObjectIdentifier doi={doi} />
-    </div>
-);
+    );
+};
 
 const AuthorsList: React.FC<{ authors: string; scientists: Author[] }> = ({ authors, scientists }) => {
     // Split authors by semicolon.
