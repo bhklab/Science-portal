@@ -545,19 +545,22 @@ const HeaderSection: React.FC<{
                     <p className="mmd:hidden font-bold">•</p>
                     <p>{citations} citations</p>
                 </div>
-                <div className="flex flex-col items-start flex-row gap-1 mmd:gap-0 text-bodyMd md:text-bodySm text-gray-700 font-light mmd:text-center">
-                    <p
-                        className={`text-black-900 font-semibold text-bodyMd mmd:text-bodySm ${showFullAbstract ? '' : 'line-clamp-2'}`}
-                    >
-                        {abstract}
-                    </p>
-                    <button
-                        className="text-blue-700 font-semibold text-bodySm"
-                        onClick={() => setShowFullAbstract(!showFullAbstract)}
-                    >
-                        {showFullAbstract ? 'Show less' : 'Show full abstract'}
-                    </button>
-                </div>
+
+                {abstract && (
+                    <div className="flex flex-col items-start flex-row gap-1 mmd:gap-0 text-bodyMd md:text-bodySm text-gray-700 font-light mmd:text-center">
+                        <p
+                            className={`text-black-900 font-semibold text-bodyMd mmd:text-bodySm ${showFullAbstract ? '' : 'line-clamp-2'}`}
+                        >
+                            {abstract}
+                        </p>
+                        <button
+                            className="text-blue-700 font-semibold text-bodySm"
+                            onClick={() => setShowFullAbstract(!showFullAbstract)}
+                        >
+                            {showFullAbstract ? 'Show less' : 'Show full abstract'}
+                        </button>
+                    </div>
+                )}
             </div>
             <DigitalObjectIdentifier doi={doi} />
         </div>
