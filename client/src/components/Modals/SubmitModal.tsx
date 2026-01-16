@@ -122,16 +122,7 @@ const SubmitModal: React.FC<SubmitModalProps> = ({
                     </div>
                 )}
 
-                <div className="flex flex-col justify-center items-center gap-2">
-                    <button
-                        disabled={newPub.summary ? false : true}
-                        className={`flex flex-row justify-center items-center gap-2 px-3 py-2 ${
-                            (newPub.summary ? false : true) ? 'bg-gray-400' : 'bg-sp_dark_green cursor-pointer'
-                        } rounded-lg text-sm font-semibold text-white shadow-xs cursor-pointer w-fit`}
-                        onClick={() => submitPublication()}
-                    >
-                        Submit
-                    </button>
+                <div className="flex flex-col justify-center items-start gap-4">
                     <div className="flex flex-row justify-start items-center gap-2 w-full ">
                         <input
                             type="checkbox"
@@ -141,6 +132,25 @@ const SubmitModal: React.FC<SubmitModalProps> = ({
                         />
                         <span className="text-bodySm">Notify director of new publication</span>
                     </div>
+                    <button
+                        disabled={newPub.summary ? false : true}
+                        className={`flex flex-row justify-center items-center gap-2 px-3 py-2 ${
+                            (
+                                sendDirector
+                                    ? newPub.summary
+                                        ? newPub.summary.split('.').length - 1 < 3
+                                            ? false
+                                            : true
+                                        : true
+                                    : true
+                            )
+                                ? 'bg-gray-400'
+                                : 'bg-sp_dark_green cursor-pointer'
+                        } rounded-lg text-sm font-semibold text-white shadow-xs cursor-pointer w-fit`}
+                        onClick={() => submitPublication()}
+                    >
+                        Submit
+                    </button>
                 </div>
             </div>
         </Dialog>

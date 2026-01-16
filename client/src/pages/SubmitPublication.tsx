@@ -307,12 +307,24 @@ const SubmitPublication: React.FC = () => {
                                 <button
                                     disabled={
                                         (newPub.doi ? false : true) ||
-                                        (sendDirector ? (newPub.summary ? false : true) : false) ||
+                                        (sendDirector
+                                            ? newPub.summary
+                                                ? newPub.summary.split('.').length - 1 < 4
+                                                    ? false
+                                                    : true
+                                                : true
+                                            : true) ||
                                         (clickedFetch ? false : true)
                                     }
                                     className={`flex flex-row justify-center items-center gap-2 px-3 py-2 ${
                                         (newPub.doi ? false : true) ||
-                                        (sendDirector ? (newPub.summary ? false : true) : false) ||
+                                        (sendDirector
+                                            ? newPub.summary
+                                                ? newPub.summary.split('.').length - 1 < 3
+                                                    ? false
+                                                    : true
+                                                : true
+                                            : true) ||
                                         (clickedFetch ? false : true)
                                             ? 'bg-gray-400'
                                             : 'bg-sp_dark_green cursor-pointer'
@@ -432,6 +444,20 @@ const SubmitPublication: React.FC = () => {
                                 </div>
                             )}
 
+                            {/* Abstract */}
+                            {newPub.abstract && (
+                                <div className="flex flex-col gap-1">
+                                    <p className="text-bodyMd">Abstract</p>
+                                    <InputTextarea
+                                        value={newPub.abstract}
+                                        className="w-full"
+                                        // onChange={e => setNewPub({ ...newPub, type: e.target.value })}
+                                        disabled={false}
+                                        rows={10}
+                                    />
+                                </div>
+                            )}
+
                             {/* Title */}
                             {newPub.name && (
                                 <div className="flex flex-col gap-1">
@@ -457,20 +483,6 @@ const SubmitPublication: React.FC = () => {
                                     />
                                 </div>
                             )}
-
-                            {/* Type */}
-                            {/* <div className="flex flex-col gap-1">
-                                <p className="text-bodyMd">Type</p>
-                                <InputText
-                                    value={newPub.type}
-                                    className="w-full"
-                                    onChange={e => setNewPub({ ...newPub, type: e.target.value })}
-                                    disabled={true}
-                                />
-                                <p className="text-bodySm text-gray-700">
-                                    Tell us what type of publication this is. An article, review, etc.
-                                </p>
-                            </div> */}
 
                             {/* Authors */}
                             {newPub.authors && (
