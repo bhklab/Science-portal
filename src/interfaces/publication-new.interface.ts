@@ -17,7 +17,8 @@ export interface PublicationDocumentNew extends Document {
 	publisher: string;
 	status: string;
 	image: string;
-	scraped: boolean;
+	scraped?: boolean;
+	pdf?: string;
 	fanout: {
 		request: boolean,
 		completed: boolean,

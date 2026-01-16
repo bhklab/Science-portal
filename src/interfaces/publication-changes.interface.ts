@@ -17,6 +17,8 @@ export interface PublicationChangesDocument extends Document {
 	publisher: string;
 	status: string;
 	image: string;
+	scraped?: boolean;
+	pdf?: string;
     supplementary: {
         code?: Record<string, string[]>;
         data?: Record<string, string[]>;

@@ -5,7 +5,7 @@ export const PublicationChangesSchema = new Schema({
 	doi: { type: String, required: true },
 	summary: { type: String},
 	date: { type: String },
-	name: { type: String },
+	name: { type: String, required: true },
 	journal: { type: String },
 	type: { type: String },
 	abstract: { type: String },
@@ -17,6 +17,8 @@ export const PublicationChangesSchema = new Schema({
 	publisher: { type: String },
 	status: { type: String },
 	image: { type: String },
+	scraped: { type: Boolean },
+	pdf: { type: String },
 	supplementary: {
 		code: {},
 		data: {},

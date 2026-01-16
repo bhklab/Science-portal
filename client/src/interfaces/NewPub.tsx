@@ -14,6 +14,7 @@ export interface NewPub {
     date: Date | null;
     dateAdded: Date | null;
     scraped: boolean;
+    pdf?: string;
     fanout: {
         request: boolean;
         completed: boolean;
@@ -54,6 +55,7 @@ export function createDefaultNewPub(): NewPub {
         date: null,
         dateAdded: new Date(),
         scraped: false,
+        pdf: '',
         fanout: {
             request: false,
             completed: false,

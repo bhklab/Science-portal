@@ -19,6 +19,7 @@ export default interface Pub {
     status: string;
     image: string;
     scraped?: boolean;
+    pdf?: string;
     fanout?: {
         request: boolean;
         completed: boolean;

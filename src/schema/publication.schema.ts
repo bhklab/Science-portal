@@ -2,10 +2,10 @@ import { Schema } from 'mongoose';
 
 export const PublicationSchema = new Schema({
 	PMID: Number,
-	doi: String,
-	summary: String,
+	doi: { type: String, required: true },
+	summary: { type: String},
 	date: String,
-	name: String,
+	name: { type: String, required: true },
 	journal: String,
 	type: String,
 	abstract: { type: String },
@@ -18,6 +18,7 @@ export const PublicationSchema = new Schema({
 	status: String,
 	image: String,
 	scraped: Boolean,
+	pdf: String,
 	fanout: {
 		request: Boolean,
 		completed: Boolean,

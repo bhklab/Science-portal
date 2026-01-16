@@ -18,6 +18,7 @@ export const PublicationsNewSchema = new Schema({
 	status: String,
 	image: String,
 	scraped: Boolean,
+	pdf: String,
 	fanout: {
 		request: Boolean,
 		completed: Boolean,

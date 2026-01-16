@@ -18,7 +18,8 @@ export interface PublicationDocument extends Document {
 	status: string;
 	image: string;
 	scraped?: boolean;
-    fanout?: {
+	pdf?: string;
+	fanout?: {
         request: boolean;
         completed: boolean;
 		verdict: boolean;
