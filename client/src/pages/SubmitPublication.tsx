@@ -65,6 +65,9 @@ const SubmitPublication: React.FC = () => {
     // Modal/Dialog state variables
     const [isModalVisible, setIsModalVisible] = useState(false);
 
+    // PDF file state
+    const [file, setFile] = useState<File | null>(null);
+
     const toast = useRef<Toast>(null);
 
     const progressTextTrigger = () => {
@@ -590,16 +593,15 @@ const SubmitPublication: React.FC = () => {
                                     </div>
                                 </div>
                             )}
-                            {clickedFetch && (
+                            {clickedFetch && newPub.authors && (
                                 <div className="flex">
                                     <label
                                         className="button-tooltip flex items-center gap-1 rounded-lg bg-sp_dark_green px-3 py-2 text-sm font-semibold text-white shadow-xs cursor-pointer"
-                                        htmlFor="img"
+                                        htmlFor="pdf-upload"
                                         data-pr-tooltip="Fetch the metadata corresponding to doi"
                                         data-pr-position="bottom"
                                     >
-                                        {/* {file ? file.name : 'Upload PDF'} */}
-                                        Upload PDF
+                                        {file ? file.name : 'Upload PDF'}
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             fill="none"
@@ -618,11 +620,16 @@ const SubmitPublication: React.FC = () => {
                                     <input
                                         type="file"
                                         className="hidden"
-                                        accept="image/jpeg"
+                                        accept="pdf"
                                         onChange={e => {
                                             const f = e.target.files?.[0] ?? null;
-                                            // setFile(f);
+                                            setFile(f);
+                                            if (f) {
+                                                setNewPub({ ...newPub, pdf: f.name });
+                                            }
                                         }}
+                                        id="pdf-upload"
+                                        name="pdf upload"
                                     />
                                 </div>
                             )}
