@@ -152,9 +152,9 @@ const SubmitModal: React.FC<SubmitModalProps> = ({
                                         : true
                                     : false
                             )
-                                ? 'bg-gray-400'
+                                ? 'bg-gray-400 cursor-not-allowed'
                                 : 'bg-sp_dark_green cursor-pointer'
-                        } rounded-lg text-sm font-semibold text-white shadow-xs cursor-pointer w-fit`}
+                        } rounded-lg text-sm font-semibold text-white shadow-xs w-fit`}
                         onClick={() => submitPublication()}
                     >
                         Submit

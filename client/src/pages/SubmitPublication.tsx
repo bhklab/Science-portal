@@ -74,7 +74,6 @@ const SubmitPublication: React.FC = () => {
         const intervalId = setInterval(() => {
             setProgressTextIndex(prevIndex => (prevIndex + 1) % progressText.length);
         }, 3000);
-        console.log(intervalId);
 
         if (Inprogress !== true) return () => clearInterval(intervalId);
         else return;
@@ -309,27 +308,11 @@ const SubmitPublication: React.FC = () => {
                                 </div>
                                 <button
                                     disabled={
-                                        (newPub.doi ? false : true) ||
-                                        (sendDirector
-                                            ? newPub.summary
-                                                ? newPub.summary.split('.').length - 1 < 3
-                                                    ? false
-                                                    : true
-                                                : true
-                                            : false) ||
-                                        (clickedFetch ? false : true)
+                                        (newPub.doi ? false : true) || (clickedFetch ? false : true) || Inprogress
                                     }
                                     className={`flex flex-row justify-center items-center gap-2 px-3 py-2 ${
-                                        (newPub.doi ? false : true) ||
-                                        (sendDirector
-                                            ? newPub.summary
-                                                ? newPub.summary.split('.').length - 1 < 3
-                                                    ? false
-                                                    : true
-                                                : true
-                                            : false) ||
-                                        (clickedFetch ? false : true)
-                                            ? 'bg-gray-400'
+                                        (newPub.doi ? false : true) || (clickedFetch ? false : true) || Inprogress
+                                            ? 'bg-gray-400 cursor-not-allowed'
                                             : 'bg-sp_dark_green cursor-pointer'
                                     } rounded-lg text-sm font-semibold text-white shadow-xs `}
                                     onClick={() => setIsModalVisible(true)}
@@ -423,29 +406,6 @@ const SubmitPublication: React.FC = () => {
                                     </div>
                                 )}
                             </div>
-                            {sendDirector && clickedFetch && (
-                                <div className="flex flex-col gap-2">
-                                    <p className="text-bodyMd">
-                                        Publication Summary <span className="text-red-600"> *</span>
-                                    </p>
-                                    <InputTextarea
-                                        value={newPub.summary}
-                                        className={`${newPub.summary === '' && clickedDoi ? 'invalid-box' : ''} w-full`}
-                                        onChange={e => setNewPub({ ...newPub, summary: e.target.value })}
-                                        autoResize
-                                    />
-                                    <p className="text-bodySm text-gray-700">
-                                        Give a brief description of the publication for the scientific director's
-                                        reference <span className="font-bold">(max: 2 sentences)</span>.
-                                    </p>
-                                    {newPub.summary === '' && clickedDoi && (
-                                        <div className="flex flex-row gap-1">
-                                            <img src="/images/assets/required-icon.svg" alt="" />
-                                            <p className="text-bodySm text-red-1000">Required Field</p>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
 
                             {/* Abstract */}
                             {newPub.abstract && (
