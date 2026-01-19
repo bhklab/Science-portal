@@ -133,7 +133,15 @@ const SubmitModal: React.FC<SubmitModalProps> = ({
                         <span className="text-bodySm">Notify director of new publication</span>
                     </div>
                     <button
-                        disabled={newPub.summary ? false : true}
+                        disabled={
+                            sendDirector
+                                ? newPub.summary
+                                    ? newPub.summary.split('.').length - 1 < 3
+                                        ? false
+                                        : true
+                                    : true
+                                : false
+                        }
                         className={`flex flex-row justify-center items-center gap-2 px-3 py-2 ${
                             (
                                 sendDirector
@@ -142,7 +150,7 @@ const SubmitModal: React.FC<SubmitModalProps> = ({
                                             ? false
                                             : true
                                         : true
-                                    : true
+                                    : false
                             )
                                 ? 'bg-gray-400'
                                 : 'bg-sp_dark_green cursor-pointer'
