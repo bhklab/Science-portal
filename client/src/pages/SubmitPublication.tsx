@@ -593,7 +593,7 @@ const SubmitPublication: React.FC = () => {
                                     </div>
                                 </div>
                             )}
-                            {clickedFetch && newPub.authors && (
+                            {/* {clickedFetch && newPub.authors && (
                                 <div className="flex">
                                     <label
                                         className="button-tooltip flex items-center gap-1 rounded-lg bg-sp_dark_green px-3 py-2 text-sm font-semibold text-white shadow-xs cursor-pointer"
@@ -632,7 +632,7 @@ const SubmitPublication: React.FC = () => {
                                         name="pdf upload"
                                     />
                                 </div>
-                            )}
+                            )} */}
                         </div>
                     </div>
 
