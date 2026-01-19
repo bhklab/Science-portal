@@ -327,7 +327,7 @@ const SubmitPublication: React.FC = () => {
                                                     ? false
                                                     : true
                                                 : true
-                                            : true) ||
+                                            : false) ||
                                         (clickedFetch ? false : true)
                                             ? 'bg-gray-400'
                                             : 'bg-sp_dark_green cursor-pointer'
