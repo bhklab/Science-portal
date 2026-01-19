@@ -312,11 +312,11 @@ const SubmitPublication: React.FC = () => {
                                         (newPub.doi ? false : true) ||
                                         (sendDirector
                                             ? newPub.summary
-                                                ? newPub.summary.split('.').length - 1 < 4
+                                                ? newPub.summary.split('.').length - 1 < 3
                                                     ? false
                                                     : true
                                                 : true
-                                            : true) ||
+                                            : false) ||
                                         (clickedFetch ? false : true)
                                     }
                                     className={`flex flex-row justify-center items-center gap-2 px-3 py-2 ${
