@@ -73,7 +73,7 @@ const SubmitPublication: React.FC = () => {
     const progressTextTrigger = () => {
         const intervalId = setInterval(() => {
             setProgressTextIndex(prevIndex => (prevIndex + 1) % progressText.length);
-        }, 3000);
+        }, 6000);
 
         if (Inprogress !== true) return () => clearInterval(intervalId);
         else return;
