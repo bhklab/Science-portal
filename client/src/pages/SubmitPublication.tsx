@@ -281,7 +281,7 @@ const SubmitPublication: React.FC = () => {
     };
 
     return (
-        <div className="px-60 py-[90px] bg-white">
+        <div className="px-60 py-[90px] bg-white min-h-screen">
             <Tooltip target=".button-tooltips" />
             {/* Header / Submit Button */}
             <div className="flex flex-row justify-between items-center pb-5">
@@ -553,7 +553,7 @@ const SubmitPublication: React.FC = () => {
                                     </div>
                                 </div>
                             )}
-                            {/* {clickedFetch && newPub.authors && (
+                            {clickedFetch && newPub.authors && (
                                 <div className="flex">
                                     <label
                                         className="button-tooltip flex items-center gap-1 rounded-lg bg-sp_dark_green px-3 py-2 text-sm font-semibold text-white shadow-xs cursor-pointer"
@@ -592,7 +592,7 @@ const SubmitPublication: React.FC = () => {
                                         name="pdf upload"
                                     />
                                 </div>
-                            )} */}
+                            )}
                         </div>
                     </div>
 
@@ -600,33 +600,62 @@ const SubmitPublication: React.FC = () => {
 
                     {/* Link categories (code, data, containers, etc.) */}
                     <div className="flex flex-col gap-5">
-                        {Object.entries(LINK_CATEGORIES).map(([categoryGroup, keys]) => (
-                            <React.Fragment key={categoryGroup}>
-                                <div className="flex flex-row gap-4">
-                                    {/* Left half: instructions & "Add Link" pills */}
-                                    <div className="flex flex-col gap-2 w-1/2">
-                                        <h1 className="text-headingXl text-black-900 font-semibold">
-                                            {capitalizeFirst(categoryGroup)}
-                                        </h1>
-                                        <p className="text-headingSm font-medium text-gray-700">
-                                            Add all relevant resource types
-                                        </p>
-                                        <div className="flex flex-col gap-5">
-                                            {/* Pills for adding new links */}
-                                            <div className="flex flex-col gap-4">
-                                                <div className="flex flex-row flex-wrap gap-2">
-                                                    {keys.map(key => {
-                                                        if (key.name === 'otherLinks') {
-                                                            const hasOtherLinks = otherLinks.length > 0;
+                        {clickedFetch &&
+                            !Inprogress &&
+                            Object.entries(LINK_CATEGORIES).map(([categoryGroup, keys]) => (
+                                <React.Fragment key={categoryGroup}>
+                                    <div className="flex flex-row gap-4">
+                                        {/* Left half: instructions & "Add Link" pills */}
+                                        <div className="flex flex-col gap-2 w-1/2">
+                                            <h1 className="text-headingXl text-black-900 font-semibold">
+                                                {capitalizeFirst(categoryGroup)}
+                                            </h1>
+                                            <p className="text-headingSm font-medium text-gray-700">
+                                                Add all relevant resource types
+                                            </p>
+                                            <div className="flex flex-col gap-5">
+                                                {/* Pills for adding new links */}
+                                                <div className="flex flex-col gap-4">
+                                                    <div className="flex flex-row flex-wrap gap-2">
+                                                        {keys.map(key => {
+                                                            if (key.name === 'otherLinks') {
+                                                                const hasOtherLinks = otherLinks.length > 0;
+                                                                return (
+                                                                    <button
+                                                                        key={key.name}
+                                                                        onClick={addNewOtherLink}
+                                                                        className={`flex flex-row gap-1 justify-center items-center p-3 text-headingMd 
+																			rounded-full font-medium bg-gray-50 border-gray-200 
+																			${hasOtherLinks ? 'text-black-900' : 'text-gray-700'}`}
+                                                                    >
+                                                                        {hasOtherLinks ? (
+                                                                            <>
+                                                                                <img
+                                                                                    src="/images/assets/checkmark-icon.svg"
+                                                                                    alt="Checkmark"
+                                                                                    className="inline-block"
+                                                                                />
+                                                                                {key.display}
+                                                                            </>
+                                                                        ) : (
+                                                                            key.display
+                                                                        )}
+                                                                    </button>
+                                                                );
+                                                            }
+
+                                                            // Otherwise, it's a normal subcategory
+                                                            const isExisting = Boolean(
+                                                                links[categoryGroup]?.[key.name]?.length
+                                                            );
                                                             return (
                                                                 <button
                                                                     key={key.name}
-                                                                    onClick={addNewOtherLink}
-                                                                    className={`flex flex-row gap-1 justify-center items-center p-3 text-headingMd 
-																			rounded-full font-medium bg-gray-50 border-gray-200 
-																			${hasOtherLinks ? 'text-black-900' : 'text-gray-700'}`}
+                                                                    onClick={() => addNewLink(categoryGroup, key.name)}
+                                                                    className={`flex flex-row gap-1 justify-center items-center p-3 text-headingMd rounded-full font-medium bg-gray-50 border-gray-200 hover:bg-gray-100 
+																${isExisting ? 'text-black-900' : 'text-gray-700'}`}
                                                                 >
-                                                                    {hasOtherLinks ? (
+                                                                    {isExisting ? (
                                                                         <>
                                                                             <img
                                                                                 src="/images/assets/checkmark-icon.svg"
@@ -640,214 +669,191 @@ const SubmitPublication: React.FC = () => {
                                                                     )}
                                                                 </button>
                                                             );
-                                                        }
-
-                                                        // Otherwise, it's a normal subcategory
-                                                        const isExisting = Boolean(
-                                                            links[categoryGroup]?.[key.name]?.length
-                                                        );
-                                                        return (
-                                                            <button
-                                                                key={key.name}
-                                                                onClick={() => addNewLink(categoryGroup, key.name)}
-                                                                className={`flex flex-row gap-1 justify-center items-center p-3 text-headingMd rounded-full font-medium bg-gray-50 border-gray-200 hover:bg-gray-100 
-																${isExisting ? 'text-black-900' : 'text-gray-700'}`}
-                                                            >
-                                                                {isExisting ? (
-                                                                    <>
-                                                                        <img
-                                                                            src="/images/assets/checkmark-icon.svg"
-                                                                            alt="Checkmark"
-                                                                            className="inline-block"
-                                                                        />
-                                                                        {key.display}
-                                                                    </>
-                                                                ) : (
-                                                                    key.display
-                                                                )}
-                                                            </button>
-                                                        );
-                                                    })}
+                                                        })}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    {/* Right half: show input fields for each subcategory that has links */}
-                                    <div className="flex flex-col gap-3 w-1/2">
-                                        <div className="flex flex-col gap-5">
-                                            {keys.map(key => {
-                                                if (key.name === 'otherLinks') {
-                                                    if (otherLinks.length < 1) {
-                                                        return null;
-                                                    }
-                                                    return (
-                                                        <div
-                                                            key={key.name}
-                                                            className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200 w-full hover:bg-gray-100 hover:text-gray"
-                                                        >
-                                                            <div className="flex justify-between items-center">
-                                                                <p className="capitalize">{key.display}</p>
-                                                                <img
-                                                                    src="/images/assets/plus-icon.svg"
-                                                                    alt="Add Link"
-                                                                    className="cursor-pointer"
-                                                                    onClick={addNewOtherLink}
-                                                                />
+                                        {/* Right half: show input fields for each subcategory that has links */}
+                                        <div className="flex flex-col gap-3 w-1/2">
+                                            <div className="flex flex-col gap-5">
+                                                {keys.map(key => {
+                                                    if (key.name === 'otherLinks') {
+                                                        if (otherLinks.length < 1) {
+                                                            return null;
+                                                        }
+                                                        return (
+                                                            <div
+                                                                key={key.name}
+                                                                className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200 w-full hover:bg-gray-100 hover:text-gray"
+                                                            >
+                                                                <div className="flex justify-between items-center">
+                                                                    <p className="capitalize">{key.display}</p>
+                                                                    <img
+                                                                        src="/images/assets/plus-icon.svg"
+                                                                        alt="Add Link"
+                                                                        className="cursor-pointer"
+                                                                        onClick={addNewOtherLink}
+                                                                    />
+                                                                </div>
+
+                                                                <div className="flex flex-col gap-3">
+                                                                    {otherLinks.map((item, index) => (
+                                                                        <div
+                                                                            key={`otherLinks-${index}`}
+                                                                            className="flex flex-col gap-2 p-3 border-1 border-open_border rounded-md"
+                                                                        >
+                                                                            <label className="text-sm text-gray-600">
+                                                                                Name
+                                                                            </label>
+                                                                            <input
+                                                                                value={item.name}
+                                                                                onChange={e =>
+                                                                                    handleOtherLinkFieldChange(
+                                                                                        index,
+                                                                                        'name',
+                                                                                        e.target.value
+                                                                                    )
+                                                                                }
+                                                                                className="border-1 border-open_border p-2 rounded-md w-full"
+                                                                            />
+
+                                                                            <label className="text-sm text-gray-600">
+                                                                                Description
+                                                                            </label>
+                                                                            <input
+                                                                                value={item.description}
+                                                                                onChange={e =>
+                                                                                    handleOtherLinkFieldChange(
+                                                                                        index,
+                                                                                        'description',
+                                                                                        e.target.value
+                                                                                    )
+                                                                                }
+                                                                                className="border-1 border-open_border p-2 rounded-md w-full"
+                                                                            />
+
+                                                                            <label className="text-sm text-gray-600">
+                                                                                Recommended Category
+                                                                            </label>
+                                                                            <Dropdown
+                                                                                value={item.recommendedCategory}
+                                                                                options={options}
+                                                                                onChange={e =>
+                                                                                    handleOtherLinkFieldChange(
+                                                                                        index,
+                                                                                        'recommendedCategory',
+                                                                                        e.value
+                                                                                    )
+                                                                                }
+                                                                                optionLabel="name"
+                                                                                optionValue="name"
+                                                                                placeholder="Select/Type recommended category"
+                                                                                editable
+                                                                                className="rounded border-1 border-open_border w-full"
+                                                                            />
+
+                                                                            <label className="text-sm text-gray-600">
+                                                                                Link
+                                                                            </label>
+                                                                            <input
+                                                                                value={item.link}
+                                                                                onChange={e =>
+                                                                                    handleOtherLinkFieldChange(
+                                                                                        index,
+                                                                                        'link',
+                                                                                        e.target.value
+                                                                                    )
+                                                                                }
+                                                                                className="border-1 border-open_border p-2 rounded-md w-full"
+                                                                            />
+
+                                                                            <div className="flex justify-end">
+                                                                                <img
+                                                                                    src="/images/assets/trashcan-icon.svg"
+                                                                                    alt="Delete"
+                                                                                    onClick={() =>
+                                                                                        deleteOtherLink(index)
+                                                                                    }
+                                                                                    className="cursor-pointer"
+                                                                                />
+                                                                            </div>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
                                                             </div>
-
-                                                            <div className="flex flex-col gap-3">
-                                                                {otherLinks.map((item, index) => (
-                                                                    <div
-                                                                        key={`otherLinks-${index}`}
-                                                                        className="flex flex-col gap-2 p-3 border-1 border-open_border rounded-md"
-                                                                    >
-                                                                        <label className="text-sm text-gray-600">
-                                                                            Name
-                                                                        </label>
-                                                                        <input
-                                                                            value={item.name}
-                                                                            onChange={e =>
-                                                                                handleOtherLinkFieldChange(
-                                                                                    index,
-                                                                                    'name',
-                                                                                    e.target.value
-                                                                                )
-                                                                            }
-                                                                            className="border-1 border-open_border p-2 rounded-md w-full"
-                                                                        />
-
-                                                                        <label className="text-sm text-gray-600">
-                                                                            Description
-                                                                        </label>
-                                                                        <input
-                                                                            value={item.description}
-                                                                            onChange={e =>
-                                                                                handleOtherLinkFieldChange(
-                                                                                    index,
-                                                                                    'description',
-                                                                                    e.target.value
-                                                                                )
-                                                                            }
-                                                                            className="border-1 border-open_border p-2 rounded-md w-full"
-                                                                        />
-
-                                                                        <label className="text-sm text-gray-600">
-                                                                            Recommended Category
-                                                                        </label>
-                                                                        <Dropdown
-                                                                            value={item.recommendedCategory}
-                                                                            options={options}
-                                                                            onChange={e =>
-                                                                                handleOtherLinkFieldChange(
-                                                                                    index,
-                                                                                    'recommendedCategory',
-                                                                                    e.value
-                                                                                )
-                                                                            }
-                                                                            optionLabel="name"
-                                                                            optionValue="name"
-                                                                            placeholder="Select/Type recommended category"
-                                                                            editable
-                                                                            className="rounded border-1 border-open_border w-full"
-                                                                        />
-
-                                                                        <label className="text-sm text-gray-600">
-                                                                            Link
-                                                                        </label>
-                                                                        <input
-                                                                            value={item.link}
-                                                                            onChange={e =>
-                                                                                handleOtherLinkFieldChange(
-                                                                                    index,
-                                                                                    'link',
-                                                                                    e.target.value
-                                                                                )
-                                                                            }
-                                                                            className="border-1 border-open_border p-2 rounded-md w-full"
-                                                                        />
-
-                                                                        <div className="flex justify-end">
+                                                        );
+                                                    } else {
+                                                        // For normal subcategories
+                                                        const categoryLinks = links[categoryGroup]?.[key.name] ?? [];
+                                                        if (categoryLinks.length === 0) {
+                                                            return null;
+                                                        }
+                                                        return (
+                                                            <div
+                                                                key={key.name}
+                                                                className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200 w-full hover:bg-gray-100 hover:text-gray"
+                                                            >
+                                                                <div className="flex justify-between items-center">
+                                                                    <p className="capitalize">{key.display}</p>
+                                                                    <img
+                                                                        src="/images/assets/plus-icon.svg"
+                                                                        alt="Add Link"
+                                                                        className="cursor-pointer"
+                                                                        onClick={() =>
+                                                                            addNewLink(categoryGroup, key.name)
+                                                                        }
+                                                                    />
+                                                                </div>
+                                                                <div className="flex flex-col gap-3">
+                                                                    {categoryLinks.map((link, index) => (
+                                                                        <div
+                                                                            key={`${key.name}-${index}`}
+                                                                            className="flex flex-row gap-2 items-center"
+                                                                        >
+                                                                            <img
+                                                                                src={`/images/assets/${key.name.toLowerCase()}-icon.png`}
+                                                                                alt={key.name}
+                                                                                className="h-6 w-6"
+                                                                            />
+                                                                            <input
+                                                                                value={link}
+                                                                                onChange={e =>
+                                                                                    handleLinkChange(
+                                                                                        categoryGroup,
+                                                                                        key.name,
+                                                                                        index,
+                                                                                        e.target.value
+                                                                                    )
+                                                                                }
+                                                                                className="border-1 border-open_border p-2 rounded-md w-full"
+                                                                            />
                                                                             <img
                                                                                 src="/images/assets/trashcan-icon.svg"
                                                                                 alt="Delete"
-                                                                                onClick={() => deleteOtherLink(index)}
+                                                                                onClick={() =>
+                                                                                    deleteLink(
+                                                                                        categoryGroup,
+                                                                                        key.name,
+                                                                                        index
+                                                                                    )
+                                                                                }
                                                                                 className="cursor-pointer"
                                                                             />
                                                                         </div>
-                                                                    </div>
-                                                                ))}
+                                                                    ))}
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    );
-                                                } else {
-                                                    // For normal subcategories
-                                                    const categoryLinks = links[categoryGroup]?.[key.name] ?? [];
-                                                    if (categoryLinks.length === 0) {
-                                                        return null;
+                                                        );
                                                     }
-                                                    return (
-                                                        <div
-                                                            key={key.name}
-                                                            className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200 w-full hover:bg-gray-100 hover:text-gray"
-                                                        >
-                                                            <div className="flex justify-between items-center">
-                                                                <p className="capitalize">{key.display}</p>
-                                                                <img
-                                                                    src="/images/assets/plus-icon.svg"
-                                                                    alt="Add Link"
-                                                                    className="cursor-pointer"
-                                                                    onClick={() => addNewLink(categoryGroup, key.name)}
-                                                                />
-                                                            </div>
-                                                            <div className="flex flex-col gap-3">
-                                                                {categoryLinks.map((link, index) => (
-                                                                    <div
-                                                                        key={`${key.name}-${index}`}
-                                                                        className="flex flex-row gap-2 items-center"
-                                                                    >
-                                                                        <img
-                                                                            src={`/images/assets/${key.name.toLowerCase()}-icon.png`}
-                                                                            alt={key.name}
-                                                                            className="h-6 w-6"
-                                                                        />
-                                                                        <input
-                                                                            value={link}
-                                                                            onChange={e =>
-                                                                                handleLinkChange(
-                                                                                    categoryGroup,
-                                                                                    key.name,
-                                                                                    index,
-                                                                                    e.target.value
-                                                                                )
-                                                                            }
-                                                                            className="border-1 border-open_border p-2 rounded-md w-full"
-                                                                        />
-                                                                        <img
-                                                                            src="/images/assets/trashcan-icon.svg"
-                                                                            alt="Delete"
-                                                                            onClick={() =>
-                                                                                deleteLink(
-                                                                                    categoryGroup,
-                                                                                    key.name,
-                                                                                    index
-                                                                                )
-                                                                            }
-                                                                            className="cursor-pointer"
-                                                                        />
-                                                                    </div>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-                                                    );
-                                                }
-                                            })}
+                                                })}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <hr />
-                            </React.Fragment>
-                        ))}
+                                    <hr />
+                                </React.Fragment>
+                            ))}
                     </div>
                 </div>
             )}
