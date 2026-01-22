@@ -261,6 +261,7 @@ const SubmitPublication: React.FC = () => {
         setOtherLinks([]);
         setIsModalVisible(false);
         setInprogress(false);
+        setFile(null);
     };
 
     const fetchPublication = async () => {
