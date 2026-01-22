@@ -161,6 +161,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({
                     image={pub.image}
                     doi={pub.doi}
                     abstract={pub.abstract}
+                    pdf={pub?.pdf}
                 />
 
                 {/* Render Link Categories */}
@@ -521,7 +522,8 @@ const HeaderSection: React.FC<{
     image: string;
     doi: string;
     abstract: string;
-}> = ({ name, authors, scientists, journal, date, citations, image, doi, abstract }) => {
+    pdf: string;
+}> = ({ name, authors, scientists, journal, date, citations, image, doi, abstract, pdf }) => {
     const [showFullAbstract, setShowFullAbstract] = useState(false);
 
     return (
@@ -562,6 +564,7 @@ const HeaderSection: React.FC<{
                 )}
             </div>
             <DigitalObjectIdentifier doi={doi} />
+            {pdf && <PDF pdf={pdf} />}
         </div>
     );
 };
@@ -651,6 +654,22 @@ const DigitalObjectIdentifier: React.FC<{ doi: string }> = ({ doi }) => (
             <div className="flex flex-row gap-2 items-center hover:text-blue-500">
                 <img src="/images/assets/doi-icon.svg" alt="Doi" className="h-6 w-6" />
                 <p className="text-bodyMd mmd:text-bodySm break-all">https://doi.org/{doi}</p>
+            </div>
+        </a>
+    </div>
+);
+
+const PDF: React.FC<{ pdf: string }> = ({ pdf }) => (
+    <div className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200 w-full hover:text-gray">
+        <div className="flex flex-row">
+            <p className="w-full">Full Article</p>
+        </div>
+        <a href={`https://storage.googleapis.com/publication_pdfs/${pdf}`} target="_blank" rel="noreferrer">
+            <div className="flex flex-row gap-2 items-center hover:text-blue-500">
+                <img src="/images/assets/pdf-icon.png" alt="Doi" className="h-6 w-6" />
+                <p className="text-bodyMd mmd:text-bodySm break-all">
+                    https://storage.googleapis.com/publication_pdfs/{pdf}
+                </p>
             </div>
         </a>
     </div>
