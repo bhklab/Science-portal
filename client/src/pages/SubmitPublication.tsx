@@ -156,6 +156,31 @@ const SubmitPublication: React.FC = () => {
     const submitPublication = async () => {
         // Build the nested supplementary object from `links`:
         setInprogress(true);
+        if (newPub.pdf && file) {
+            try {
+                const formData = new FormData();
+                formData.append('file', file, file.name);
+                const res = await axios.post('/api/publications/new/pdf', formData);
+                toast.current?.show({
+                    severity: 'error',
+                    summary: 'Unexpected error occured.',
+                    detail: res.data,
+                    life: 20000
+                });
+            } catch (error) {
+                toast.current?.show({
+                    severity: 'error',
+                    summary: 'Unexpected error occured.',
+                    detail: (error as Error).message,
+                    life: 20000
+                });
+                setIsModalVisible(false);
+                setInprogress(false);
+                setFile(null);
+                setNewPub({ ...newPub, pdf: '' });
+                return;
+            }
+        }
 
         try {
             // Construct the final object to send
@@ -219,12 +244,6 @@ const SubmitPublication: React.FC = () => {
                     life: 20000
                 });
             }
-
-            // After a successful submission, reset publication values
-            setClickedFetch(false);
-            setNewPub(createDefaultNewPub());
-            setLinks(createDefaultNewPub().supplementary);
-            setOtherLinks([]);
         } catch (error) {
             toast.current?.show({
                 severity: 'error',
@@ -234,6 +253,12 @@ const SubmitPublication: React.FC = () => {
             });
             console.error('Error submitting new publication:', error);
         }
+
+        // After a successful submission, reset publication values, hide modal, and set inInprogress to false
+        setClickedFetch(false);
+        setNewPub(createDefaultNewPub());
+        setLinks(createDefaultNewPub().supplementary);
+        setOtherLinks([]);
         setIsModalVisible(false);
         setInprogress(false);
     };
@@ -580,12 +605,12 @@ const SubmitPublication: React.FC = () => {
                                     <input
                                         type="file"
                                         className="hidden"
-                                        accept="pdf"
+                                        accept=".pdf"
                                         onChange={e => {
                                             const f = e.target.files?.[0] ?? null;
                                             setFile(f);
                                             if (f) {
-                                                setNewPub({ ...newPub, pdf: f.name });
+                                                setNewPub({ ...newPub, pdf: f.name.replace(/[^a-zA-Z0-9._-]/g, '_') });
                                             }
                                         }}
                                         id="pdf-upload"
