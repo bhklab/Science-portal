@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, ConflictException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Storage } from '@google-cloud/storage';
@@ -236,20 +236,17 @@ export class PublicationService {
 		}
 
 		const fileName = pdf.originalname.replace(/[^a-zA-Z0-9._-]/g, '_');
-		let bucket = null
-		let file = null
+
+		const bucket = this.storage.bucket(this.bucketName)
+		const file = bucket.file(fileName)
+
+		const [fileExists] = await file.exists() // list of duplicate files (if they exist)
+			
+		if (fileExists) {// Ensure no duplicate publication names exist in the database
+			throw new InternalServerErrorException('PDF file name exists in database already, please rename and resubmit');
+		}
 
 		try {
-			
-			bucket = this.storage.bucket(this.bucketName)
-			file = bucket.file(fileName)
-
-			const [fileExists] = await file.exists() // list of duplicate files (if they exist)
-			
-			if (fileExists) {// Ensure no duplicate publication names exist in the database
-				throw new Error(`pdf names exists already, please rename and resubmit`);
-			}
-
 			await file.save(pdf.buffer, {
 				contentType: pdf.mimetype || 'application/pdf',
 				resumable: false,
@@ -264,10 +261,11 @@ export class PublicationService {
 
 		} catch (error) {
 			console.log(error);
-			throw new Error(`Unsuccessful pdf upload: ${(error as Error).message}`);
+			if (error instanceof ConflictException || error instanceof BadRequestException) {
+				throw error;
+			}
+			throw new InternalServerErrorException('Unsuccessful pdf upload');
 		}
-
-		
 
 		return 'Successful pdf upload!';
 	}

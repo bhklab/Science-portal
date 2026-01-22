@@ -95,12 +95,6 @@ export class PublicationController {
 	@Post('new/pdf')
 	@UseInterceptors(FileInterceptor('file'))
 	async uploadPublicationPDF(@UploadedFile() pdf: Express.Multer.File) {
-		try {
-			const pdfUpload = await this.publicationService.uploadPublicationPDF(pdf);
-			return pdfUpload;
-		} catch (error) {
-			throw new HttpException(`Error uploading publication PDF: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		
+		return await this.publicationService.uploadPublicationPDF(pdf);		
 	}
 }

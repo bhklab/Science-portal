@@ -162,7 +162,7 @@ const SubmitPublication: React.FC = () => {
                 formData.append('file', file, file.name);
                 const res = await axios.post('/api/publications/new/pdf', formData);
                 toast.current?.show({
-                    severity: 'error',
+                    severity: 'success',
                     summary: 'Unexpected error occured.',
                     detail: res.data,
                     life: 20000
@@ -171,7 +171,7 @@ const SubmitPublication: React.FC = () => {
                 toast.current?.show({
                     severity: 'error',
                     summary: 'Unexpected error occured.',
-                    detail: (error as Error).message,
+                    detail: error.response.data.message,
                     life: 20000
                 });
                 setIsModalVisible(false);
