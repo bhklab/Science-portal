@@ -7,6 +7,8 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import { Dropdown } from 'primereact/dropdown';
 import { Calendar } from 'primereact/calendar';
 import { Tooltip } from 'primereact/tooltip';
+import { InputSwitch } from 'primereact/inputswitch';
+import { classNames } from 'primereact/utils';
 import { NewPub, createDefaultNewPub } from '../interfaces/NewPub';
 import { LINK_CATEGORIES } from '../interfaces/Links';
 import { AuthContext } from '../hooks/AuthContext';
@@ -308,7 +310,7 @@ const SubmitPublication: React.FC = () => {
 
     return (
         <div className="px-60 py-[90px] bg-white min-h-screen">
-            <Tooltip target=".button-tooltips" />
+            <Tooltip target=".button-tooltip" />
             {/* Header / Submit Button */}
             <div className="flex flex-row justify-between items-center pb-5">
                 <div className="w-full">
@@ -323,15 +325,6 @@ const SubmitPublication: React.FC = () => {
                                 </p>
                             </div>
                             <div className="flex justify-center gap-2">
-                                <div className="flex flex-row justify-center items-center gap-2">
-                                    <input
-                                        type="checkbox"
-                                        checked={sendDirector}
-                                        onChange={e => setSendDirector(!sendDirector)}
-                                        className="rounded-full text-sp_dark_green border-red-1000"
-                                    />
-                                    <p className="text-bodySm">Notify director of new publication</p>
-                                </div>
                                 <button
                                     disabled={
                                         (newPub.doi ? false : true) || (clickedFetch ? false : true) || Inprogress
@@ -340,7 +333,7 @@ const SubmitPublication: React.FC = () => {
                                         (newPub.doi ? false : true) || (clickedFetch ? false : true) || Inprogress
                                             ? 'bg-gray-400 cursor-not-allowed'
                                             : 'bg-sp_dark_green cursor-pointer'
-                                    } rounded-lg text-sm font-semibold text-white shadow-xs `}
+                                    } rounded-lg text-bodyMd font-semibold text-white shadow-xs`}
                                     onClick={() => setIsModalVisible(true)}
                                 >
                                     Submit
@@ -399,38 +392,105 @@ const SubmitPublication: React.FC = () => {
 
                         <div className="flex flex-col gap-4 w-full">
                             {/* DOI */}
-                            <div className="flex flex-col gap-1">
-                                <p className="text-bodyMd">
-                                    DOI <span className="text-red-600"> *</span>
-                                </p>
-                                <div className="flex flex-row gap-4">
-                                    <InputText
-                                        value={newPub.doi}
-                                        className={`${newPub.doi === '' && clickedDoi ? 'invalid-box' : ''} w-full`}
-                                        onChange={e => setNewPub({ ...newPub, doi: e.target.value })}
-                                        onClick={() => setClickedDoi(true)}
-                                    />
-                                    <button
-                                        disabled={newPub.doi ? false : true}
-                                        className={`flex flex-row justify-center items-center ${
-                                            newPub.doi ? 'bg-sp_dark_green cursor-pointer' : 'bg-gray-400'
-                                        } rounded-lg text-sm font-semibold text-white shadow-xs min-w-28`}
-                                        onClick={() => {
-                                            fetchPublication();
-                                            setClickedFetch(true);
-                                            progressTextTrigger();
-                                        }}
-                                    >
-                                        Fetch Data
-                                    </button>
+                            <div className="flex flex-col gap-4">
+                                <div className="">
+                                    <p className="text-bodyMd">
+                                        DOI <span className="text-red-600">*</span>
+                                    </p>
+                                    <div className="flex flex-row justify-between items-center gap-4">
+                                        <InputText
+                                            value={newPub.doi}
+                                            className={`${newPub.doi === '' && clickedDoi ? 'invalid-box' : ''} w-full`}
+                                            onChange={e => setNewPub({ ...newPub, doi: e.target.value })}
+                                            onClick={() => setClickedDoi(true)}
+                                        />
+                                        <button
+                                            disabled={newPub.doi ? false : true}
+                                            className={`flex flex-row justify-center items-center ${
+                                                newPub.doi ? 'bg-sp_dark_green cursor-pointer' : 'bg-gray-400'
+                                            } rounded-lg text-bodyMd font-semibold text-white shadow-xs min-w-28 px-3 py-2`}
+                                            onClick={() => {
+                                                fetchPublication();
+                                                setClickedFetch(true);
+                                                progressTextTrigger();
+                                            }}
+                                        >
+                                            Fetch Data
+                                        </button>
+                                    </div>
                                 </div>
-
                                 {newPub.doi === '' && clickedDoi && (
                                     <div className="flex flex-row gap-1">
                                         <img src="/images/assets/required-icon.svg" alt="" />
                                         <p className="text-bodySm text-red-1000">Required Field</p>
                                     </div>
                                 )}
+                                <div className="flex flex-col items-start gap-3">
+                                    <div className="flex flex-row items-center gap-2">
+                                        <InputSwitch
+                                            checked={sendDirector}
+                                            onClick={() => setSendDirector(!sendDirector)}
+                                            pt={{
+                                                root: options => ({
+                                                    className: classNames('w-10 h-5')
+                                                }),
+                                                slider: options => ({
+                                                    className: classNames(
+                                                        'before:w-4 before:h-4 before:top-3 before:left-0.5 before:-mt-2.5',
+                                                        {
+                                                            'bg-green-600': options?.props.checked,
+                                                            'bg-red-600': !options?.props.checked
+                                                        }
+                                                    )
+                                                })
+                                            }}
+                                        />
+                                        <p className="text-bodySm font-semibold">Notify director</p>
+                                    </div>
+                                    {clickedFetch && newPub.authors && (
+                                        <div className="flex">
+                                            <label
+                                                className="button-tooltip flex items-center gap-1 rounded-lg bg-sp_dark_green px-3 py-2 text-bodyMd font-semibold text-white shadow-xs cursor-pointer line-clamp-"
+                                                htmlFor="pdf-upload"
+                                                data-pr-tooltip="Fetch the metadata corresponding to doi"
+                                                data-pr-position="bottom"
+                                            >
+                                                {file ? file.name : 'Upload PDF'}
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth={4}
+                                                    stroke="currentColor"
+                                                    className="size-3"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="m19.5 8.25-7.5 7.5-7.5-7.5"
+                                                    />
+                                                </svg>
+                                            </label>
+                                            <input
+                                                type="file"
+                                                className="hidden"
+                                                accept=".pdf"
+                                                onChange={e => {
+                                                    const f = e.target.files?.[0] ?? null;
+                                                    setFile(f);
+                                                    if (f) {
+                                                        setNewPub({
+                                                            ...newPub,
+                                                            pdf: f.name.replace(/[^a-zA-Z0-9._-]/g, '_')
+                                                        });
+                                                    }
+                                                }}
+                                                id="pdf-upload"
+                                                name="pdf upload"
+                                            />
+                                        </div>
+                                    )}
+                                </div>
                             </div>
 
                             {/* Abstract */}
@@ -440,9 +500,8 @@ const SubmitPublication: React.FC = () => {
                                     <InputTextarea
                                         value={newPub.abstract}
                                         className="w-full"
-                                        // onChange={e => setNewPub({ ...newPub, type: e.target.value })}
                                         disabled={false}
-                                        rows={10}
+                                        rows={5}
                                     />
                                 </div>
                             )}
@@ -492,7 +551,7 @@ const SubmitPublication: React.FC = () => {
                             )}
 
                             {/* Affiliations */}
-                            {newPub.affiliations.length !== 0 && (
+                            {/* {newPub.affiliations.length !== 0 && (
                                 <div className="flex flex-col gap-1">
                                     <p className="text-bodyMd">Affiliations</p>
                                     {newPub.affiliations.map((affil, index) => (
@@ -512,43 +571,10 @@ const SubmitPublication: React.FC = () => {
                                                 }
                                                 disabled={true}
                                             />
-                                            {/* <div className="flex justify-end">
-                                            <img
-                                                src="/images/assets/trashcan-icon.svg"
-                                                alt="Delete"
-                                                onClick={() =>
-                                                    setNewPub({
-                                                        ...newPub,
-                                                        affiliations: newPub.affiliations.toSpliced(index, 1)
-                                                    })
-                                                }
-                                                className="cursor-pointer"
-                                            />
-                                        </div> */}
                                         </div>
                                     ))}
-                                    {/* <div className="flex justify-between items-center">
-                                    <p className="text-bodySm text-gray-700">
-                                        List all affiliations in this publication.
-                                    </p>
-                                    <img
-                                        src="/images/assets/plus-icon.svg"
-                                        alt="Add Link"
-                                        className="cursor-pointer"
-                                        onClick={() =>
-                                            setNewPub({
-                                                ...newPub,
-                                                affiliations: newPub.affiliations.toSpliced(
-                                                    newPub.affiliations.length,
-                                                    0,
-                                                    ''
-                                                )
-                                            })
-                                        }
-                                    />
-                                </div> */}
                                 </div>
-                            )}
+                            )} */}
 
                             {/* Publisher */}
                             {newPub.publisher && (
@@ -577,46 +603,6 @@ const SubmitPublication: React.FC = () => {
                                             dateFormat="yy-mm-dd"
                                         />
                                     </div>
-                                </div>
-                            )}
-                            {clickedFetch && newPub.authors && (
-                                <div className="flex">
-                                    <label
-                                        className="button-tooltip flex items-center gap-1 rounded-lg bg-sp_dark_green px-3 py-2 text-sm font-semibold text-white shadow-xs cursor-pointer"
-                                        htmlFor="pdf-upload"
-                                        data-pr-tooltip="Fetch the metadata corresponding to doi"
-                                        data-pr-position="bottom"
-                                    >
-                                        {file ? file.name : 'Upload PDF'}
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            strokeWidth={4}
-                                            stroke="currentColor"
-                                            className="size-3"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="m19.5 8.25-7.5 7.5-7.5-7.5"
-                                            />
-                                        </svg>
-                                    </label>
-                                    <input
-                                        type="file"
-                                        className="hidden"
-                                        accept=".pdf"
-                                        onChange={e => {
-                                            const f = e.target.files?.[0] ?? null;
-                                            setFile(f);
-                                            if (f) {
-                                                setNewPub({ ...newPub, pdf: f.name.replace(/[^a-zA-Z0-9._-]/g, '_') });
-                                            }
-                                        }}
-                                        id="pdf-upload"
-                                        name="pdf upload"
-                                    />
                                 </div>
                             )}
                         </div>

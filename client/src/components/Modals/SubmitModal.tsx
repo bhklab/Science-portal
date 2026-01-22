@@ -2,6 +2,8 @@ import React, { Dispatch, SetStateAction } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { NewPub, createDefaultNewPub } from '../../interfaces/NewPub';
 import { InputTextarea } from 'primereact/inputtextarea';
+import { InputSwitch } from 'primereact/inputswitch';
+import { classNames } from 'primereact/utils';
 
 interface SubmitModalProps {
     isVisible: boolean;
@@ -86,51 +88,70 @@ const SubmitModal: React.FC<SubmitModalProps> = ({
             visible={isVisible}
             header={modalHeader}
             onHide={onHide}
-            style={{ width: '1100px', borderRadius: '15px', height: '600px' }}
+            style={{ width: '1100px', borderRadius: '15px' }}
             modal
             draggable={false}
             closable={false}
             position="bottom"
+            pt={{
+                root: () => ({
+                    className: classNames('max-h-[90%]')
+                })
+            }}
         >
-            <div className="flex flex-col justify-center overflow-auto gap-6 w-full px-24">
-                <HeaderSection
-                    name={newPub.name}
-                    citations={newPub.citations}
-                    journal={newPub.journal}
-                    date={newPub.date}
-                    doi={newPub.doi}
-                />
-                {sendDirector && (
-                    <div className="flex flex-col gap-2 w-full">
-                        <p className="text-bodyMd">
-                            Publication Summary <span className="text-red-600"> *</span>
-                        </p>
-                        <InputTextarea
-                            value={newPub.summary}
-                            className="w-full"
-                            onChange={e => setNewPub({ ...newPub, summary: e.target.value })}
-                            autoResize
-                        />
-                        <p className="text-bodySm text-gray-700">
-                            Give a brief description of the publication for the scientific director's reference{' '}
-                            <span className="font-bold">(max: 2 sentences)</span>.
-                        </p>
-                        <div className="flex flex-row gap-1">
-                            <img src="/images/assets/required-icon.svg" alt="" />
-                            <p className="text-bodySm text-red-1000">Required Field</p>
+            <div className="flex flex-col justify-between overflow-auto h-full w-full px-24 pb-16 gap-4">
+                <div className="flex flex-col justify-between gap-6">
+                    <HeaderSection
+                        name={newPub.name}
+                        citations={newPub.citations}
+                        journal={newPub.journal}
+                        date={newPub.date}
+                        doi={newPub.doi}
+                    />
+                    {sendDirector && (
+                        <div className="flex flex-col gap-2 w-full">
+                            <p className="text-bodyMd">
+                                Publication Summary <span className="text-red-600"> *</span>
+                            </p>
+                            <InputTextarea
+                                value={newPub.summary}
+                                className="w-full"
+                                onChange={e => setNewPub({ ...newPub, summary: e.target.value })}
+                                autoResize
+                            />
+                            <p className="text-bodySm text-gray-700">
+                                Give a brief description of the publication for the scientific director's reference{' '}
+                                <span className="font-bold">(max: 2 sentences)</span>.
+                            </p>
+                            <div className="flex flex-row gap-1">
+                                <img src="/images/assets/required-icon.svg" alt="" />
+                                <p className="text-bodySm text-red-1000">Required Field</p>
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
 
-                <div className="flex flex-col justify-center items-start gap-4">
-                    <div className="flex flex-row justify-start items-center gap-2 w-full ">
-                        <input
-                            type="checkbox"
+                <div className="flex flex-col gap-3">
+                    <div className="flex flex-row items-center gap-2">
+                        <InputSwitch
                             checked={sendDirector}
-                            onChange={e => setSendDirector()}
-                            className="rounded-full text-sp_dark_green border-red-1000"
+                            onClick={() => setSendDirector()}
+                            pt={{
+                                root: () => ({
+                                    className: classNames('w-10 h-5')
+                                }),
+                                slider: options => ({
+                                    className: classNames(
+                                        'before:w-4 before:h-4 before:top-3 before:left-0.5 before:-mt-2.5',
+                                        {
+                                            'bg-green-600': options?.props.checked,
+                                            'bg-red-600': !options?.props.checked
+                                        }
+                                    )
+                                })
+                            }}
                         />
-                        <span className="text-bodySm">Notify director of new publication</span>
+                        <p className="text-bodySm font-semibold text-black-900">Notify director</p>
                     </div>
                     <button
                         disabled={
