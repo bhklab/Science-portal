@@ -163,7 +163,7 @@ const SubmitPublication: React.FC = () => {
                 const res = await axios.post('/api/publications/new/pdf', formData);
                 toast.current?.show({
                     severity: 'success',
-                    summary: 'Unexpected error occured.',
+                    summary: 'Successful PDF Upload!',
                     detail: res.data,
                     life: 20000
                 });
