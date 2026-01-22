@@ -1,9 +1,10 @@
-import { Controller, Get, Body, HttpException, HttpStatus, Param, Post } from '@nestjs/common';
+import { Controller, Get, Body, HttpException, HttpStatus, Param, Post, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { PublicationService } from './publication.service';
 import { LoggingService } from '../logging/logs.service';
 import { PublicationDocument } from 'src/interfaces/publication.interface';
 import { PublicationChangesDocument } from '../interfaces/publication-changes.interface';
 import { PublicationDocumentNew } from 'src/interfaces/publication-new.interface';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('publications')
 export class PublicationController {
@@ -87,6 +88,18 @@ export class PublicationController {
 			return createdPublication
 		} catch (error) {
 			throw new HttpException(`Error creating publication: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+	}
+
+	@Post('new/pdf')
+	@UseInterceptors(FileInterceptor('file'))
+	async uploadPublicationPDF(@UploadedFile() pdf: Express.Multer.File) {
+		try {
+			const pdfUpload = await this.publicationService.uploadPublicationPDF(pdf);
+			return pdfUpload;
+		} catch (error) {
+			throw new HttpException(`Error uploading publication PDF: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
 	}

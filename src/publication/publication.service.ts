@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { Storage } from '@google-cloud/storage';
 import { PublicationDocument } from '../interfaces/publication.interface';
 import { PublicationChangesDocument } from '../interfaces/publication-changes.interface';
 import { PublicationDocumentNew } from 'src/interfaces/publication-new.interface';
@@ -16,7 +17,10 @@ export class PublicationService {
       @InjectModel('PublicationChanges') private publicationChangesModel: Model<PublicationChangesDocument>,
       @InjectModel('PublicationsNew') private publicationsNewModel: Model<PublicationDocumentNew>,
     ) {}
-    
+
+	// Creates a client
+	private readonly storage = new Storage();   
+	private readonly bucketName = 'publication_pdfs' 
 
     //Get select publications based on criteria
     async findSelectPublications(
@@ -224,4 +228,48 @@ export class PublicationService {
 		return `${process.env.DOMAIN}/publication/${encodeURIComponent(newPub.doi)}`
 
     }
+
+	async uploadPublicationPDF(pdf: Express.Multer.File): Promise<any> {
+
+		if (!pdf?.buffer) {
+			throw new Error(`Did not recieve pdf`);
+		}
+
+		const fileName = pdf.originalname.replace(/[^a-zA-Z0-9._-]/g, '_');
+		let bucket = null
+		let file = null
+
+		try {
+			
+			bucket = this.storage.bucket(this.bucketName)
+			file = bucket.file(fileName)
+
+			const [fileExists] = await file.exists() // list of duplicate files (if they exist)
+			
+			if (fileExists) {// Ensure no duplicate publication names exist in the database
+				throw new Error(`pdf names exists already, please rename and resubmit`);
+			}
+
+			await file.save(pdf.buffer, {
+				contentType: pdf.mimetype || 'application/pdf',
+				resumable: false,
+				metadata: {
+					metadata: {
+						originalName: pdf.originalname,
+						uploadedAt: new Date().toISOString(),
+					},
+						
+				},
+			});
+
+		} catch (error) {
+			console.log(error);
+			throw new Error(`Unsuccessful pdf upload: ${(error as Error).message}`);
+		}
+
+		
+
+		return 'Successful pdf upload!';
+	}
+
 }
