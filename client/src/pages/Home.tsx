@@ -322,7 +322,6 @@ const Home: React.FC = () => {
                                 options={resourceTypes}
                                 optionLabel="name"
                                 placeholder="Select a resource type"
-                                selectionLimit={2}
                                 id="resource-type"
                                 className="rounded border-1 border-gray-300 w-64 text-black-900"
                                 panelHeaderTemplate={() => null}
