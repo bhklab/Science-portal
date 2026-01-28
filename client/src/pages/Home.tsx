@@ -292,6 +292,7 @@ const Home: React.FC = () => {
                                         }
                                         setSelectedAuthor(e.value);
                                     }}
+                                    onClick={e => e?.stopPropagation()}
                                     filter
                                     showClear
                                     filterBy="name"
