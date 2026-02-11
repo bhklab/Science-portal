@@ -77,15 +77,12 @@ const Admin: React.FC = () => {
         URL.revokeObjectURL(url);
     };
 
-    const downloadCSV = (scope: 'filtered' | 'full' = 'filtered') => {
-        const data = scope === 'filtered' ? filteredChartData : chartData;
-        if (!data) return;
+    const downloadCSV = () => {
+        if (!filteredChartData) return;
 
-        const csv = buildCSVFromChartData(data);
+        const csv = buildCSVFromChartData(filteredChartData);
         const ts = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-        const fname =
-            scope === 'filtered' ? `supplementary_stats_filtered_${ts}.csv` : `supplementary_stats_full_${ts}.csv`;
-
+        const fname = `supplementary_stats_${ts}.csv`;
         triggerCSVDownload(csv, fname);
     };
 
@@ -244,7 +241,7 @@ const Admin: React.FC = () => {
                         />
                         <button
                             type="button"
-                            onClick={() => downloadCSV('filtered')}
+                            onClick={() => downloadCSV()}
                             className="flex flex-row gap-1 justify-center items-center text-center bg-sp_dark_green rounded-md p-2 w-[120px] xs:w-[110px] text-headingXs xs:text-bodyXs font-semibold text-white "
                         >
                             <img src="/images/assets/download-icon.svg" alt="Download icon" />
