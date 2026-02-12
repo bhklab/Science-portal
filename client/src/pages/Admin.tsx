@@ -77,13 +77,20 @@ const Admin: React.FC = () => {
         URL.revokeObjectURL(url);
     };
 
-    const downloadCSV = () => {
+    const downloadTotals = () => {
         if (!filteredChartData) return;
-
         const csv = buildCSVFromChartData(filteredChartData);
         const ts = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
         const fname = `supplementary_stats_${ts}.csv`;
         triggerCSVDownload(csv, fname);
+    };
+
+    const downloadDetails = () => {
+        try {
+            const res = axios.get('/api/stats/admin/details');
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     useEffect(() => {
@@ -219,16 +226,12 @@ const Admin: React.FC = () => {
         <div className="py-20 px-32 md:px-6">
             <div className="flex flex-col px-10 sm:px-2 gap-3 bg-white border-1 border-gray-200 rounded-md pb-10">
                 <div className="flex flex-row justify-between items-center">
-                    <div className="flex flex-col gap-1 py-10 xs:max-w-[60%]">
-                        <h1 className="text-heading2Xl sm:text-headingLg xs:text-headingMd font-semibold">
-                            Institution Wide Statistics
-                        </h1>
-                        <p className="text-bodySm sm:text-bodyXs text-gray-500">
-                            Total publications that share resources
-                        </p>
+                    <div className="flex flex-col gap-1 py-10 md:max-w-[60%]">
+                        <h1 className="text-heading2Xl sm:text-headingXl font-semibold">Institution Wide Statistics</h1>
+                        <p className="text-bodySm text-gray-500">Total publications that share resources</p>
                     </div>
 
-                    <div className="flex flex-row sm:flex-col xs:items-end gap-4">
+                    <div className="flex flex-row md:flex-col md:items-end md:mt-6 gap-4">
                         <FilterDropdown
                             legendItems={legendItems}
                             activeItems={activeLegendItems}
@@ -239,15 +242,23 @@ const Admin: React.FC = () => {
                             yearRange={yearRange ?? undefined}
                             onYearRangeChange={setYearRange}
                         />
+                        <ExportDropdown onDownload={downloadChartImage} chartType="bar" />
                         <button
                             type="button"
-                            onClick={() => downloadCSV()}
+                            onClick={() => downloadTotals()}
                             className="flex flex-row gap-1 justify-center items-center text-center bg-sp_dark_green rounded-md p-2 w-[120px] xs:w-[110px] text-headingXs xs:text-bodyXs font-semibold text-white "
                         >
                             <img src="/images/assets/download-icon.svg" alt="Download icon" />
-                            Export CSV
+                            Export Totals
                         </button>
-                        <ExportDropdown onDownload={downloadChartImage} chartType="bar" />
+                        <button
+                            type="button"
+                            onClick={() => downloadDetails()}
+                            className="flex flex-row gap-1 justify-center items-center text-center bg-sp_dark_green rounded-md p-2 w-[120px] xs:w-[110px] text-headingXs xs:text-bodyXs font-semibold text-white "
+                        >
+                            <img src="/images/assets/download-icon.svg" alt="Download icon" />
+                            Export Details
+                        </button>
                     </div>
                 </div>
                 {filteredChartData ? (
