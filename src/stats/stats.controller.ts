@@ -42,6 +42,27 @@ export class StatsController {
         }
     }
 
+	// Detailed resource extraction for Admin page
+	@Get('/admin/supplementary/details/:email')
+    async getAllSupplementaryDetails(email: string){
+		// try {
+		// 	await this.loggingService.logAction(
+		// 		`Admin Page Export (Detailed)`, 
+		// 		email ? email : 'Not signed in',
+		// 		{}
+		// 	);
+		// } catch (error) {
+		// 	console.log(error)
+		// }
+
+        try {
+            const publications = await this.statsService.findAllSupplementaryDetails();
+            return publications;
+        } catch (error) {
+            throw new HttpException(`Error retrieving publications: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 	@Put('supplementary/author')
     async getAuthorAnnualSupplementary(@Body('email') email: string)
 	{

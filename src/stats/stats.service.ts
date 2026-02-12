@@ -107,6 +107,44 @@ export class StatsService {
 		}
 	}
 
+	async findAllSupplementaryDetails() {
+
+		const uhnAuthors = new Set();
+
+		try {
+			const publications = await this.publicationModel.find({
+				date: { $gte: '2018-01-01' },
+			});
+
+			const scientists = await this.authorModel.find({});
+
+			// Build a set of normalized scientist name variants
+			const scientistSet = new Set<string>();
+			scientists.forEach((s) => {
+				scientistSet.add(`${s.lastName}, ${s.firstName}`);
+			});
+			
+
+			publications.forEach((pub) => {
+				// Object.entries(pub.supplementary).forEach((category, category_obj) => {
+				// 	if (category_obj && Object.keys(category_obj).length > 0) {
+				// 		console.log(category, Object.keys(category_obj));
+				// 	}
+				// })
+				scientistSet.forEach((scientist) => {
+					if ((pub.authors.toLowerCase()).includes(scientist.toLowerCase())) {
+						uhnAuthors.add(scientist)
+					}
+				})
+			});
+			return Array.from(uhnAuthors);
+		} catch (error) {
+			throw new Error(`Error fetching supplementary stats: ${error}`);
+		}
+	}
+
+
+
 
 	async findAuthorAnnualSupplementary(email: string) {
 
