@@ -1,5 +1,5 @@
 // publication.service.ts
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { StatsDocument } from '../interfaces/stats.interface';
@@ -7,6 +7,7 @@ import { AuthorDocument } from '../interfaces/author.interface';
 import { PublicationDocument } from '../interfaces/publication.interface';
 import { supplementary } from '../interfaces/link-types';
 import { AuthorSupplementaryLinks } from 'src/interfaces/author-supplementary-list.interface';
+import { UserDocument } from 'src/interfaces/user.interface';
 
 @Injectable()
 export class StatsService {
@@ -14,6 +15,7 @@ export class StatsService {
     @InjectModel('Stats') private statsModel: Model<StatsDocument>,
     @InjectModel('Author') private authorModel: Model<AuthorDocument>,
     @InjectModel('Publication') private publicationModel: Model<PublicationDocument>,
+	@InjectModel('Users') private userModel: Model<UserDocument>,
   ) {}
 
   	colours = [
@@ -107,9 +109,14 @@ export class StatsService {
 		}
 	}
 
-	async findAllSupplementaryDetails() {
+	async findAllSupplementaryDetails(years: string[], datatypes: string[], email: string) {
 
-		const uhnAuthors = new Set();
+		// admin check
+		const user = this.userModel.find({email: email, admin: true})
+		if (user === null){
+			throw new HttpException(`User is not a designated admin`,  HttpStatus.NOT_FOUND);
+		}
+
 
 		try {
 			const publications = await this.publicationModel.find({
@@ -117,30 +124,63 @@ export class StatsService {
 			});
 
 			const scientists = await this.authorModel.find({});
-
-			// Build a set of normalized scientist name variants
-			const scientistSet = new Set<string>();
-			scientists.forEach((s) => {
-				scientistSet.add(`${s.lastName}, ${s.firstName}`);
-			});
+			let scientistsCombined = []
+			scientists.forEach((scientist) => {
+				scientistsCombined.push(`${scientist.lastName}, ${scientist.firstName}`)
+			})
 			
+			let detailedData = []
+            const SOURCE_CODE = ['code', 'containers', 'packages'];
 
 			publications.forEach((pub) => {
-				// Object.entries(pub.supplementary).forEach((category, category_obj) => {
-				// 	if (category_obj && Object.keys(category_obj).length > 0) {
-				// 		console.log(category, Object.keys(category_obj));
-				// 	}
-				// })
-				scientistSet.forEach((scientist) => {
-					if ((pub.authors.toLowerCase()).includes(scientist.toLowerCase())) {
-						uhnAuthors.add(scientist)
+				Object.entries(pub.supplementary).forEach(([category, category_obj]) => {
+					if (category_obj && Object.keys(category_obj).length > 0) {
+						Object.entries(category_obj).forEach(([resource_type, resource_arr]) => {
+							if (Array.isArray(resource_arr) && resource_arr.length > 0){
+								resource_arr.forEach((link) => {
+									detailedData.push({
+										doi: pub.doi,
+										category_type: SOURCE_CODE.includes(category) ? "source code" : category,
+										link_type: resource_type,
+										link: link,
+										date: pub.date,
+										journal: pub.journal,
+										publisher: pub.publisher,
+										crossref_authors: pub.authors,
+										uhn_authors: this.getInstitutionAuthors(pub.authors, scientistsCombined),
+										crossref_affiliations: pub.affiliations.toString(),
+										crossref_citations: pub.citations,
+									})
+								})
+							}
+							
+						})
 					}
 				})
 			});
-			return Array.from(uhnAuthors);
+
+			return detailedData;
 		} catch (error) {
 			throw new Error(`Error fetching supplementary stats: ${error}`);
 		}
+	}
+
+	getInstitutionAuthors(authors: String, scientists: String[]) {
+		const authorNames = authors.includes(';') ? authors.split(';').map(name => name.trim()) : [authors.trim()];
+		let uhnScientists = []
+
+		if (authorNames.length > 0) {
+			authorNames.map((name) => {
+				// Normalize the candidate name.
+				const candidate = name.trim().replace(/[.]/g, '');
+				const candidateNoMiddle = candidate.replace(/\s+[a-z]\b/gi, '').trim();
+				// Find a matching scientist.
+				if (scientists.includes(candidate) || scientists.includes(candidateNoMiddle)){
+					uhnScientists.push(candidate)
+				}
+			})
+		}
+		return uhnScientists
 	}
 
 

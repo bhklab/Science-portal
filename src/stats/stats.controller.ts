@@ -43,23 +43,23 @@ export class StatsController {
     }
 
 	// Detailed resource extraction for Admin page
-	@Get('/admin/supplementary/details/:email')
-    async getAllSupplementaryDetails(email: string){
-		// try {
-		// 	await this.loggingService.logAction(
-		// 		`Admin Page Export (Detailed)`, 
-		// 		email ? email : 'Not signed in',
-		// 		{}
-		// 	);
-		// } catch (error) {
-		// 	console.log(error)
-		// }
+	@Post('/admin/supplementary/details')
+    async getAllSupplementaryDetails(years: string[], datatypes: string[], email: string){
+		try {
+			// await this.loggingService.logAction(
+			// 	`Admin Page Export (Detailed)`, 
+			// 	email ? email : 'Not signed in',
+			// 	{}
+			// );
+		} catch (error) {
+			console.log(error)
+		}
 
         try {
-            const publications = await this.statsService.findAllSupplementaryDetails();
-            return publications;
+            const detailedData = await this.statsService.findAllSupplementaryDetails(years, datatypes, email);
+            return detailedData;
         } catch (error) {
-            throw new HttpException(`Error retrieving publications: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new HttpException(`Error retrieving detailed admin data: ${error}`, HttpStatus.NOT_FOUND);
         }
     }
 
