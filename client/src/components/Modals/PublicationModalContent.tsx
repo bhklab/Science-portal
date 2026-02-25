@@ -548,7 +548,7 @@ const HeaderSection: React.FC<{
                     <p>{citations} citations</p>
                 </div>
                 {abstract && (
-                    <div className="flex flex-col items-start flex-row gap-1 mmd:gap-0 md:text-bodySm text-gray-700 font-light mmd:text-center">
+                    <div className="flex items-start flex-row gap-1 mmd:gap-0 md:text-bodySm text-gray-700 font-light mmd:text-center">
                         <p
                             className={`text-black-900 italic mmd:text-bodySm ${showFullAbstract ? '' : 'line-clamp-2'}`}
                         >
