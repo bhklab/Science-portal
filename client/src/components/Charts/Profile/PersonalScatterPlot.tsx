@@ -59,7 +59,7 @@ const PersonalScatterPlot = forwardRef<PersonalScatterPlotRef, PersonalChartProp
                                     useBorderRadius: true,
                                     borderRadius: 2
                                 },
-                                onClick: undefined
+                                onClick: () => ({})
                             }
                         },
                         scales: {

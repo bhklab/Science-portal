@@ -74,7 +74,7 @@ const PersonalBarChart = forwardRef<PersonalBarChartRef, PersonalChartProps>(
                                     useBorderRadius: true,
                                     borderRadius: 2
                                 },
-                                onClick: undefined
+                                onClick: () => ({})
                             },
                             datalabels: {
                                 // anchor: 'end',

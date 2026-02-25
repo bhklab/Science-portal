@@ -89,7 +89,7 @@ const PersonalHistogram = forwardRef<PersonalHistogramRef, PersonalHistogramProp
                                     useBorderRadius: true,
                                     borderRadius: 2
                                 },
-                                onClick: undefined // Disable default legend click behavior
+                                onClick: () => ({}) // Disable default legend click behavior
                             }
                         },
                         scales: {

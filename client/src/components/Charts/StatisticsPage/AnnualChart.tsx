@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { Chart, registerables } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { isNullOrUndef } from 'chart.js/dist/helpers/helpers.core';
+import { devNull } from 'os';
 
 Chart.register(...registerables);
 
@@ -73,7 +75,7 @@ const AnnualChart = forwardRef<AnnualChartRef, AnnualChartProps>(({ chartData, a
                                 useBorderRadius: true,
                                 borderRadius: 2
                             },
-                            onClick: undefined
+                            onClick: () => ({})
                         },
                         datalabels: {
                             // anchor: 'end',
