@@ -5,6 +5,7 @@ import { FilterDropdown } from '../components/DropdownButtons/FilterDropdown';
 import { ExportDropdown } from '../components/DropdownButtons/ExportDropdown';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import axios from 'axios';
+import { mkConfig, generateCsv, download } from 'export-to-csv';
 
 const Admin: React.FC = () => {
     const [chartData, setChartData] = useState<any | null>(null);
@@ -39,7 +40,7 @@ const Admin: React.FC = () => {
         }
     };
 
-    const buildCSVFromChartData = (data: any): string => {
+    const buildTotalsCSV = (data: any): string => {
         if (!data || !Array.isArray(data.labels) || !Array.isArray(data.datasets)) return '';
 
         const lines: string[] = [];
@@ -79,15 +80,28 @@ const Admin: React.FC = () => {
 
     const downloadTotals = () => {
         if (!filteredChartData) return;
-        const csv = buildCSVFromChartData(filteredChartData);
+        const csv = buildTotalsCSV(filteredChartData);
         const ts = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
         const fname = `supplementary_stats_${ts}.csv`;
         triggerCSVDownload(csv, fname);
     };
 
-    const downloadDetails = () => {
+    const downloadDetails = async () => {
+        let datatypes: string[] = [];
+        // chartData.datasets.forEach(datatype => {
+        //     datatypes.push(datatype.label);
+        // });
         try {
-            const res = axios.get('/api/stats/admin/details');
+            const res = await axios.post('/api/stats/admin/supplementary/details', {
+                datatypes: datatypes,
+                years: chartData.labels,
+                email: authContext?.user?.email
+            });
+            if (!res) return;
+            console.log(res.data);
+            const csvConfig = mkConfig({ useKeysAsHeaders: true });
+            const csv = generateCsv(csvConfig)(res.data);
+            download(csvConfig)(csv);
         } catch (error) {
             console.log(error);
         }

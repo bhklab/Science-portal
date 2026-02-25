@@ -5470,6 +5470,11 @@ expect@^27.5.1:
     jest-matcher-utils "^27.5.1"
     jest-message-util "^27.5.1"
 
+export-to-csv@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.npmjs.org/export-to-csv/-/export-to-csv-1.4.0.tgz"
+  integrity sha512-6CX17Cu+rC2Fi2CyZ4CkgVG3hLl6BFsdAxfXiZkmDFIDY4mRx2y2spdeH6dqPHI9rP+AsHEfGeKz84Uuw7+Pmg==
+
 express@^4.17.3:
   version "4.18.3"
   resolved "https://registry.npmjs.org/express/-/express-4.18.3.tgz"
