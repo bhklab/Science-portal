@@ -46,11 +46,11 @@ export class StatsController {
 	@Post('/admin/supplementary/details')
     async getAllSupplementaryDetails(years: string[], datatypes: string[], email: string){
 		try {
-			// await this.loggingService.logAction(
-			// 	`Admin Page Export (Detailed)`, 
-			// 	email ? email : 'Not signed in',
-			// 	{}
-			// );
+			await this.loggingService.logAction(
+				`Admin Page Export (Detailed)`, 
+				email ? email : 'Not signed in',
+				{}
+			);
 		} catch (error) {
 			console.log(error)
 		}

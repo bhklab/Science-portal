@@ -112,7 +112,7 @@ export class StatsService {
 	async findAllSupplementaryDetails(years: string[], datatypes: string[], email: string) {
 
 		// admin check
-		const user = this.userModel.find({email: email, admin: true})
+		const user = this.userModel.find({email: { $regex: new RegExp(`^${email}$`, 'i') }, admin: true})
 		if (user === null){
 			throw new HttpException(`User is not a designated admin`,  HttpStatus.NOT_FOUND);
 		}
