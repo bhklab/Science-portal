@@ -40,50 +40,42 @@ const Admin: React.FC = () => {
         }
     };
 
-    const buildTotalsCSV = (data: any): string => {
-        if (!data || !Array.isArray(data.labels) || !Array.isArray(data.datasets)) return '';
-
-        const lines: string[] = [];
-        lines.push('year,category,value');
+    const buildTotalsRows = (data: any): Object[] => {
+        if (!data || !Array.isArray(data.labels) || !Array.isArray(data.datasets)) return [];
 
         const labels = data.labels;
+        const rows: Object[] = [];
+
         data.datasets.forEach((ds: any) => {
-            const cat = String(ds?.label ?? '');
+            const category = String(ds?.label ?? '');
             const arr = Array.isArray(ds?.data) ? ds.data : [];
+
             for (let i = 0; i < labels.length; i++) {
                 const yearRaw = labels[i];
                 const year = typeof yearRaw === 'string' ? yearRaw : String(yearRaw);
-                const val = Number(arr[i] ?? 0);
-                // escape category if needed
-                const catEsc = /[",\n]/.test(cat) ? `"${cat.replace(/"/g, '""')}"` : cat;
-                const yearEsc = /[",\n]/.test(year) ? `"${year.replace(/"/g, '""')}"` : year;
-                lines.push(`${yearEsc},${catEsc},${val}`);
+                const value = Number(arr[i] ?? 0);
+
+                rows.push({ year, category, value });
             }
         });
 
-        return lines.join('\n');
-    };
-
-    const triggerCSVDownload = (csv: string, filename: string) => {
-        const BOM = '\uFEFF';
-        const blob = new Blob([BOM + csv], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        return rows;
     };
 
     const downloadTotals = () => {
         if (!filteredChartData) return;
-        const csv = buildTotalsCSV(filteredChartData);
+
+        const rows = buildTotalsRows(filteredChartData);
+        if (rows.length === 0) return;
+
         const ts = new Date().toISOString().slice(0, 10).replaceAll('-', '_');
-        const fname = `publication_data_totals_${ts}.csv`;
-        triggerCSVDownload(csv, fname);
+
+        const csvConfig = mkConfig({
+            useKeysAsHeaders: true,
+            filename: `publication_data_totals_${ts}`
+        });
+        const csv = generateCsv(csvConfig)(rows);
+        download(csvConfig)(csv);
     };
 
     const downloadDetails = async () => {
