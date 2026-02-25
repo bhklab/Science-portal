@@ -129,34 +129,37 @@ export class StatsService {
 				scientistsCombined.push(`${scientist.lastName}, ${scientist.firstName}`)
 			})
 			
-			let detailedData = []
             const SOURCE_CODE = ['code', 'containers', 'packages'];
 
-			publications.forEach((pub) => {
-				Object.entries(pub.supplementary).forEach(([category, category_obj]) => {
-					if (category_obj && Object.keys(category_obj).length > 0) {
-						Object.entries(category_obj).forEach(([resource_type, resource_arr]) => {
-							if (Array.isArray(resource_arr) && resource_arr.length > 0){
-								resource_arr.forEach((link) => {
-									detailedData.push({
-										doi: pub.doi,
-										category_type: SOURCE_CODE.includes(category) ? "source code" : category,
-										link_type: resource_type,
-										link: link,
-										date: pub.date,
-										journal: pub.journal,
-										publisher: pub.publisher,
-										crossref_authors: pub.authors,
-										uhn_authors: this.getInstitutionAuthors(pub.authors, scientistsCombined),
-										crossref_affiliations: pub.affiliations.toString(),
-										crossref_citations: pub.citations,
-									})
-								})
-							}
-							
-						})
-					}
-				})
+			const detailedData = publications.flatMap((pub) => {
+				if (!pub?.supplementary) return [];
+
+				const uhnAuthorsStr = (this.getInstitutionAuthors(pub.authors, scientistsCombined)).toString();
+				const affiliationsStr = pub.affiliations.toString();
+
+				return Object.entries(pub.supplementary).flatMap(([category, category_obj]) => {
+					if (!category_obj || Object.keys(category_obj).length === 0) return [];
+
+					return Object.entries(category_obj).flatMap(([resource_type, resource_arr]) => {
+						if (!Array.isArray(resource_arr) || resource_arr.length === 0) return [];
+
+						return resource_arr.map((link) => {
+							return {
+								doi: pub.doi,
+								category_type: SOURCE_CODE.includes(category) ? "source code" : category,
+								link_type: resource_type,
+								link: link,
+								date: pub.date,
+								journal: pub.journal,
+								publisher: pub.publisher,
+								crossref_authors: pub.authors,
+								uhn_authors: uhnAuthorsStr,
+								crossref_affiliations: affiliationsStr,
+								crossref_citations: pub.citations,
+							};
+						});
+					});
+				});
 			});
 
 			return detailedData;
