@@ -162,6 +162,7 @@ const PiProfile: React.FC = () => {
                 const mailingStatus = await axios.post(`/api/mailing/status`, {
                     email: authContext?.user?.email
                 });
+                console.log(mailingStatus);
 
                 setMailOptIn(mailingStatus.data);
 

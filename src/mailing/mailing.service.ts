@@ -11,14 +11,11 @@ export class MailingService {
 	// Get a mailing status for an email
     async mailStatus(email: string) {
         try {
-            const mail = await this.MailModel.findOne({ email }).exec();
-
+            const mail = await this.MailModel.findOne({ email: { $regex: new RegExp(`^${email}$`, 'i') } });
             if (!mail) {
-                console.log("user not found");
 				await this.MailModel.create({ email: email, mailOptIn: true });
-				return false
+				return true
             }
-
             return mail.mailOptIn;
         } catch (error) {
             throw new Error(`Error updating mailOptIn: ${(error as Error).message}`);
@@ -30,9 +27,9 @@ export class MailingService {
 		try {
 			
 			await this.MailModel.updateOne(
-				{ email: email },
+				{ email: { $regex: new RegExp(`^${email}$`, 'i') } },
 				{ $set: { mailOptIn: !mailOptIn } }
-			).exec();
+			);
 
 			return !mailOptIn;
 			

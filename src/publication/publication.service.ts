@@ -134,7 +134,7 @@ export class PublicationService {
 
     async findByDoi(doi: string): Promise<PublicationDocument> {
         try {
-            const publication = await this.publicationModel.findOne({ doi }).exec();
+            const publication = await this.publicationModel.findOne({ doi });
             if (!publication) {
                 throw new Error('Publication not found');
             }
@@ -152,7 +152,7 @@ export class PublicationService {
     async fetchPublication(newPub: PublicationDocumentNew): Promise<any> {
 
 		newPub.doi = newPub.doi.trim() //Clear off white space
-		const publication = await this.publicationModel.findOne({ doi: newPub.doi }).exec();
+		const publication = await this.publicationModel.findOne({ doi: newPub.doi });
 		if (publication) {
 			return "DOI exists in database already";
 		}
@@ -187,7 +187,7 @@ export class PublicationService {
 	async createPublication(newPub: PublicationDocumentNew): Promise<any> {
 
 		newPub.doi = newPub.doi.trim() //Clear off any spaces
-		const publication = await this.publicationModel.findOne({ doi: newPub.doi }).exec();
+		const publication = await this.publicationModel.findOne({ doi: newPub.doi });
 		if (publication) {
 			return "DOI exists in database already";
 		}

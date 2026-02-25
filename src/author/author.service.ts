@@ -10,7 +10,7 @@ export class AuthorService {
     //Get all authors/scientist
     async findAllAuthors() {
         try {
-            const authors = await this.AuthorModel.find({}).exec();
+            const authors = await this.AuthorModel.find({});
             if (!authors) {
                 throw new Error('Authors not found');
             }
@@ -23,7 +23,7 @@ export class AuthorService {
     // Find a single author/scientist
     async findOneAuthor(email: string) {
         try {
-			const author = await this.AuthorModel.findOne({ email: new RegExp(`^${email}$`, 'i') }).exec();
+			const author = await this.AuthorModel.findOne({ email: new RegExp(`^${email}$`, 'i') });
             if (!author) {
                 return "Author not found"
             }

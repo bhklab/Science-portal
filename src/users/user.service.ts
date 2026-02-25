@@ -13,7 +13,7 @@ export class UserService {
 	
 	async getAdminEmails() {
         try {
-            const users = await this.UserModel.find({ "admin" : true}).exec();
+            const users = await this.UserModel.find({ "admin" : true});
             if (!users) {
                 throw new Error('Users not found');
             }

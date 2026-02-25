@@ -192,7 +192,7 @@ export class StatsService {
 	async findAuthorAnnualSupplementary(email: string) {
 
 		try {
-			const author = await this.authorModel.findOne({ email: new RegExp(`^${email}$`, 'i') }).exec();
+			const author = await this.authorModel.findOne({ email: new RegExp(`^${email}$`, 'i') });
 			if (!author) {
 				throw new Error(`Author with email ${email} not found`);
 			}

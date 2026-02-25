@@ -15,7 +15,7 @@ export class EmailService {
 	
 	async findAllEmails() {
         try {
-            const emails = await this.AuthorModel.find({}, 'email').exec();
+            const emails = await this.AuthorModel.find({}, 'email');
             if (!emails) {
                 throw new Error('Emails not found');
             }
@@ -52,7 +52,7 @@ export class EmailService {
 								verdict: true,
 							}}
 						}
-					).exec();
+					);
 				} catch (error) {
 					console.log(error);
 					return {status: 500, message: `Database fanout update error: ${error}`};
@@ -68,7 +68,7 @@ export class EmailService {
 								verdict: false,
 							}}
 						}
-					).exec();
+					);
 					return {status: 200, message: "Successful decline of fanout email."}
 				} catch (error) {
 					console.log(error);
