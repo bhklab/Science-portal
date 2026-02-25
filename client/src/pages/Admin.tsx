@@ -162,7 +162,6 @@ const Admin: React.FC = () => {
 
                 // Save chart data
                 setChartData(transformed);
-                console.log('Transformed data:', transformed);
 
                 // Rebuild legend labels from transformed datasets (deduped)
                 const legend = Array.from(

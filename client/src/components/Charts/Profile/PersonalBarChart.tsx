@@ -74,7 +74,7 @@ const PersonalBarChart = forwardRef<PersonalBarChartRef, PersonalChartProps>(
                                     useBorderRadius: true,
                                     borderRadius: 2
                                 },
-                                onClick: null
+                                onClick: undefined
                             },
                             datalabels: {
                                 // anchor: 'end',
@@ -167,12 +167,25 @@ const PersonalBarChart = forwardRef<PersonalBarChartRef, PersonalChartProps>(
                     const chartCanvas = chartRef.current;
                     const link = document.createElement('a');
 
-                    if (format === 'png') {
-                        link.href = chartInstance.current.toBase64Image();
-                        link.download = 'chart-image.png';
-                    } else if (format === 'jpeg') {
-                        link.href = chartCanvas.toDataURL('image/jpeg');
-                        link.download = 'chart-image.jpeg';
+                    const ctx = chartCanvas.getContext('2d');
+                    if (format === 'jpeg') {
+                        if (ctx) {
+                            ctx.save();
+                            ctx.globalCompositeOperation = 'destination-over'; // send colour to back
+                            ctx.fillStyle = '#ffffff'; // set colour to white
+                            ctx.fillRect(0, 0, chartCanvas.width, chartCanvas.height); // set colour box to conver entire canvas
+                            link.href = chartCanvas.toDataURL('image/jpeg');
+                            link.download = 'chart-image.jpeg';
+                            ctx.restore();
+                        }
+                    } else if (format === 'png') {
+                        if (ctx) {
+                            ctx.save();
+                            ctx.fillStyle = 'rgb(0, 0, 0, 0.01)';
+                            link.href = chartCanvas.toDataURL('image/png');
+                            link.download = 'chart-image.png';
+                            ctx.restore();
+                        }
                     }
 
                     link.click();
