@@ -81,8 +81,8 @@ const Admin: React.FC = () => {
     const downloadTotals = () => {
         if (!filteredChartData) return;
         const csv = buildTotalsCSV(filteredChartData);
-        const ts = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-        const fname = `supplementary_stats_${ts}.csv`;
+        const ts = new Date().toISOString().slice(0, 10).replaceAll('-', '_');
+        const fname = `publication_data_totals_${ts}.csv`;
         triggerCSVDownload(csv, fname);
     };
 
@@ -98,8 +98,11 @@ const Admin: React.FC = () => {
                 email: authContext?.user?.email
             });
             if (!res) return;
-            console.log(res.data);
-            const csvConfig = mkConfig({ useKeysAsHeaders: true });
+            const ts = new Date().toISOString().slice(0, 10).replaceAll('-', '_');
+            const csvConfig = mkConfig({
+                useKeysAsHeaders: true,
+                filename: `publication_data_detailed_${ts}`
+            });
             const csv = generateCsv(csvConfig)(res.data);
             download(csvConfig)(csv);
         } catch (error) {
