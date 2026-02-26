@@ -31,6 +31,8 @@ export const PublicationsNewSchema = new Schema({
 		results: {},
 		trials: {},
 		protocols: {},
+		celllines: {},
+		plasmids: {},
 		packages: {},
 		miscellaneous: {}
 	},

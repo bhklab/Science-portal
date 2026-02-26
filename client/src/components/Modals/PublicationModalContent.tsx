@@ -27,6 +27,8 @@ const options: Option[] = [
     { name: 'results' },
     { name: 'trials' },
     { name: 'protocols' },
+    { name: 'celllines' },
+    { name: 'plasmids' },
     { name: 'packages' },
     { name: 'miscellaneous' }
 ];

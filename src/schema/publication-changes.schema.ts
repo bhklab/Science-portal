@@ -26,6 +26,8 @@ export const PublicationChangesSchema = new Schema({
 		results: {},
 		trials: {},
 		protocols: {},
+		celllines: {},
+		plasmids: {},
 		packages: {},
 		miscellaneous: {}
 	},

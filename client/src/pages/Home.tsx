@@ -37,6 +37,8 @@ const resourceTypes: Option[] = [
     { name: 'Results' },
     { name: 'Trials' },
     { name: 'Protocols' },
+    { name: 'Cell Lines' },
+    { name: 'Plasmids' },
     { name: 'Packages' },
     { name: 'Miscellaneous' }
 ];

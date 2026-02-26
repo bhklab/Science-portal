@@ -37,6 +37,12 @@ export const LINK_CATEGORIES = {
         { name: 'vivli', display: 'Vivli' },
         { name: 'yoda', display: 'The YODA Project' }
     ],
+    celllines: [{ name: 'cellosaurus', display: 'Cellosaurus' }],
+    plasmids: [
+        { name: 'addgene', display: 'Addgene' },
+        { name: 'dnasu', display: 'DNASU Plasmid Repository' },
+        { name: 'deepomics', display: 'Deepomics' }
+    ],
     protocols: [
         { name: 'protocolsIO', display: 'Protocols.io' },
         { name: 'bioProtocol', display: 'Bio-protocol' },

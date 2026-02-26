@@ -54,6 +54,8 @@ export const ListView: React.FC<publications> = ({ pubs }) => {
             results: '/images/assets/results-icon.svg',
             trials: '/images/assets/clinicaltrials-icon.svg',
             protocols: '/images/assets/protocols-icon.svg',
+            celllines: '/images/assets/celllines-icon.svg',
+            plasmids: '/images/assets/plasmids-icon.svg',
             packages: '/images/assets/packages-icon.svg',
             miscellaneous: '/images/assets/miscellaneous-icon.svg'
         };

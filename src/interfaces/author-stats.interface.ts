@@ -10,6 +10,8 @@ export interface AuthorStats {
         results: number;
         trials: number;
 		protocols: number;
+		plasmids: number;
+		celllines: number;
 		packages: number;
         miscellaneous: number;
     };

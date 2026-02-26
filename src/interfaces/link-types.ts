@@ -48,6 +48,15 @@ export const supplementary = [
 	{ category: 'packages', subCategory: 'bioconductor', displayName: 'Bioconductor', type: 'Packages' },
 	{ category: 'packages', subCategory: 'pypi', displayName: 'PyPI', type: 'Packages' },
 	{ category: 'packages', subCategory: 'CRAN', displayName: 'CRAN', type: 'Packages' },
+
+	// -- cell lines
+	{ category: 'celllines', subCategory: 'cellosaurus', displayName: 'Cellosaurus', type: 'Cell Lines' },
+
+
+	// -- Plasmids
+	{ category: 'plasmids', subCategory: 'addgene', displayName: 'Addgene', type: 'Plasmids' },
+	{ category: 'plasmids', subCategory: 'dnasu', displayName: 'DNASU Plasmid Repository', type: 'Plasmids' },
+	{ category: 'plasmids', subCategory: 'deepomics', displayName: 'Deep Omics', type: 'Plasmids' },
   
 	// -- miscellaneous
 	// { category: 'miscellaneous', subCategory: 'IEEE', displayName: 'IEEE', type: 'Miscellaneous' },

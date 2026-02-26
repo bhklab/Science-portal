@@ -12,6 +12,8 @@ export interface StatsDocument extends Document {
 			results?: Record<string, string[]>;
 			trials?: Record<string, string[]>;
 			protocols?: Record<string, string[]>;
+			celllines?: Record<string, string[]>;
+			plasmids?: Record<string, string[]>;
 			packages?: Record<string, string[]>;
 			miscellaneous?: Record<string, string[]>;
 		};

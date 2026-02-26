@@ -30,7 +30,9 @@ export interface PublicationDocument extends Document {
 		containers?: {};
 		results?: {};
 		trials?: {};
-		protocols?: {}
+		protocols?: {};
+		celllines: {};
+		plasmids: {};
 		packages?: {};
 		miscellaneous?: {};
 	};

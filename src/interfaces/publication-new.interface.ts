@@ -31,6 +31,8 @@ export interface PublicationDocumentNew extends Document {
 		results?: {};
 		trials?: {};
 		protocols: {};
+		celllines: {};
+		plasmids: {};
 		packages?: {};
 		miscellaneous?: {};
 	};

@@ -71,6 +71,8 @@ export const StatsSchema = new Schema({
 		results: {},
 		trials: {},
 		protocols: {},
+		celllines: {},
+		plasmids: {},
 		packages: {},
 		miscellaneous: {}
 }
