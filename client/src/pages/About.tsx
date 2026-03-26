@@ -14,16 +14,6 @@ type SectionDef = {
 };
 
 const About: React.FC = () => {
-    const [institute, setInstitute] = useState('');
-
-    useEffect(() => {
-        const getInstitute = async () => {
-            const res = await axios.get('/api/institute/get');
-            setInstitute(res.data);
-        };
-        getInstitute();
-    }, []);
-
     const sections: SectionDef[] = useMemo(
         () => [
             {
@@ -108,7 +98,9 @@ const About: React.FC = () => {
             </div>
 
             <div className="flex flex-col gap-10 mx-auto smd:px-4 col-span-6 text-gray-700 p-6 bg-white border-1 shadow-xs rounded-lg">
-                {Active ? <Active scrollTarget={scrollTarget} institute={institute} /> : null}
+                {Active ? (
+                    <Active scrollTarget={scrollTarget} institute={process.env.REACT_APP_INSTITUTE?.toString() || ''} />
+                ) : null}
             </div>
         </div>
     );

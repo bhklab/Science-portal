@@ -40,7 +40,7 @@ export const Overview: React.FC<SectionProps> = ({ scrollTarget, institute }) =>
                         </p>
                         <p className="text-bodyLg font-light xs:text-bodyMd">
                             The Science Portal serves as a platform to centralize and simplify access to research
-                            outputs at {institute}. The Science Portal tackles common
+                            outputs at {process.env.REACT_APP_INSTITUTE}. The Science Portal tackles common
                             <span className="font-normal"> transparency </span> and
                             <span className="font-normal"> reproducibility </span>issues faced in research by sharing
                             diverse open science contributions and utilizing robust tools to track them.
@@ -335,7 +335,7 @@ export const Data: React.FC<SectionProps> = ({ scrollTarget, institute }) => {
                     functionalities and backend data processing we have chosen to only import publications from{' '}
                     <span className="font-normal">2018 onwards</span> to the platform. It is also important to note that
                     we only extract the publications from UHN research analytics that are deemed having having a direct
-                    affiliation with {institute}.
+                    affiliation with {process.env.REACT_APP_INSTITUTE}.
                 </p>
             </div>
             <div className="flex flex-col gap-2">
@@ -374,7 +374,7 @@ export const Data: React.FC<SectionProps> = ({ scrollTarget, institute }) => {
                 <p className="text-bodyLg font-light xs:text-bodyMd">
                     All of the "members" tracked in the platform <span className="font-normal">(377 faculty)</span> are
                     also provided to us by the UHN research analytics team. Just like publications in the platform we
-                    only extract UHN faculty that have a direct affiliation with {institute}.
+                    only extract UHN faculty that have a direct affiliation with {process.env.REACT_APP_INSTITUTE}.
                 </p>
             </div>
             <div className="flex flex-col gap-2">

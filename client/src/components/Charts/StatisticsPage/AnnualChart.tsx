@@ -1,9 +1,6 @@
 import React, { useEffect, useRef, forwardRef, useImperativeHandle, useState } from 'react';
 import { Chart, registerables } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { isNullOrUndef } from 'chart.js/dist/helpers/helpers.core';
-import { devNull } from 'os';
-import axios from 'axios';
 
 Chart.register(...registerables);
 
@@ -27,18 +24,9 @@ export interface AnnualChartRef {
 const AnnualChart = forwardRef<AnnualChartRef, AnnualChartProps>(({ chartData, activeLegendItems }, ref) => {
     const chartRef = useRef<HTMLCanvasElement>(null);
     const chartInstance = useRef<Chart | null>(null);
-    const [institute, setInstitute] = useState('');
 
     useEffect(() => {
-        const getInstitute = async () => {
-            const res = await axios.get('/api/institute/get');
-            setInstitute(res.data);
-        };
-        getInstitute();
-    }, []);
-
-    useEffect(() => {
-        if (chartData && chartRef.current && !chartInstance.current && institute) {
+        if (chartData && chartRef.current && !chartInstance.current) {
             // Calculate the max for stacked bars
             const stackedMax = chartData.labels.map((_: any, index: number) =>
                 chartData.datasets.reduce((sum: number, dataset: Dataset) => {
@@ -66,7 +54,7 @@ const AnnualChart = forwardRef<AnnualChartRef, AnnualChartProps>(({ chartData, a
                     plugins: {
                         title: {
                             display: false,
-                            text: `${institute} Statistics`
+                            text: `${process.env.REACT_APP_INSTITUTE} Statistics`
                         },
                         tooltip: {
                             mode: 'index',

@@ -23,8 +23,6 @@ const Analytics: React.FC = () => {
     const chartRef = useRef<AnnualChartRef>(null);
     const authContext = useContext(AuthContext);
 
-    const [institute, setInstitute] = useState('');
-
     // Keep name: toggleLegendItem (legend only)
     const toggleLegendItem = (item: string, _chartType: string) => {
         setActiveLegendItems(prev => {
@@ -40,14 +38,6 @@ const Analytics: React.FC = () => {
             chartRef.current.downloadChartImage(format);
         }
     };
-
-    useEffect(() => {
-        const getInstitute = async () => {
-            const res = await axios.get('/api/institute/get');
-            setInstitute(res.data);
-        };
-        getInstitute();
-    }, []);
 
     useEffect(() => {
         const getChartData = async () => {
@@ -133,7 +123,7 @@ const Analytics: React.FC = () => {
                 <div className="flex flex-row justify-between items-center">
                     <div className="flex flex-col gap-1 py-10 xs:max-w-[60%]">
                         <h1 className="text-heading2Xl sm:text-headingLg xs:text-headingMd font-semibold">
-                            {institute} Resource Statistics
+                            {process.env.REACT_APP_INSTITUTE} Resource Statistics
                         </h1>
                         <p className="text-bodySm sm:text-bodyXs text-gray-500">
                             Total publications that share resources
