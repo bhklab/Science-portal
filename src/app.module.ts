@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import { FeedbackModule } from './feedback/feedback.module';
 import { MailingModule } from './mailing/mailing.module';
 import { UserModule } from './users/user.module';
+import { InstituteModule } from './institute/institute.module';
 
 @Module({
   	imports: [
@@ -22,7 +23,8 @@ import { UserModule } from './users/user.module';
 		AuthModule,
 		FeedbackModule,
 		MailingModule,
-		UserModule
+		UserModule,
+		InstituteModule
   	],
   	controllers: [AppController],
   	providers: [AppService],
