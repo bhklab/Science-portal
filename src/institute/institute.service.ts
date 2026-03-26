@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 export class InstituteService {	
 	async getInstitute() {
         try {
-            const institute = process.env.INSTITUTE || "Princess Margaret Cancer Center"
+            const institute = process.env.INSTITUTE || "Princess Margaret Cancer Centre"
 			return institute
         } catch (error) {
             throw new Error(`Error fetching users`);
