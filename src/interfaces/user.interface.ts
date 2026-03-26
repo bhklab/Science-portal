@@ -7,4 +7,5 @@ export interface UserDocument extends Document {
 	lastName: string;
 	email: string;
 	admin: boolean;
+	password: string;
 }

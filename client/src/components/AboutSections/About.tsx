@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Image } from 'primereact/image';
-import axios from 'axios';
 
 type SectionProps = {
     scrollTarget?: string | null;
