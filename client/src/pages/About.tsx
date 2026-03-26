@@ -1,13 +1,29 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Overview, Functionality, Data, Future } from '../components/AboutSections/About';
+import axios from 'axios';
+
+type SectionProps = {
+    scrollTarget?: string | null;
+    institute: string;
+};
 
 type SectionDef = {
     id: string;
-    component: React.FC<{ scrollTarget?: string | null }>;
+    component: React.FC<SectionProps>;
     subsections: { id: string; value: string }[];
 };
 
 const About: React.FC = () => {
+    const [institute, setInstitute] = useState('');
+
+    useEffect(() => {
+        const getInstitute = async () => {
+            const res = await axios.get('/api/institute/get');
+            setInstitute(res.data);
+        };
+        getInstitute();
+    }, []);
+
     const sections: SectionDef[] = useMemo(
         () => [
             {
@@ -64,7 +80,7 @@ const About: React.FC = () => {
                             <div className="w-fit">
                                 {sects.id}
                                 <span
-                                    className={`block max-w-0 group-hover:max-w-full  transition-all duration-500 h-0.5 bg-sp_dark_green ${selected === sects.id ? '!max-w-full' : ''}`}
+                                    className={`block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-sp_dark_green ${selected === sects.id ? '!max-w-full' : ''}`}
                                 />
                             </div>
 
@@ -91,8 +107,8 @@ const About: React.FC = () => {
                 </ul>
             </div>
 
-            <div className="flex flex-col gap-10 mx-auto smd:px-4 col-span-6 text-gray-700 p-6 bg-white border-1 shadow-xs rounded-lg ">
-                {Active ? <Active scrollTarget={scrollTarget} /> : null}
+            <div className="flex flex-col gap-10 mx-auto smd:px-4 col-span-6 text-gray-700 p-6 bg-white border-1 shadow-xs rounded-lg">
+                {Active ? <Active scrollTarget={scrollTarget} institute={institute} /> : null}
             </div>
         </div>
     );

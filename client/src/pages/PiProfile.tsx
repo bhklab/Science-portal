@@ -129,6 +129,9 @@ const PiProfile: React.FC = () => {
     // Author link stats for csv exports
     const [authorLinks, setAuthorLinks] = useState<AuthorSupplementaryLinks[]>([]);
 
+    // State for institute name
+    const [institute, setInstitute] = useState('');
+
     // Toggling the legend items for bar or scatter chart
     const toggleLegendItem = (item: string, chartType: string) => {
         if (chartType === 'bar') {
@@ -154,6 +157,14 @@ const PiProfile: React.FC = () => {
             histogramRef.current.downloadChartImage(format);
         }
     };
+
+    useEffect(() => {
+        const getInstitute = async () => {
+            const res = await axios.get('/api/institute/get');
+            setInstitute(res.data);
+        };
+        getInstitute();
+    }, []);
 
     // Fetch PI data from the backend
     useEffect(() => {
@@ -378,7 +389,7 @@ const PiProfile: React.FC = () => {
                             <div className="flex flex-col gap-2">
                                 <div className="flex flex-row gap-2 items-center">
                                     <img src="/images/assets/briefcase-icon.svg" alt="briefcase-icon" />
-                                    <p className="text-bodyMd">Princess Margaret Cancer Centre</p>
+                                    <p className="text-bodyMd">{institute}</p>
                                 </div>
                                 <div className="flex flex-row gap-2 items-center">
                                     <img src="/images/assets/mail-icon.svg" alt="mail-icon" />
@@ -420,7 +431,7 @@ const PiProfile: React.FC = () => {
                     </div>
                     <div className="flex items-center justify-center w-[860px] md:w-[420px]">
                         <span className="text-bodyMd font-semibold text-gray-700 text-center">
-                            User is currently not a tracked scientist at Princess Margaret. If you would like to request
+                            User is currently not a tracked scientist at {institute}. If you would like to request
                             yourself as a trackable user, please make a request through the Send Feedback portal.
                         </span>
                     </div>
@@ -451,7 +462,7 @@ const PiProfile: React.FC = () => {
                         <div className="flex flex-col gap-2">
                             <div className="flex flex-row gap-2 items-center">
                                 <img src="/images/assets/briefcase-icon.svg" alt="briefcase-icon" />
-                                <p className="text-bodyMd">Princess Margaret Cancer Centre</p>
+                                <p className="text-bodyMd">{institute}</p>
                             </div>
                             <div className="flex flex-row gap-2 items-center">
                                 <img src="/images/assets/mail-icon.svg" alt="mail-icon" />
