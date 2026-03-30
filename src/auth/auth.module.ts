@@ -1,18 +1,14 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { KeycloakConnectModule } from 'nest-keycloak-connect';
-import * as dotenv from 'dotenv'; dotenv.config();
-
+import { UserSchema } from 'src/schema/user.schema';
 
 @Module({
 	imports: [
-		// KeycloakConnectModule.register({
-		// 	authServerUrl: process.env.KEYCLOAK_AUTH_SERVER_URL,
-		// 	realm: process.env.KEYCLOAK_REALM,
-		// 	clientId: process.env.KEYCLOAK_CLIENT_ID,
-		// 	secret: process.env.KEYCLOAK_CLIENT_SECRET,
-		// }),
+		MongooseModule.forFeature([
+			{ name: 'User', schema: UserSchema },
+		])
 	],
 	controllers: [AuthController],
 	providers: [AuthService],

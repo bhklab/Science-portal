@@ -6,6 +6,7 @@ type AuthContextType = {
     setUser: (user: any) => void;
     logout: () => void;
     status: 'loading' | 'authenticated' | 'unauthenticated';
+    setStatus: (user: any) => void;
 };
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -65,7 +66,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setStatus('unauthenticated');
     };
 
-    const value = useMemo(() => ({ user, setUser, logout, status }), [user, status]);
+    const value = useMemo(() => ({ user, setUser, logout, status, setStatus }), [user, status]);
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

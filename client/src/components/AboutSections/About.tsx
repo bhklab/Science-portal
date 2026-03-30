@@ -1,9 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image } from 'primereact/image';
 
-type SectionProps = { scrollTarget?: string | null };
+type SectionProps = {
+    scrollTarget?: string | null;
+    institute: string;
+};
 
-export const Overview: React.FC<SectionProps> = ({ scrollTarget }) => {
+export const Overview: React.FC<SectionProps> = ({ scrollTarget, institute }) => {
     useEffect(() => {
         async function scrollTo() {
             await new Promise(resolve => setTimeout(resolve, 75));
@@ -36,7 +39,7 @@ export const Overview: React.FC<SectionProps> = ({ scrollTarget }) => {
                         </p>
                         <p className="text-bodyLg font-light xs:text-bodyMd">
                             The Science Portal serves as a platform to centralize and simplify access to research
-                            outputs at Princess Margaret. The Science Portal tackles common
+                            outputs at {process.env.REACT_APP_INSTITUTE}. The Science Portal tackles common
                             <span className="font-normal"> transparency </span> and
                             <span className="font-normal"> reproducibility </span>issues faced in research by sharing
                             diverse open science contributions and utilizing robust tools to track them.
@@ -47,10 +50,12 @@ export const Overview: React.FC<SectionProps> = ({ scrollTarget }) => {
             <div className="flex flex-col gap-1 px-1 overflow-hidden">
                 <iframe
                     height="600"
-                    src="https://www.youtube.com/embed/L6UxPbZcgmY"
+                    src="https://www.youtube-nocookie.com/embed/L6UxPbZcgmY"
                     title="Science Portal Demo"
+                    className="border"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
                     allowFullScreen
-                    className="border-1"
                 />
                 <p className="text-bodySm text-gray-900">
                     0:00 - Intro | 1:11 - Search Functionality | 2:09 - Publication Overview | 2:57 - Public Statistics
@@ -62,7 +67,7 @@ export const Overview: React.FC<SectionProps> = ({ scrollTarget }) => {
     );
 };
 
-export const Functionality: React.FC<SectionProps> = ({ scrollTarget }) => {
+export const Functionality: React.FC<SectionProps> = ({ scrollTarget, institute }) => {
     useEffect(() => {
         async function scrollTo() {
             await new Promise(resolve => setTimeout(resolve, 75));
@@ -162,7 +167,8 @@ export const Functionality: React.FC<SectionProps> = ({ scrollTarget }) => {
                         adherence to{' '}
                         <a
                             target="_blank"
-                            href="www.go-fair.org/fair-principles/"
+                            rel="noreferrer noopener"
+                            href="https://www.go-fair.org/fair-principles/"
                             className="text-blue-700 font-normal transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110"
                         >
                             FAIR{' '}
@@ -293,7 +299,7 @@ export const Functionality: React.FC<SectionProps> = ({ scrollTarget }) => {
     );
 };
 
-export const Data: React.FC<SectionProps> = ({ scrollTarget }) => {
+export const Data: React.FC<SectionProps> = ({ scrollTarget, institute }) => {
     useEffect(() => {
         async function scrollTo() {
             await new Promise(resolve => setTimeout(resolve, 75));
@@ -318,6 +324,7 @@ export const Data: React.FC<SectionProps> = ({ scrollTarget }) => {
                     <a
                         href="https://universityhealthnetwork.sharepoint.com/teams/ResGrantsAwards/SitePages/About.aspx#research-analytics"
                         target="_blank"
+                        rel="noreferrer noopener"
                         className="text-blue-700 font-normal transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110"
                     >
                         UHN research analytics
@@ -327,7 +334,7 @@ export const Data: React.FC<SectionProps> = ({ scrollTarget }) => {
                     functionalities and backend data processing we have chosen to only import publications from{' '}
                     <span className="font-normal">2018 onwards</span> to the platform. It is also important to note that
                     we only extract the publications from UHN research analytics that are deemed having having a direct
-                    affiliation with Princess Margaret.
+                    affiliation with {process.env.REACT_APP_INSTITUTE}.
                 </p>
             </div>
             <div className="flex flex-col gap-2">
@@ -344,6 +351,7 @@ export const Data: React.FC<SectionProps> = ({ scrollTarget }) => {
                     <a
                         href="https://www.doi.org/the-identifier/what-is-a-doi/"
                         target="_blank"
+                        rel="noreferrer noopener"
                         className="text-blue-700 font-normal transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110"
                     >
                         DOI
@@ -365,7 +373,7 @@ export const Data: React.FC<SectionProps> = ({ scrollTarget }) => {
                 <p className="text-bodyLg font-light xs:text-bodyMd">
                     All of the "members" tracked in the platform <span className="font-normal">(377 faculty)</span> are
                     also provided to us by the UHN research analytics team. Just like publications in the platform we
-                    only extract UHN faculty that have a direct affiliation with Princess Margaret.
+                    only extract UHN faculty that have a direct affiliation with {process.env.REACT_APP_INSTITUTE}.
                 </p>
             </div>
             <div className="flex flex-col gap-2">
@@ -380,6 +388,7 @@ export const Data: React.FC<SectionProps> = ({ scrollTarget }) => {
                     <a
                         href="https://www.crossref.org/"
                         target="_blank"
+                        rel="noreferrer noopener"
                         className="text-blue-700 font-normal transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110"
                     >
                         Crossref
@@ -430,8 +439,11 @@ export const Future: React.FC<SectionProps> = ({ scrollTarget }) => {
                         reviewing publications that come from you or your team to verify resource accuracy and add new
                         resources that may have been missed. Also, notify us of any other useful statistics, analytics,
                         or features you would like to see come to the platform. To request new functionality to the
-                        platform please email <a href="mailto:admin@pmscience.ca">admin@pmscience.ca</a> or use the
-                        feedback ticketing system on the profile page.
+                        platform please email{' '}
+                        <a href="mailto:admin@pmscience.ca" rel="noreferrer noopener">
+                            admin@pmscience.ca
+                        </a>{' '}
+                        or use the feedback ticketing system on the profile page.
                     </p>
                 </div>
             </div>

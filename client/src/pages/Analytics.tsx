@@ -123,7 +123,7 @@ const Analytics: React.FC = () => {
                 <div className="flex flex-row justify-between items-center">
                     <div className="flex flex-col gap-1 py-10 xs:max-w-[60%]">
                         <h1 className="text-heading2Xl sm:text-headingLg xs:text-headingMd font-semibold">
-                            Princess Margaret Cancer Centre Resource Statistics
+                            {process.env.REACT_APP_INSTITUTE} Resource Statistics
                         </h1>
                         <p className="text-bodySm sm:text-bodyXs text-gray-500">
                             Total publications that share resources

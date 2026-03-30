@@ -4,6 +4,7 @@ export const UserSchema = new Schema({
     firstName: {type: String},
 	lastName: {type: String},
 	email: { type: String },
-	admin: {type: Boolean }
+	admin: {type: Boolean },
+	password: { type: String }
 }, { collection: 'users' });
 

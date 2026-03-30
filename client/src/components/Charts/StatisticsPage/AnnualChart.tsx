@@ -1,8 +1,6 @@
-import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
+import React, { useEffect, useRef, forwardRef, useImperativeHandle, useState } from 'react';
 import { Chart, registerables } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { isNullOrUndef } from 'chart.js/dist/helpers/helpers.core';
-import { devNull } from 'os';
 
 Chart.register(...registerables);
 
@@ -56,7 +54,7 @@ const AnnualChart = forwardRef<AnnualChartRef, AnnualChartProps>(({ chartData, a
                     plugins: {
                         title: {
                             display: false,
-                            text: 'Princess Margaret Cancer Centre Statistics'
+                            text: `${process.env.REACT_APP_INSTITUTE} Statistics`
                         },
                         tooltip: {
                             mode: 'index',

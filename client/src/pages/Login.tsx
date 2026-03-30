@@ -28,6 +28,7 @@ const Login: React.FC = () => {
                 // Get user info from web token
                 const decodedUser = jwtDecode(access_token);
                 authContext?.setUser(decodedUser);
+                authContext?.setStatus('authenticated');
 
                 // Remove error message
                 setErrorMessage(null);
