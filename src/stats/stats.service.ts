@@ -53,7 +53,7 @@ export class StatsService {
 			const publications = await this.statsModel.find({});
 			// Filter for 2018 and onwards
 			const filteredPublications = publications.filter(
-				(pub) => new Date(pub.date) >= new Date('2018-01-01'),
+				(pub) => new Date(pub.date) >= new Date(`${process.env.YEAR_BOTTOM_LINE}-01-01`),
 			);
 
 			const yearData: Record<
@@ -120,7 +120,7 @@ export class StatsService {
 
 		try {
 			const publications = await this.publicationModel.find({
-				date: { $gte: '2018-01-01' },
+				date: { $gte: `${process.env.YEAR_BOTTOM_LINE}-01-01` },
 			});
 
 			const scientists = await this.authorModel.find({});
@@ -207,7 +207,7 @@ export class StatsService {
 				.collation({ locale: 'en', strength: 2 });
 
 			const filteredPublications = publications.filter(
-				(pub) => new Date(pub.date) >= new Date('2018-01-01'),
+				(pub) => new Date(pub.date) >= new Date(`${process.env.YEAR_BOTTOM_LINE}-01-01`),
 			);
 
 			const yearData: Record<number, Record<string, number>> = {};
