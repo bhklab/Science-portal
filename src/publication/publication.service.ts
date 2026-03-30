@@ -21,6 +21,35 @@ export class PublicationService {
 	// Creates a client
 	private readonly storage = new Storage();   
 	private readonly bucketName = 'publication_pdfs' 
+	
+	private getSortOption(sort: string): any {
+		const sortOption: any = {};
+
+		switch (sort) {
+			case 'A-Z':
+				sortOption.name = 1;
+				break;
+			case 'Z-A':
+				sortOption.name = -1;
+				break;
+			case 'Most Recent':
+				sortOption.date = -1;
+				break;
+			case 'Least Recent':
+				sortOption.date = 1;
+				break;
+			case 'Most Citations':
+				sortOption.citations = -1;
+				break;
+			case 'Least Citations':
+				sortOption.citations = 1;
+				break;
+			default:
+				sortOption.date = -1;
+		}
+
+		return sortOption;
+	}
 
     //Get select publications based on criteria
     async findSelectPublications(
@@ -75,28 +104,8 @@ export class PublicationService {
             }
             }
 
-            // Sorting
-            let sortOption: any = {};
-            switch (sort) {
-            case 'A-Z':
-                sortOption['name'] = 1;
-                break;
-            case 'Z-A':
-                sortOption['name'] = -1;
-                break;
-            case 'Most Recent':
-                sortOption['date'] = -1;
-                break;
-            case 'Least Recent':
-                sortOption['date'] = 1;
-                break;
-            case 'Most Citations':
-                sortOption['citations'] = -1;
-                break;
-            case 'Least Citations':
-                sortOption['citations'] = 1;
-                break;
-            }
+            // Sorting options
+            const sortOption = this.getSortOption(sort)
 
             if (search !== '') {
             	sortOption['score'] = { $meta: 'textScore' };
