@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import axios from 'axios';
 import * as jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt'
 import { UserDocument } from '../interfaces/user.interface';
 
 @Injectable()
@@ -53,9 +54,35 @@ export class AuthService {
 				throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
 			}
 		} else {
+			const user = await this.UserModel.findOne({ email: username });
 
+			if (!user) {
+				throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+			}
+
+			const verdict = await bcrypt.compare(password, user.password);
+
+			if (!verdict) {
+				throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+			}
+
+			const payload = {
+				name: `${user.lastName}, ${user.firstName}`,
+				email: user.email,
+				admin: user.admin,
+			};
+
+			const access_token = jwt.sign(payload, process.env.JWT_SECRET, {
+				expiresIn: '18h',
+			});
+
+			const decodedToken = jwt.decode(access_token);
+			console.log(decodedToken)
+
+			return {
+				access_token,
+				user_info: decodedToken,
+			};
 		}
 	}
-
-    
 }
