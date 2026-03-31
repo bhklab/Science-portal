@@ -62,7 +62,7 @@ const Login: React.FC = () => {
                 </div>
                 <div className="flex flex-col gap-1 text-black-900">
                     <h1 className="text-heading2Xl font-semibold">Log in</h1>
-                    <p>Use your UHN credentials to use the Science Portal</p>
+                    <p>Use your {process.env.REACT_APP_SECONDARY_INSTITUTE} credentials to use the Science Portal</p>
                 </div>
                 <div className="flex flex-col gap-2">
                     <div className="flex flex-col gap-1">
@@ -94,7 +94,8 @@ const Login: React.FC = () => {
 
                     <div className="flex flex-col justify-center items-center gap-2">
                         <p className="text-bodyXs text-gray-600 text-center">
-                            Science Portal logins and authentication are managed by a keycloak instance deployed by UHN
+                            Science Portal logins and authentication are managed by a keycloak instance deployed by{' '}
+                            {process.env.REACT_APP_SECONDARY_INSTITUTE}
                         </p>
                         <div className="flex flex-row justify-center items-center gap-2">
                             <img src="/images/assets/uhn-icon.svg" className="w-16" alt="UHN" />
