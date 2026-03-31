@@ -93,9 +93,6 @@ const Login: React.FC = () => {
                     </button>
 
                     <div className="flex flex-col justify-center items-center gap-2">
-                        <p className="text-bodyXs text-gray-600 text-center">
-                            Science Portal logins and authentication are managed by a keycloak instance deployed by UHN
-                        </p>
                         <div className="flex flex-row justify-center items-center gap-2">
                             <img src="/images/team-logos/mcgill-logo.png" alt="mcgill" className="max-w-40" />
                         </div>
