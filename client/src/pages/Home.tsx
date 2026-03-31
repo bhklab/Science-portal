@@ -400,16 +400,7 @@ const Home: React.FC = () => {
                     <div
                         className={`flex flex-row flex-wrap justify-center items-center gap-6 mmd:gap-2 mb-1 ${!loaded ? 'hidden' : ''}`}
                     >
-                        <img src="/images/team-logos/pmcc.png" alt="pmcc logo" className="max-w-44" />
-                        <img
-                            src="/images/team-logos/research-analytics.png"
-                            alt="research analytics logo"
-                            className="max-w-40"
-                        />
-                        <img src="/images/team-logos/cdi.svg" alt="cdi logo" className="max-w-36" />
-
-                        <img src="/images/team-logos/bhk.png" alt="bhk lab logo" className="max-w-32" />
-                        <img src="/images/team-logos/lupien.png" alt="lupien logo" className="max-w-40" />
+                        <img src="/images/team-logos/mcgill-logo.png" alt="mcgill" className="max-w-40" />
                     </div>
                 </div>
             </div>

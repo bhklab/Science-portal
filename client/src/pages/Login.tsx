@@ -97,8 +97,7 @@ const Login: React.FC = () => {
                             Science Portal logins and authentication are managed by a keycloak instance deployed by UHN
                         </p>
                         <div className="flex flex-row justify-center items-center gap-2">
-                            <img src="/images/assets/uhn-icon.svg" className="w-16" alt="UHN" />
-                            <img src="/images/assets/keycloak-icon.svg" className="w-28" alt="keycloak" />
+                            <img src="/images/team-logos/mcgill-logo.png" alt="mcgill" className="max-w-40" />
                         </div>
                     </div>
                 </div>
