@@ -62,7 +62,7 @@ const Login: React.FC = () => {
                 </div>
                 <div className="flex flex-col gap-1 text-black-900">
                     <h1 className="text-heading2Xl font-semibold">Log in</h1>
-                    <p>Use your UHN credentials to use the Science Portal</p>
+                    <p>Use your McGill credentials to use the Science Portal</p>
                 </div>
                 <div className="flex flex-col gap-2">
                     <div className="flex flex-col gap-1">

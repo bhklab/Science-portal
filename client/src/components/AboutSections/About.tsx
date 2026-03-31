@@ -320,21 +320,12 @@ export const Data: React.FC<SectionProps> = ({ scrollTarget, institute }) => {
                     Publications
                 </h3>
                 <p className="text-bodyLg font-light xs:text-bodyMd">
-                    All of the publications curated in the platform are kindly provided to us by the{' '}
-                    <a
-                        href="https://universityhealthnetwork.sharepoint.com/teams/ResGrantsAwards/SitePages/About.aspx#research-analytics"
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        className="text-blue-700 font-normal transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110"
-                    >
-                        UHN research analytics
-                    </a>{' '}
-                    team. We receive updates on a rolling monthly basis from the previous month and work to add the new
+                    We receive updates on a rolling monthly basis from the previous month and work to add the new
                     publications to the platform as soon as possible. As we continue to work on refining our application
                     functionalities and backend data processing we have chosen to only import publications from{' '}
-                    <span className="font-normal">2018 onwards</span> to the platform. It is also important to note that
-                    we only extract the publications from UHN research analytics that are deemed having having a direct
-                    affiliation with {process.env.REACT_APP_INSTITUTE}.
+                    <span className="font-normal">2014 onwards</span> to the platform. It is also important to note that
+                    we only extract the publications from McGill that are deemed having having a direct affiliation with{' '}
+                    {process.env.REACT_APP_INSTITUTE}.
                 </p>
             </div>
             <div className="flex flex-col gap-2">
@@ -371,9 +362,9 @@ export const Data: React.FC<SectionProps> = ({ scrollTarget, institute }) => {
                     Members
                 </h3>
                 <p className="text-bodyLg font-light xs:text-bodyMd">
-                    All of the "members" tracked in the platform <span className="font-normal">(377 faculty)</span> are
-                    also provided to us by the UHN research analytics team. Just like publications in the platform we
-                    only extract UHN faculty that have a direct affiliation with {process.env.REACT_APP_INSTITUTE}.
+                    All of the "members" tracked in the platform <span className="font-normal">(29 faculty)</span> are
+                    also provided to us by McGill. Just like publications in the platform we only extract McGill faculty
+                    that have a direct affiliation with {process.env.REACT_APP_INSTITUTE}.
                 </p>
             </div>
             <div className="flex flex-col gap-2">
