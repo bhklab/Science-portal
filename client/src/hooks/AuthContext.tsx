@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect, ReactNode, useMemo } from 'react';
 import { jwtDecode } from 'jwt-decode';
 
-type AuthContextType = {
+export type AuthContextType = {
     user: any;
     setUser: (user: any) => void;
     logout: () => void;

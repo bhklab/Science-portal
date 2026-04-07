@@ -94,7 +94,8 @@ export class PublicationController {
 
 	@Post('new/pdf')
 	@UseInterceptors(FileInterceptor('file'))
-	async uploadPublicationPDF(@UploadedFile() pdf: Express.Multer.File) {
-		return await this.publicationService.uploadPublicationPDF(pdf);		
+	async uploadPublicationPDF(@UploadedFile() pdf: Express.Multer.File, @Body('doi') doi: string) {
+		console.log(doi)
+		return await this.publicationService.uploadPublicationPDF(pdf, doi);		
 	}
 }

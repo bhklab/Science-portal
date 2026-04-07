@@ -6,7 +6,7 @@ import axios from 'axios';
 import Pub from '../../interfaces/Pub';
 import { PublicationImage } from '../PublicationImage/PublicationImage';
 import { LINK_CATEGORIES } from '../../interfaces/Links';
-import { AuthContext } from '../../hooks/AuthContext';
+import { AuthContext, AuthContextType } from '../../hooks/AuthContext';
 import Author from 'interfaces/Author';
 
 interface PublicationModalContentProps {
@@ -51,7 +51,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({
     const toast = useRef<Toast>(null);
     const authContext = useContext(AuthContext);
 
-    // ---- Manage changes in the "supplementary" links ----
+    // Manages changes in the supplementary section
     const handleLinkChange = (category: string, subCategory: string, index: number, value: string) => {
         setLinks(prevLinks => {
             const updatedLinks = { ...prevLinks };
@@ -164,6 +164,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({
                     doi={pub.doi}
                     abstract={pub.abstract}
                     pdf={pub?.pdf}
+                    authContext={AuthContext}
                 />
 
                 {/* Render Link Categories */}
@@ -525,8 +526,44 @@ const HeaderSection: React.FC<{
     doi: string;
     abstract: string;
     pdf: string;
+    authContext: AuthContextType;
 }> = ({ name, authors, scientists, journal, date, citations, image, doi, abstract, pdf }) => {
     const [showFullAbstract, setShowFullAbstract] = useState(false);
+
+    // PDF file state
+    const [file, setFile] = useState<File | null>(null);
+
+    // Toast for PDF submission
+    const toast = useRef<Toast>(null);
+
+    const uploadPDF = async () => {
+        // Build the nested supplementary object from `links`:
+        if (!pdf && file) {
+            try {
+                const formData = new FormData();
+                formData.append('file', file, file.name);
+                formData.append('doi', doi);
+                const res = await axios.post('/api/publications/new/pdf', formData);
+                toast.current?.show({
+                    severity: 'success',
+                    summary: 'Successful PDF Upload!',
+                    detail: res.data,
+                    life: 20000
+                });
+            } catch (error) {
+                toast.current?.show({
+                    severity: 'error',
+                    summary: 'Unexpected error while uploading pdf.',
+                    detail: error.response.data.message,
+                    life: 20000
+                });
+                setFile(null);
+                return;
+            }
+        }
+        // After a successful submission reset publication pdf value set inInprogress to false
+        setFile(null);
+    };
 
     return (
         <div className="flex flex-col gap-5 pb-10 border-b-2 border-gray-200 mmd:justify-center mmd:items-center">
@@ -566,7 +603,54 @@ const HeaderSection: React.FC<{
                 )}
             </div>
             <DigitalObjectIdentifier doi={doi} />
-            {pdf && <PDF pdf={pdf} />}
+            {pdf && pdf !== '' ? (
+                <>
+                    <PDF pdf={pdf} />
+                </>
+            ) : (
+                <div className="flex gap-2">
+                    <label
+                        className="button-tooltip flex items-center gap-1 rounded-lg bg-sp_dark_green px-3 py-2 text-bodyMd font-semibold text-white shadow-xs cursor-pointer line-clamp-1"
+                        htmlFor="pdf-upload"
+                        data-pr-tooltip="Fetch the metadata corresponding to doi"
+                        data-pr-position="bottom"
+                    >
+                        {file ? file.name : 'Upload PDF'}
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={4}
+                            stroke="currentColor"
+                            className="size-3"
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                        </svg>
+                    </label>
+                    <input
+                        type="file"
+                        className="hidden"
+                        accept=".pdf"
+                        onChange={e => {
+                            const f = e.target.files?.[0] ?? null;
+                            if (f) {
+                                setFile(f);
+                            }
+                        }}
+                        id="pdf-upload"
+                        name="pdf upload"
+                    />
+                    {file ? (
+                        <button
+                            className="button-tooltip flex items-center gap-1 rounded-lg bg-sp_dark_green px-3 py-2 text-bodyMd font-semibold text-white shadow-xs cursor-pointer"
+                            onClick={() => uploadPDF()}
+                        >
+                            Submit
+                        </button>
+                    ) : null}
+                </div>
+            )}
+            <Toast ref={toast} baseZIndex={1000} position="bottom-right" />
         </div>
     );
 };

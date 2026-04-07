@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, ConflictException, BadRequestException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, ConflictException, BadRequestException, NotFoundException, HttpException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Storage } from '@google-cloud/storage';
@@ -229,7 +229,7 @@ export class PublicationService {
 
     }
 
-	async uploadPublicationPDF(pdf: Express.Multer.File): Promise<any> {
+	async uploadPublicationPDF(pdf: Express.Multer.File, doi: string | null = null): Promise<any> {
 
 		if (!pdf?.buffer) {
 			throw new Error(`Did not recieve pdf`);
@@ -246,25 +246,67 @@ export class PublicationService {
 			throw new InternalServerErrorException('PDF file name exists in database already, please rename and resubmit');
 		}
 
-		try {
-			await file.save(pdf.buffer, {
-				contentType: pdf.mimetype || 'application/pdf',
-				resumable: false,
-				metadata: {
-					metadata: {
-						originalName: pdf.originalname,
-						uploadedAt: new Date().toISOString(),
-					},
-						
-				},
-			});
 
-		} catch (error) {
-			console.log(error);
-			if (error instanceof ConflictException || error instanceof BadRequestException) {
-				throw error;
+		/** 
+		 * if (doi): update publication entry with pdf field by finding entry by doi
+		 * 		This is used from PublicationModalContent.tsx
+		 * else: solely upload pdf to bucket
+		 * 		This is used from SubmitPublication.tsx
+		**/
+		if (doi) {
+
+			try {
+				await file.save(pdf.buffer, {
+					contentType: pdf.mimetype || 'application/pdf',
+					resumable: false,
+					metadata: {
+						metadata: {
+							originalName: pdf.originalname,
+							uploadedAt: new Date().toISOString(),
+						},
+							
+					},
+				});
+			} catch (error) {
+				console.log(error);
+				if (error instanceof ConflictException || error instanceof BadRequestException) {
+					throw error;
+				}
+				throw new InternalServerErrorException('Unsuccessful pdf upload');
 			}
-			throw new InternalServerErrorException('Unsuccessful pdf upload');
+			
+			try {
+				const publication = await this.publicationModel.updateOne({doi: doi}, {$set: { pdf: pdf.originalname }})
+				if (publication.matchedCount < 1) {
+					throw new NotFoundException('Cannot find entry with doi');
+				}
+			} catch (error) {
+				if (error instanceof HttpException) {
+					throw error
+				}
+				throw new InternalServerErrorException('Could not process pdf upload')
+			}
+
+		} else {
+			try {
+				await file.save(pdf.buffer, {
+					contentType: pdf.mimetype || 'application/pdf',
+					resumable: false,
+					metadata: {
+						metadata: {
+							originalName: pdf.originalname,
+							uploadedAt: new Date().toISOString(),
+						},
+							
+					},
+				});
+			} catch (error) {
+				console.log(error);
+				if (error instanceof ConflictException || error instanceof BadRequestException) {
+					throw error;
+				}
+				throw new InternalServerErrorException('Unsuccessful pdf upload');
+			}
 		}
 
 		return 'Successful pdf upload!';
