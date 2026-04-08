@@ -7,24 +7,17 @@ import PublicationModalContent from '../components/Modals/PublicationModalConten
 import Author from 'interfaces/Author';
 import { AuthContext } from 'hooks/AuthContext';
 
-interface PublicationModalProps {
-    isVisible: boolean;
-    onHide: () => void;
-    pub: Pub | null;
-    scientists: Author[];
-}
-
 const Publication: React.FC = () => {
     const { doi } = useParams();
-    const [pub, setPub] = useState<Pub>(null);
+    const [pub, setPub] = useState<Pub | null>(null);
     const [editMode, setEditMode] = useState<boolean>(false);
     const [scientists, setScientists] = useState<Author[]>([]);
-    const [fanoutEmail, setFanoutEmail] = useState<string>('');
+    // const [fanoutEmail, setFanoutEmail] = useState<string>('');
 
     const toast = useRef<Toast>(null);
 
     const authContext = useContext(AuthContext);
-    const location = useLocation();
+    // const location = useLocation();
 
     useEffect(() => {
         //Fetch publication based on DOI in the URL
@@ -39,16 +32,16 @@ const Publication: React.FC = () => {
                 }
             }
         };
-        const getFanoutEmail = async () => {
-            try {
-                const res = await axios.get('/api/emails/fanout');
-                setFanoutEmail(res.data);
-            } catch (error) {
-                console.log(error);
-            }
-        };
+        // const getFanoutEmail = async () => {
+        //     try {
+        //         const res = await axios.get('/api/emails/fanout');
+        //         setFanoutEmail(res.data);
+        //     } catch (error) {
+        //         console.log(error);
+        //     }
+        // };
         getPublication();
-        getFanoutEmail();
+        // getFanoutEmail();
     }, [doi]);
 
     // Fetch authors on load
@@ -132,9 +125,11 @@ const Publication: React.FC = () => {
                 {pub && (
                     <PublicationModalContent
                         pub={pub}
+                        setPub={setPub}
                         editMode={editMode}
                         setEditMode={setEditMode}
                         scientists={scientists}
+                        authContext={authContext}
                     />
                 )}
             </div>

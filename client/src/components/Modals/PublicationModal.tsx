@@ -126,6 +126,7 @@ const PublicationModal: React.FC<PublicationModalProps> = ({ isVisible, onHide, 
                         editMode={editMode}
                         setEditMode={setEditMode}
                         scientists={scientists}
+                        authContext={authContext}
                     />
                 )}
             </Dialog>

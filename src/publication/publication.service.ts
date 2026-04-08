@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, ConflictException, BadRequestException, NotFoundException, HttpException } from '@nestjs/common';
+import { Injectable, ConflictException, BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Storage } from '@google-cloud/storage';
@@ -243,7 +243,7 @@ export class PublicationService {
 		const [fileExists] = await file.exists() // list of duplicate files (if they exist)
 			
 		if (fileExists) {// Ensure no duplicate publication names exist in the database
-			throw new InternalServerErrorException('PDF file name exists in database already, please rename and resubmit');
+			throw new HttpException('PDF file name exists in database already, please rename and resubmit', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 
@@ -254,6 +254,11 @@ export class PublicationService {
 		 * 		This is used from SubmitPublication.tsx
 		**/
 		if (doi) {
+			
+			const publicationCheck = await this.publicationModel.findOne({doi: doi})
+			if (!publicationCheck) {
+				throw new HttpException('Cannot find entry with doi', HttpStatus.NOT_FOUND);
+			}
 
 			try {
 				await file.save(pdf.buffer, {
@@ -272,19 +277,20 @@ export class PublicationService {
 				if (error instanceof ConflictException || error instanceof BadRequestException) {
 					throw error;
 				}
-				throw new InternalServerErrorException('Unsuccessful pdf upload');
+				throw new HttpException('Unsuccessful pdf upload', HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-			
+
 			try {
 				const publication = await this.publicationModel.updateOne({doi: doi}, {$set: { pdf: pdf.originalname }})
 				if (publication.matchedCount < 1) {
-					throw new NotFoundException('Cannot find entry with doi');
+					throw new HttpException('Cannot find entry with doi', HttpStatus.NOT_FOUND);
+
 				}
 			} catch (error) {
 				if (error instanceof HttpException) {
 					throw error
 				}
-				throw new InternalServerErrorException('Could not process pdf upload')
+				throw new HttpException(`Could not process pdf upload: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		} else {
 			try {
@@ -300,11 +306,11 @@ export class PublicationService {
 					},
 				});
 			} catch (error) {
-				console.log(error);
 				if (error instanceof ConflictException || error instanceof BadRequestException) {
 					throw error;
 				}
-				throw new InternalServerErrorException('Unsuccessful pdf upload');
+				throw new HttpException(`Could not process pdf upload: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
+
 			}
 		}
 
