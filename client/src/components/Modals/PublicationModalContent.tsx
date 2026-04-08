@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { Toast } from 'primereact/toast';
 import { Dropdown } from 'primereact/dropdown';
 import { Dialog } from 'primereact/dialog';
@@ -12,7 +12,7 @@ import Author from 'interfaces/Author';
 interface PublicationModalContentProps {
     pub: Pub;
     editMode: boolean;
-    setEditMode: React.Dispatch<React.SetStateAction<boolean>>;
+    setEditMode: (val: boolean) => void;
     scientists: Author[];
     authContext: AuthContextType | null;
 }
@@ -42,10 +42,10 @@ interface LinksState {
 
 const PublicationModalContent: React.FC<PublicationModalContentProps> = ({
     pub,
-    editMode,
+    editMode = false,
     setEditMode,
-    scientists,
-    authContext
+    scientists = [],
+    authContext = null
 }) => {
     const [links, setLinks] = useState<LinksState>(() => initializeLinks({ ...pub.supplementary }));
     const [otherLinks, setOtherLinks] = useState<Pub['otherLinks']>(pub.otherLinks ?? []);
@@ -152,7 +152,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({
                 </div>
             )}
 
-            <div className="flex flex-col gap-10 py-10 mmd:px-[10px] px-[120px]">
+            <div className="flex flex-col gap-10 py-10">
                 {/* Header Section */}
                 <HeaderSection
                     name={pub.name}
@@ -559,7 +559,9 @@ const HeaderSection: React.FC<{
                 toast.current?.show({
                     severity: 'error',
                     summary: 'Unexpected error while uploading pdf.',
-                    detail: error?.response?.data?.message,
+                    detail: axios.isAxiosError(error)
+                        ? error?.response?.data?.message || error.message
+                        : 'Unexpected error during upload',
                     life: 20000
                 });
             }

@@ -9,7 +9,7 @@ import { Calendar } from 'primereact/calendar';
 import { Tooltip } from 'primereact/tooltip';
 import { InputSwitch } from 'primereact/inputswitch';
 import { classNames } from 'primereact/utils';
-import { NewPub, createDefaultNewPub } from '../interfaces/NewPub';
+import Pub, { createDefaultPub } from '../interfaces/Pub';
 import { LINK_CATEGORIES } from '../interfaces/Links';
 import { AuthContext } from '../hooks/AuthContext';
 import SubmitModal from 'components/Modals/SubmitModal';
@@ -31,13 +31,13 @@ const SubmitPublication: React.FC = () => {
     const authContext = useContext(AuthContext);
 
     // State for the main publication info
-    const [newPub, setNewPub] = useState<NewPub>(createDefaultNewPub());
+    const [newPub, setNewPub] = useState<Pub>(createDefaultPub());
 
     // State for supplementary resources
-    const [links, setLinks] = useState<NewPub['supplementary']>(createDefaultNewPub().supplementary);
+    const [links, setLinks] = useState<Pub['supplementary']>(createDefaultPub().supplementary);
 
     // State for the "otherLinks" array (objects with name/description/link)
-    const [otherLinks, setOtherLinks] = useState<NewPub['otherLinks']>([]);
+    const [otherLinks, setOtherLinks] = useState<Pub['otherLinks']>([]);
 
     // Manage when to show 'Required Field' popup
     const [clickedDoi, setClickedDoi] = useState<boolean>(false);
@@ -162,6 +162,7 @@ const SubmitPublication: React.FC = () => {
             try {
                 const formData = new FormData();
                 formData.append('file', file, file.name);
+                formData.append('email', authContext?.user?.email);
                 const res = await axios.post('/api/publications/new/pdf', formData);
                 toast.current?.show({
                     severity: 'success',
@@ -186,7 +187,7 @@ const SubmitPublication: React.FC = () => {
 
         try {
             // Construct the final object to send
-            const updatedPub: NewPub = {
+            const updatedPub: Pub = {
                 ...newPub,
                 scraped: false,
                 fanout: {
@@ -222,7 +223,7 @@ const SubmitPublication: React.FC = () => {
                         ),
                         life: 20000
                     });
-                    setNewPub(createDefaultNewPub());
+                    setNewPub(createDefaultPub());
                 } else if (res.data === 'DOI exists in database already') {
                     toast.current?.show({
                         severity: 'error',
@@ -258,8 +259,8 @@ const SubmitPublication: React.FC = () => {
 
         // After a successful submission, reset publication values, hide modal, and set inInprogress to false
         setClickedFetch(false);
-        setNewPub(createDefaultNewPub());
-        setLinks(createDefaultNewPub().supplementary);
+        setNewPub(createDefaultPub());
+        setLinks(createDefaultPub().supplementary);
         setOtherLinks([]);
         setIsModalVisible(false);
         setInprogress(false);
@@ -268,7 +269,7 @@ const SubmitPublication: React.FC = () => {
 
     const fetchPublication = async () => {
         setInprogress(true);
-        const updatedPub: NewPub = {
+        const updatedPub: Pub = {
             ...newPub,
             scraped: false,
             fanout: {

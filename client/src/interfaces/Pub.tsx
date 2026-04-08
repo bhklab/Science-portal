@@ -68,6 +68,7 @@ export function createDefaultPub(): Pub {
         dateAdded: new Date(),
         image: '',
         scraped: false,
+        pdf: '',
         fanout: {
             request: false,
             completed: false,

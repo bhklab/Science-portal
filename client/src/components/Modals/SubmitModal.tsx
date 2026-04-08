@@ -1,9 +1,10 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import { Dialog } from 'primereact/dialog';
-import { NewPub, createDefaultNewPub } from '../../interfaces/NewPub';
+import Pub from '../../interfaces/Pub';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { InputSwitch } from 'primereact/inputswitch';
 import { classNames } from 'primereact/utils';
+import PublicationModalContent from './PublicationModalContent';
 
 interface SubmitModalProps {
     isVisible: boolean;
@@ -11,45 +12,9 @@ interface SubmitModalProps {
     submitPublication: () => void;
     sendDirector: boolean;
     setSendDirector: () => void;
-    newPub: NewPub;
-    setNewPub: Dispatch<SetStateAction<NewPub>>;
+    newPub: Pub;
+    setNewPub: (pub: Pub) => void;
 }
-
-const HeaderSection: React.FC<{
-    name: string;
-    journal: string;
-    date: string | null;
-    citations: number;
-    doi: string;
-}> = ({ name, journal, date, citations, doi }) => (
-    <div className="flex flex-col gap-5 border-gray-200 mmd:justify-center mmd:items-center">
-        <div className="flex flex-col gap-2">
-            <h1 className="md:text-headingMd text-heading2Xl font-semibold text-cyan-900 mmd:text-center">{name}</h1>
-            <div className="flex mmd:flex-col flex-row gap-2 mmd:gap-0 text-bodyMd md:text-bodySm text-gray-700 font-light mmd:text-center">
-                <p>{journal}</p>
-                <p className="mmd:hidden">•</p>
-                <p>{date}</p>
-                <p className="mmd:hidden">•</p>
-                <p>{citations} citations</p>
-            </div>
-        </div>
-        <DigitalObjectIdentifier doi={doi} />
-    </div>
-);
-
-const DigitalObjectIdentifier: React.FC<{ doi: string }> = ({ doi }) => (
-    <div className="flex flex-col gap-3 rounded-[4px] p-5 bg-gray-50 border-1 border-gray-200 w-full hover:text-gray">
-        <div className="flex flex-row">
-            <p className="w-full">Digital Object Identifier</p>
-        </div>
-        <a href={`https://doi.org/${doi}`} target="_blank" rel="noreferrer">
-            <div className="flex flex-row gap-2 items-center hover:text-blue-500">
-                <img src="/images/assets/doi-icon.svg" alt="Doi" className="h-6 w-6" />
-                <p className="text-bodyMd mmd:text-bodySm break-all">https://doi.org/{doi}</p>
-            </div>
-        </a>
-    </div>
-);
 
 const SubmitModal: React.FC<SubmitModalProps> = ({
     isVisible,
@@ -99,14 +64,14 @@ const SubmitModal: React.FC<SubmitModalProps> = ({
                 })
             }}
         >
-            <div className="flex flex-col justify-between overflow-auto h-full w-full px-24 pb-16 gap-4">
+            <div className="flex flex-col justify-between overflow-auto h-full w-full px-[120px] mmd:px-[10px] pb-16 gap-4">
                 <div className="flex flex-col justify-between gap-6">
-                    <HeaderSection
-                        name={newPub.name}
-                        citations={newPub.citations}
-                        journal={newPub.journal}
-                        date={newPub.date}
-                        doi={newPub.doi}
+                    <PublicationModalContent
+                        pub={newPub}
+                        editMode={false}
+                        setEditMode={() => null}
+                        scientists={[]}
+                        authContext={null}
                     />
                     {sendDirector && (
                         <div className="flex flex-col gap-2 w-full">

@@ -121,13 +121,15 @@ const PublicationModal: React.FC<PublicationModalProps> = ({ isVisible, onHide, 
                 position="bottom"
             >
                 {pub && (
-                    <PublicationModalContent
-                        pub={pub}
-                        editMode={editMode}
-                        setEditMode={setEditMode}
-                        scientists={scientists}
-                        authContext={authContext}
-                    />
+                    <div className="px-[120px] mmd:px-[10px]">
+                        <PublicationModalContent
+                            pub={pub}
+                            editMode={editMode}
+                            setEditMode={setEditMode}
+                            scientists={scientists}
+                            authContext={authContext}
+                        />
+                    </div>
                 )}
             </Dialog>
         </div>
