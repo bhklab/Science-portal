@@ -94,17 +94,19 @@ export class PublicationController {
 	@Post('new/pdf')
 	@UseInterceptors(FileInterceptor('file'))
 	async uploadPublicationPDF(@UploadedFile() pdf: Express.Multer.File, @Body('doi') doi: string, @Body('email') email: string) {
+		const upload = await this.publicationService.uploadPublicationPDF(pdf, doi)
 		try {
 			await this.loggingService.logAction(
-				`PDF Upload`, 
+				doi ? `PDF upload to existing entry` : `PDF upload with publication submission`, 
 				email ? email : 'Not signed in',
 				doi,
 				{}
-
 			);
 		} catch (error) {
 			console.log(error)
 		}
-		return await this.publicationService.uploadPublicationPDF(pdf, doi);		
+
+
+		return upload;		
 	}
 }
