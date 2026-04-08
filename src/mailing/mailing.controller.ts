@@ -25,6 +25,7 @@ export class MailingController {
 			await this.loggingService.logAction(
 				`User has opted ${mailOptIn ? 'out of' : 'in' } mailing`, 
 				email ? email : 'Not signed in',
+				null,
 				{}
 			);
 		} catch (error) {

@@ -286,7 +286,6 @@ export class PublicationService {
 				}
 				throw new InternalServerErrorException('Could not process pdf upload')
 			}
-
 		} else {
 			try {
 				await file.save(pdf.buffer, {

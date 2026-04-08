@@ -28,6 +28,7 @@ export class StatsController {
 			await this.loggingService.logAction(
 				`Analytics Page Check`, 
 				email ? email : 'Not signed in',
+				null,
 				{}
 			);
 		} catch (error) {
@@ -49,6 +50,7 @@ export class StatsController {
 			await this.loggingService.logAction(
 				`Admin Page Export (Detailed)`, 
 				email ? email : 'Not signed in',
+				null,
 				{}
 			);
 		} catch (error) {
@@ -102,6 +104,7 @@ export class StatsController {
 			await this.loggingService.logAction(
 				`Profile page export`, 
 				enid ? enid : 'Not signed in',
+				null,
 				{}
 			);
 		} catch (error) {

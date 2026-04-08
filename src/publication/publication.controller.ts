@@ -27,6 +27,7 @@ export class PublicationController {
 				await this.loggingService.logAction(
 					`Search/Filter`, 
 					email ? email : 'Not signed in',
+					null,
 					{
 						search,
 						lab: lab ? lab : '',
@@ -72,7 +73,6 @@ export class PublicationController {
 	async scrapePublicationData(@Body() newPub: PublicationDocumentNew) {
 		try {
 			const createdPublication = await this.publicationService.fetchPublication(newPub);
-			console.log(createdPublication)
 			return createdPublication
 		} catch (error) {
 			throw new HttpException(`Error creating publication: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -84,7 +84,6 @@ export class PublicationController {
 	async createPublication(@Body() newPub: PublicationDocumentNew) {
 		try {
 			const createdPublication = await this.publicationService.createPublication(newPub);
-			console.log(createdPublication)
 			return createdPublication
 		} catch (error) {
 			throw new HttpException(`Error creating publication: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -94,8 +93,18 @@ export class PublicationController {
 
 	@Post('new/pdf')
 	@UseInterceptors(FileInterceptor('file'))
-	async uploadPublicationPDF(@UploadedFile() pdf: Express.Multer.File, @Body('doi') doi: string) {
-		console.log(doi)
+	async uploadPublicationPDF(@UploadedFile() pdf: Express.Multer.File, @Body('doi') doi: string, @Body('email') email: string) {
+		try {
+			await this.loggingService.logAction(
+				`PDF Upload`, 
+				email ? email : 'Not signed in',
+				doi,
+				{}
+
+			);
+		} catch (error) {
+			console.log(error)
+		}
 		return await this.publicationService.uploadPublicationPDF(pdf, doi);		
 	}
 }

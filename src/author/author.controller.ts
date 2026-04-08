@@ -24,6 +24,7 @@ export class AuthorController {
 			await this.loggingService.logAction(
 				`Profile Page Check`, 
 				email ? email : 'Not signed in',
+				null,
 				{}
 			);
 		} catch (error) {
