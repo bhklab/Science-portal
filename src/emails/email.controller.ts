@@ -15,24 +15,4 @@ export class EmailController {
             throw new HttpException(`Error retrieving emails: ${error}`, HttpStatus.NOT_FOUND);
         }
     }
-
-	@Get('fanout')
-    async getFanoutEmail() {
-        try {
-            const emails = await this.EmailService.getFanout();
-            return emails;
-        } catch (error) {
-            throw new HttpException(`Error retrieving emails: ${error}`, HttpStatus.NOT_FOUND);
-        }
-    }
-
-	@Post('fanout/send')
-    async sendFanoutEmail(@Body('pub') pub: PublicationDocument, @Body('verdict') verdict: boolean) {
-        try {
-            const emails = await this.EmailService.sendFanout(pub, verdict);
-            return emails;
-        } catch (error) {
-            throw new HttpException(`Error retrieving emails: ${error}`, HttpStatus.NOT_FOUND);
-        }
-    }
 }
