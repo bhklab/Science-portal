@@ -360,7 +360,7 @@ const PiProfile: React.FC = () => {
     // If user is not found as an author
     if (piData === 'DNE') {
         return (
-            <div className="flex flex-col items-center py-36 smd:px-4 px-10 min-h-screen bg-white">
+            <div className="flex flex-col items-center justify-center py-36 smd:px-4 px-10 min-h-screen bg-white">
                 <div className="flex flex-row smd:flex-col smd:items-center gap-5 justify-center mx-auto">
                     <div className="flex flex-col max-w-[285px] gap-10 sticky smd:static top-36 h-fit smd:mb-10">
                         <div className="flex flex-col gap-5 smd:justify-center smd:items-center ">
@@ -434,7 +434,7 @@ const PiProfile: React.FC = () => {
     const { totalPublications, totalCitations, categoryStats } = piData;
 
     return (
-        <div className="flex flex-col items-center py-36 smd:px-4 px-10 min-h-screen bg-white">
+        <div className="flex flex-col items-center justify-center py-36 smd:px-4 px-10 min-h-screen bg-white">
             <div className="flex flex-row smd:flex-col smd:items-center gap-5 justify-center mx-auto">
                 <div className="flex flex-col max-w-[285px] gap-8 sticky smd:static top-36 h-fit smd:mb-10">
                     <div className="flex flex-col gap-4 smd:justify-center smd:items-center ">
@@ -513,7 +513,7 @@ const PiProfile: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col gap-5 xs:justify-center xs:items-center">
-                    <div className="flex flex-row justify-between items-center w-full xs:gap-2">
+                    <div className="flex flex-row justify-between items-center w-full mmd:gap-4 mmd:flex-col mmd:items-start">
                         <div className="flex flex-col xs:max-w-[60%]">
                             <h2 className="text-headingLg xs:text-headingMd font-semibold text-black-900">
                                 My Publication Statistics
@@ -522,10 +522,10 @@ const PiProfile: React.FC = () => {
                                 Total publications of yours that contain at least one resource
                             </p>
                         </div>
-                        <div className="flex flex-row gap-1">
+                        <div className="flex flex-row gap-2 ">
                             <ExportDomButton targetRef={exportRef} filename="open_science_adherence" />
 
-                            <div className="flex items-center gap-2 xs:flex-col xs:items-start">
+                            <div className="flex items-center gap-2">
                                 <label htmlFor="toggle-slider" className="text-bodyMd xs:text-bodyXs font-medium">
                                     Detailed View
                                 </label>
@@ -547,7 +547,7 @@ const PiProfile: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="flex flex-col items-center gap-5 flex-wrap w-[860px] wrap:w-[600px] wrapSmall:w-[450px] sm:w-[420px] xs:w-[325px] xs:justify-center">
+                    <div className="flex flex-col items-center gap-5 flex-wrap w-[860px] wrap:w-[600px] sm:w-[420px] xs:w-[325px] xs:justify-center">
                         <div className="flex flex-row items-center gap-5 flex-wrap xs:justify-center" ref={exportRef}>
                             {sections.map(item => {
                                 return (
