@@ -126,9 +126,6 @@ const PiProfile: React.FC = () => {
     // Used to navigate to a new page
     const navigate = useNavigate();
 
-    // Author link stats for csv exports
-    const [authorLinks, setAuthorLinks] = useState<AuthorSupplementaryLinks[]>([]);
-
     // Toggling the legend items for bar or scatter chart
     const toggleLegendItem = (item: string, chartType: string) => {
         if (chartType === 'bar') {

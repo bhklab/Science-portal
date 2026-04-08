@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React from 'react';
 import { Dialog } from 'primereact/dialog';
 import Pub from '../../interfaces/Pub';
 import { InputTextarea } from 'primereact/inputtextarea';

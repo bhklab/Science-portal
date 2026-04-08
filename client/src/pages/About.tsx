@@ -1,6 +1,5 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { Overview, Functionality, Data, Future } from '../components/AboutSections/About';
-import axios from 'axios';
+import React, { useState, useMemo } from 'react';
+import { Overview, Functionality, Data } from '../components/AboutSections/About';
 
 type SectionProps = {
     scrollTarget?: string | null;
@@ -55,7 +54,7 @@ const About: React.FC = () => {
 
     return (
         <div className="grid grid-cols-8 gap-6 py-32 max-w-[1200px] m-auto">
-            <div className="flex flex-col gap-2 col-span-2 sticky top-32 h-fit shrink-0 bg-white px-4 py-4 rounded-lg border border-1 shadow-sm">
+            <div className="flex flex-col gap-2 col-span-2 sticky top-32 h-fit shrink-0 bg-white px-4 py-4 rounded-lg border-1 shadow-sm">
                 <ul className="list-disc pl-6">
                     {sections.map(sects => (
                         <li

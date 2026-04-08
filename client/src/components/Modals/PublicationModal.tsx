@@ -78,7 +78,11 @@ const PublicationModal: React.FC<PublicationModalProps> = ({ isVisible, onHide, 
                                 data-pr-tooltip="Edit publication resources"
                                 data-pr-position="left"
                             >
-                                <img src="/images/assets/edit-icon.svg" style={{ fontSize: '2.0rem' }} />
+                                <img
+                                    src="/images/assets/edit-icon.svg"
+                                    style={{ fontSize: '2.0rem' }}
+                                    alt="edit button"
+                                />
                             </button>
                         )}
 
