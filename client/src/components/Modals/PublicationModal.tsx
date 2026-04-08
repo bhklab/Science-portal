@@ -58,7 +58,10 @@ const PublicationModal: React.FC<PublicationModalProps> = ({ isVisible, onHide, 
         return (
             <>
                 <div className="flex flex-row justify-between items-center align-middle">
-                    <button className="p-[10px] rounded-[4px] hover:bg-gray-100" onClick={handleExpandClick}>
+                    <button
+                        className="p-[10px] rounded-[4px] hover:bg-gray-100 focus:outline-none"
+                        onClick={handleExpandClick}
+                    >
                         <img
                             src="/images/assets/expand-modal-icon.svg"
                             alt="expand publication modal button"
@@ -70,7 +73,7 @@ const PublicationModal: React.FC<PublicationModalProps> = ({ isVisible, onHide, 
 
                         {!editMode && authContext?.user && (
                             <button
-                                className="p-[10px] rounded-[4px] hover:bg-gray-100 adjust-icon"
+                                className="p-[10px] rounded-[4px] hover:bg-gray-100 focus:outline-none adjust-icon"
                                 onClick={() => setEditMode(!editMode)}
                                 data-pr-tooltip="Edit publication resources"
                                 data-pr-position="left"
@@ -79,11 +82,14 @@ const PublicationModal: React.FC<PublicationModalProps> = ({ isVisible, onHide, 
                             </button>
                         )}
 
-                        <button className="p-[10px] rounded-[4px] hover:bg-gray-100" onClick={handleCopyDoi}>
+                        <button
+                            className="p-[10px] rounded-[4px] hover:bg-gray-100 focus:outline-none"
+                            onClick={handleCopyDoi}
+                        >
                             <img src="/images/assets/copy-doi-icon.svg" alt="copy doi button" className="w-6" />
                         </button>
                         <button
-                            className="p-[10px] rounded-[4px] hover:bg-gray-100"
+                            className="p-[10px] rounded-[4px] hover:bg-gray-100 focus:outline-none"
                             onClick={() => {
                                 onHide();
                                 setEditMode(false);
