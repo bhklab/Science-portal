@@ -19,18 +19,7 @@ export class AuthorController {
         }
     }
 	@Post('one')
-    async getOneAuthor(@Body('email') email: string) {
-		try {
-			await this.loggingService.logAction(
-				`Profile Page Check`, 
-				email ? email : 'Not signed in',
-				null,
-				{}
-			);
-		} catch (error) {
-			console.log(error)
-		}
-		
+    async getOneAuthor(@Body('email') email: string) {		
         try {
             const authors = await this.AuthorService.findOneAuthor(email);
             return authors;

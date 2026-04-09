@@ -68,6 +68,17 @@ export class StatsController {
 	@Put('supplementary/author')
     async getAuthorAnnualSupplementary(@Body('email') email: string)
 	{
+		try {
+			await this.loggingService.logAction(
+				`Profile Page Check`, 
+				email ? email : 'Not signed in',
+				null,
+				{}
+			);
+		} catch (error) {
+			console.log(error)
+		}
+
         try {
             const publications = await this.statsService.findAuthorAnnualSupplementary(email);
             return publications;

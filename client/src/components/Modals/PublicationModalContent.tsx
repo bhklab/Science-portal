@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Toast } from 'primereact/toast';
 import { Dropdown } from 'primereact/dropdown';
 import { Dialog } from 'primereact/dialog';
@@ -51,6 +51,8 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({
     const [otherLinks, setOtherLinks] = useState<Pub['otherLinks']>(pub.otherLinks ?? []);
 
     const toast = useRef<Toast>(null);
+
+    const [userExists, setUserExists] = useState<boolean>(false);
 
     // Manages changes in the supplementary section
     const handleLinkChange = (category: string, subCategory: string, index: number, value: string) => {
@@ -134,6 +136,32 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({
         }
     };
 
+    useEffect(() => {
+        async function checkOwnership(email: string, authors: string) {
+            const authorNames = authors.includes(';') ? authors.split(';').map(name => name.trim()) : [authors.trim()];
+            try {
+                const scientistData = await axios.post(`/api/authors/one`, {
+                    email
+                });
+                authorNames.forEach(name => {
+                    const splitName = name.split(',');
+                    const lastName = splitName[0];
+                    const firstName = splitName[1];
+                    if (
+                        lastName.toLowerCase().trim().includes(scientistData.data.lastName.toLowerCase().trim()) &&
+                        firstName.toLowerCase().trim().includes(scientistData.data.firstName.toLowerCase().trim())
+                    ) {
+                        setUserExists(true);
+                        return;
+                    }
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        checkOwnership(authContext?.user?.email, pub.authors);
+    });
+
     return (
         <div>
             {/* Edit mode banner */}
@@ -165,6 +193,7 @@ const PublicationModalContent: React.FC<PublicationModalContentProps> = ({
                     doi={pub.doi}
                     abstract={pub.abstract}
                     pdf={pub?.pdf}
+                    userExists={userExists}
                     authContext={authContext}
                 />
 
@@ -527,8 +556,9 @@ const HeaderSection: React.FC<{
     doi: string;
     abstract: string;
     pdf: string;
+    userExists: boolean;
     authContext: AuthContextType | null;
-}> = ({ name, authors, scientists, journal, date, citations, image, doi, abstract, pdf, authContext }) => {
+}> = ({ name, authors, scientists, journal, date, citations, image, doi, abstract, pdf, userExists, authContext }) => {
     const [showFullAbstract, setShowFullAbstract] = useState(false);
 
     // PDF file state
@@ -613,7 +643,8 @@ const HeaderSection: React.FC<{
                     <PDF pdf={pdfObj} />
                 </>
             ) : (
-                authContext?.user?.email && (
+                authContext?.user?.email &&
+                userExists && (
                     <div className="flex gap-2">
                         <label
                             className="button-tooltip flex items-center gap-1 rounded-lg bg-sp_dark_green px-3 py-2 text-bodyMd font-semibold text-white shadow-xs cursor-pointer line-clamp-1"
