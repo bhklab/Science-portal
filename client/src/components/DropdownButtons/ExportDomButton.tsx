@@ -45,7 +45,6 @@ const ExportDomDropdown: React.FC<ExportDomDropdownProps> = ({
         document.body.appendChild(paddedWrapper);
 
         // Capture snapshot
-        console.log(format);
         const canvas = await html2canvas(paddedWrapper, {
             useCORS: true,
             backgroundColor: format === 'jpeg' ? 'white' : null,
